@@ -2,22 +2,23 @@
 # File:     fs_oper.mk
 # Project:  GNU Make OS Specifics
 # Author:   Radim Loskot
-# E-mail:   xlosko01@stud.fit.vutbr.cz
+# E-mail:   xlosko01(at)stud.fit.vutbr.cz
 
 ifndef _FS_OPER_MK
 _FS_OPER_MK = _FS_OPER_MK
 
 _FS_OPER_MK_RUN_DIR = $(dir $(lastword $(MAKEFILE_LIST)))
 include $(_FS_OPER_MK_RUN_DIR)os_vars.mk
+include $(_FS_OPER_MK_RUN_DIR)common.mk
 
 # Tests whether file/dir exists
 # @param $1 filename of the file/dir
 # @param $2 adds negate to the condition "not" or ""
 # @param $3 specifies type of the file (regular file/directory)
 ifeq ($(OSS_OS_NAME), windows)
-    oss_if_exist = IF $(if ($2, not), NOT) EXIST $1 $(if ($3, dir), /)
+    oss_if_exist = IF $(if $(call eq,$2,not), NOT) EXIST $1 $(if $(call eq,$3,dir), /)
 else
-    oss_if_exist = [ $(if ($3, dir), -d, -f) $1 ] && $(if ($2, not), : ||)
+    oss_if_exist = [ $(if $(call eq,$3,dir), -d, -f) $1 ] && $(if $(call eq,$2,not), : ||)
 endif
 
 # Creates folder
@@ -31,7 +32,7 @@ endif
 # Removes file from the filesystem
 # @param $1 filename to the file
 ifeq ($(OSS_OS_NAME), windows)
-    oss_rm = DEL /F /S /Q "$(patsubst %/, %, $1)"
+    oss_rm = IF EXIST "$(patsubst %/, %, $1)" DEL /F /S /Q "$(patsubst %/, %, $1)"
 else
     oss_rm = rm -f $1
 endif
@@ -39,7 +40,7 @@ endif
 # Removes folder from the filesystem
 # @param $1 filename to the folder
 ifeq ($(OSS_OS_NAME), windows)
-    oss_rmdir = RD /S /Q "$(patsubst %/, %, $1)"
+    oss_rmdir = IF EXIST "$(patsubst %/, %, $1)/" RD /S /Q "$(patsubst %/, %, $1)"
 else
     oss_rmdir = rm -rf $1
 endif
@@ -56,7 +57,7 @@ endif
 # Prints directory file list on stdout
 # @param $1 directory with files which should be printed
 ifeq ($(OSS_OS_NAME), windows)
-    oss_ls = DIR /B $1
+    oss_ls = dir /B $1
 else
     oss_ls = ls $1
 endif

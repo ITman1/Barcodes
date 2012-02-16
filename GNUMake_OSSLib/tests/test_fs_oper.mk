@@ -1,8 +1,8 @@
-# Test Makefile - Filesystem operations (called by test.py)
-# File:     fs_oper.mk
+# Test Makefile - Filesystem operations (called by test_fs_oper.py)
+# File:     test_fs_oper.mk
 # Project:  GNU Make OS Specifics
 # Author:   Radim Loskot
-# E-mail:   xlosko01@stud.fit.vutbr.cz
+# E-mail:   xlosko01(at)stud.fit.vutbr.cz
 
 include ../include.mk
 
@@ -19,3 +19,6 @@ del-file:
 
 del-tmp:
 	$(call oss_rmdir,tmp)
+	
+ls-tmp:
+	$(call oss_ls,tmp) > tmp/ls.out

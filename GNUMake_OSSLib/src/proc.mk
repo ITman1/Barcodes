@@ -2,10 +2,13 @@
 # File:     proc.mk
 # Project:  GNU Make OS Specifics
 # Author:   Radim Loskot
-# E-mail:   xlosko01@stud.fit.vutbr.cz
+# E-mail:   xlosko01(at)stud.fit.vutbr.cz
 
 ifndef _PROC_MK
 _PROC_MK = _PROC_MK
+
+_PROC_MK_RUN_DIR = $(dir $(lastword $(MAKEFILE_LIST)))
+include $(_PROC_MK_RUN_DIR)os_vars.mk
 
 # Retrieves return code of the last process
 ifeq ($(OSS_OS_NAME), windows)
