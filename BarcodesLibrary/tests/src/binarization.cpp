@@ -1,7 +1,7 @@
 // Encoding: UTF-8
 
 /**
- * File:      detection.cpp
+ * File:      binarization.cpp
  * Date:      March 2012
  * Project:   Barcodes Library
  * Author:    Radim Loskot
@@ -10,7 +10,7 @@
  */
 
 /**
- * @file detection.cpp
+ * @file binarization.cpp
  *
  * @brief XXXXXXXXXXXXXXXXXXXXXXXXXXXX @todo
  * @brief XXXXXXXXXXXXXXXXXXXXXXXXXXXX @todo
