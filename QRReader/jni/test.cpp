@@ -1,5 +1,11 @@
-#include <jni.h>
 #include <vector>
+#include <iostream>
+
+#include <jni.h>
+
+#include <BarcodesLibrary.h>
+
+using namespace std;
 
 extern "C" {
     JNIEXPORT jint JNICALL Java_com_qrreader_android_QrReaderAndroid_testMe(JNIEnv * env, jobject obj);
@@ -7,7 +13,6 @@ extern "C" {
 
 JNIEXPORT jint JNICALL Java_com_qrreader_android_QrReaderAndroid_testMe(JNIEnv * env, jobject obj)
 {
-    std::vector<int> vec;
-    int i = 12;
+    int i = testMELib();
     return i;
 }

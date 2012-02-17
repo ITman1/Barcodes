@@ -1,1 +1,4 @@
 -- popsat Android architekturu a ARM procesory
+-- C:/Development/OpenCV vs. C:\Development\OpenCV slashes BUG nekdy se projevi :P mozna Eclipse BUG
+-- z OpenCV makefilu smazany extaras 3rd party
+-- komplexni Makefile => dalsi moznosti distribuce po zmeneni AR CC LD apod promennych (prip. dalsi rozsireni)

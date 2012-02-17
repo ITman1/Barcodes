@@ -10,18 +10,17 @@ public class QrReaderAndroid extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         TextView  tv = new TextView(this);
-        tv.setText( "HMMM" );
-        /*if (testMe() == 12) {
+        if (testMe() == 12) {
         	tv.setText( "YES" );
         } else {
         	tv.setText( "SHIT" );
-        }*/
+        }
         setContentView(tv);
     }
     
     public native int testMe();
 
-    /*static {
-        System.loadLibrary("test");
-    }*/
+    static {
+        System.loadLibrary("JNIBarcodesLibrary");
+    }
 }
