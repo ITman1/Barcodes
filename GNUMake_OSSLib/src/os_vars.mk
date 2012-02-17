@@ -7,6 +7,9 @@
 ifndef _OS_VARS_MK
 _OS_VARS_MK = _OS_VARS_MK
 
+_OS_VARS_MK_RUN_DIR = $(dir $(lastword $(MAKEFILE_LIST)))
+include $(_OS_VARS_MK_RUN_DIR)common.mk
+
 # Set OS name to the variable OSS_OS_NAME
 ifeq ($(OS),Windows_NT)
     OSS_OS_NAME := windows
@@ -26,5 +29,11 @@ ifeq ($(OSS_OS_NAME), windows)
 else
 	OSS_DEVNULL := /dev/null
 endif
+
+# Extension of the shared library on the current OS
+OSS_SHARED_LIBRARY_EXTENSION := $(if $(call eq,$(OSS_OS_NAME),windows),.dll,.so)
+
+# Extension of the executable file on the current OS
+OSS_EXECUTABLE_EXTENSION := $(if $(call eq,$(OSS_OS_NAME),windows),.exe,)
 
 endif
