@@ -11,8 +11,7 @@ include ../../GNUMake_OSSLib/include.mk
 # Defining names of some directories and Barcodes Library
 SRCDIR         := src
 TESTSDIR       := tests
-BARCODES_LIB   := libBarcodesLibrary$(if $(call eq,$(OSS_OS_NAME),windows),.dll,.so)
-EXEC_EXTENSION := $(if $(call eq,$(OSS_OS_NAME),windows),.exe,)
+BARCODES_LIB   := libBarcodesLibrary$(OSS_SHARED_LIBRARY_EXTENSION)
 
 # Flags and options for compiler
 CXXFLAGS :=	$(CXXOPT) -g -Wall -fmessage-length=0
@@ -21,10 +20,10 @@ LIBS     := -L./$(TESTSDIR) -lBarcodesLibrary
 
 # Lists of sources and output executable programs
 SRCS     := $(shell $(call oss_ls,$(SRCDIR)))
-EXECS    := $(patsubst %,$(TESTSDIR)/%,$(patsubst %.cpp,%$(EXEC_EXTENSION),$(SRCS)))
+EXECS    := $(patsubst %,$(TESTSDIR)/%,$(patsubst %.cpp,%$(OSS_EXECUTABLE_EXTENSION),$(SRCS)))
 
-# Universal rule for compilink/linking executable program
-$(TESTSDIR)/%$(EXEC_EXTENSION) : $(SRCDIR)/%.cpp
+# Universal rule for compiling/linking executable program
+$(TESTSDIR)/%$(OSS_EXECUTABLE_EXTENSION) : $(SRCDIR)/%.cpp
 	$(CXX) -o $@ $< $(INCLUDES) $(LIBS)
 
 # Main entrance rule

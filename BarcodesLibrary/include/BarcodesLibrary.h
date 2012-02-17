@@ -17,4 +17,4 @@
  * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
  */
 
-int testME();
+int testMELib();

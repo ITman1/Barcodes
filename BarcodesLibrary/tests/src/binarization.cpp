@@ -20,6 +20,6 @@
 #include <BarcodesLibrary.h>
 
 int main() {
-    int i = testME();
+    int i = testMELib();
     return i;
 }

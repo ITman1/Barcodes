@@ -28,7 +28,7 @@
 using namespace std;
 using namespace cv;
 
-int testME() {
+int testMELib() {
 	cout << "QR Code" << endl;
     vector<int> vec;
     FastFeatureDetector detector(50);

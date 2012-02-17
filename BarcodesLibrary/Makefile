@@ -17,11 +17,12 @@ OPENCV_LIB_PATH     := -L$(OPENCV_INSTALL_DIR)\build\x86\mingw\lib
 # Including OS Specifics Library
 include ../GNUMake_OSSLib/include.mk
 
-# Defining names of some directories and Barcodes Library
-SRCDIR := src
-OBJDIR := obj
-LIBDIR := $(if $(call eq,$(flavor LIBDIR),undefined),lib,$(LIBDIR))
-TARGET := $(if $(call eq,$(flavor TARGET),undefined),libBarcodesLibrary$(if $(call eq,$(OSS_OS_NAME),windows),.dll,.so),$(TARGET))
+# Defining names of some directories, Barcodes Library and file that contains list of the sources
+SRCDIR   := src
+OBJDIR   := obj
+LIBDIR   := $(if $(call eq,$(flavor LIBDIR),undefined),lib,$(LIBDIR))
+TARGET   := $(if $(call eq,$(flavor TARGET),undefined),libBarcodesLibrary$(OSS_SHARED_LIBRARY_EXTENSION),$(TARGET))
+SRC_LIST := src_list.TXT
 
 # Flags and options for compiler
 CXXFLAGS :=	$(CXXOPT) -g -Wall -fmessage-length=0
@@ -32,7 +33,7 @@ LIBS     := $(OPENCV_LIB_PATH) -llibopencv_core231 -llibopencv_imgproc231 \
            -llibopencv_contrib231 -llibopencv_legacy231
 
 # Lists of sources and output object files
-SRCS := Barcode.cpp
+SRCS := $(shell $(call oss_cat,$(SRC_LIST)))
 OBJS := ${SRCS:%.cpp=${OBJDIR}/%.o}
 
 # Universal rule for creating object files
