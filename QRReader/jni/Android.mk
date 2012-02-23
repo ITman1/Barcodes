@@ -11,20 +11,19 @@ include ../GNUMake_OSSLib/include.mk
 
 LOCAL_MODULE    := BarcodesLibrary
 LOCAL_SRC_FILES := $(patsubst %,../../BarcodesLibrary/src/%,$(shell $(call oss_cat,"..\BarcodesLibrary\src_list.TXT")))
-a := $(shell echo on && echo $(LOCAL_SRC_FILES) >test.out)
 LOCAL_LDLIBS    += -llog -ldl -lz
 
-include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)
 
 ##########( BUILDING JNI LIBRARY )##########
 # - availables methods for QR codes only
 include $(CLEAR_VARS)
 
 LOCAL_C_INCLUDES         += ../BarcodesLibrary/include
-LOCAL_SHARED_LIBRARIES   += BarcodesLibrary
+LOCAL_STATIC_LIBRARIES   += BarcodesLibrary
 LOCAL_CFLAGS             += -fPIC
 
-LOCAL_MODULE             := JNIBarcodesLibrary
+LOCAL_MODULE             := QRBarcodesLibrary
 LOCAL_SRC_FILES          := test.cpp
 LOCAL_LDLIBS             += -llog -ldl -lz
 

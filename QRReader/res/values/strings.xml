@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">QR Code Reader</string>
+    <string name="err_alert">Error</string>
+    <string name="str_image">image</string>
+    <string name="str_qrcode">QR code</string>
+    <string name="dir_images">Images</string>
+    <string name="dir_qrcodes">QR Codes</string>
+    <string name="fileformat_jpeg">JPEG</string>
+    <string name="fileformat_raw">RAW</string>
+    
+    <string name="QRReaderActivity_StatusText_Capturing">(capturing image)</string>
+    <string name="QRReaderActivity_StatusText_Saving">(saving image)</string>
+    <string name="QRReaderActivity_StatusText_Processing">(processing image)</string>
+    
+    <string name="CameraOptionsMenu_Preferences">Settings</string>
+    <string name="CameraOptionsMenu_Recent_QRCodes">Recent QR codes</string>
+
+</resources>

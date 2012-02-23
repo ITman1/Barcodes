@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/relativeLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <ImageButton
+            android:id="@+id/read_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/read_btn" />
+
+        <TextView
+            android:id="@+id/fps_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:text="FPS: ??"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#ff0" />
+
+        <TextView
+            android:id="@+id/debug_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:background="@null"
+            android:height="75dp"
+            android:inputType="textMultiLine"
+            android:textColor="#ff0" />
+
+        <LinearLayout
+            android:id="@+id/status_LinearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+            android:visibility="invisible"
+            android:gravity="center_horizontal" >
+
+            <ProgressBar
+                android:id="@+id/statusProgress_ProgressBar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal" />
+
+            <TextView
+                android:id="@+id/statusText_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/currSnapshot_ProgressBar"
+                android:layout_gravity="center_horizontal"
+                android:text="Status text"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        </LinearLayout>
+
+    </RelativeLayout>

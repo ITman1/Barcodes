@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_Preferences_Images">Obrázky</string>
+    <string name="summary_Preferences_Images">Nastavení pro zachycené obrázky</string>
+    <string name="title_Preferences_QRCodes">QR kódy</string>
+    <string name="summary_Preferences_QRCodes">Nastavení pro dekódované QR kódy</string>
+    <string name="title_Preferences_AutoFocus">Zapnout autofocus</string>
+    <string name="summary_Preferences_AutoFocus">Zapne nebo nebo vypne autofocus pro zachycení obrazu</string>
+    <string name="title_Preferences_ShowFPS">Zobrazit FPS</string>
+    <string name="summary_Preferences_ShowFPS">Zobrazí nebo skryje údaj o snímkové frekvenci kamery</string>
+    <string name="title_Prefereces_ResetPreferences">Obnovit výchozí nastavení</string>
+    <string name="summary_Prefereces_ResetPreferences">Obnoví nastavení dostupné po nainstalování aplikace</string>  
+    
+    <string name="title_Preferences_Images_SaveMethod">Ukládání obrazků</string>
+    <string name="summary_Preferences_Images_SaveMethod">Definuje způsob ukládání zachyceného obrázku</string>
+    <string name="title_Preferences_Images_FilePath">Cesta k úložišti</string>
+    <string name="summary_Preferences_Images_FilePath">Definuje cestu pro ukládání zachycených obrázků</string>
+    <string name="title_Preferences_Images_FilePrefix">Předpona souborů</string>
+    <string name="summary_Preferences_Images_FilePrefix">Definuje předponu souboru pro zachycené obrázky</string>
+    <string name="title_Preferences_Images_Format">Formát souboru</string>
+    <string name="summary_Preferences_Images_Format">Definuje formát obrázku v jakém bude uložen</string>
+    
+    <string name="title_Preferences_QRCodes_SaveMethod">Ukládání QR kódů</string>
+    <string name="summary_Preferences_QRCodes_SaveMethod">Definuje způsob ukládání dekódovaného QR kódu</string>
+    <string name="title_Preferences_QRCodes_FilePath">Cesta k úložišti</string>
+    <string name="summary_Preferences_QRCodes_FilePath">Definuje cestu pro ukládání dekódovaných QR kódů</string>
+    <string name="title_Preferences_QRCodes_FilePrefix">Předpona souborů</string>
+    <string name="summary_Preferences_QRCodes_FilePrefix">Definuje předponu souboru pro dekódované QR kódy</string>  
+    <string name="dialogMessage_Prefereces_ResetPreferences">Přejete si obnovit výchozí nastavení?</string>  
+    
+	<string-array name="entries_Preferences_SaveMethod">
+		<item>Automaticky</item>
+		<item>Dotázat se</item>
+		<item>Neukládat</item>
+	</string-array>
+</resources>

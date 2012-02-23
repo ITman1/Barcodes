@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Errors_Camera_Failure">Unable to open camera device! Probably locked by another application.</string>
+    <string name="Errors_Camera_PictureCallback">Could not take a picture! Your device probably does not support selected image format, please choose another one in the Image settings.</string>
+    <string name="Errors_Storage_Mount">Unable to reach storage device! Probably is unmounted, please insert SD card.</string>
+    <string name="Errors_Storage_MKDIRS">Unable to create directory structure for saving file! Probably due to permissions or internal error.</string>
+    <string name="Errors_Storage_OpenWrite">Unable to open file for write (%s)!</string>
+    <string name="Errors_Storage_Save">Unable to save file (%s)! Probably no available space for new data.</string>
+</resources>

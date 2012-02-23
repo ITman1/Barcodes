@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+     <PreferenceScreen 
+         android:key="Preferences_Images"
+         android:summary="@string/summary_Preferences_Images"
+         android:title="@string/title_Preferences_Images">
+         <ListPreference
+             android:key="Preferences_Images_SaveMethod"
+	         android:summary="@string/summary_Preferences_Images_SaveMethod"
+	         android:title="@string/title_Preferences_Images_SaveMethod"
+	         android:entries="@array/entries_Preferences_SaveMethod"
+	         android:entryValues="@array/entryValues_Preferences_SaveMethod"
+	         android:defaultValue="autoSave" />
+         <com.android.preferences.ValidateEditTextPreference
+             android:key="Preferences_Images_FilePath"
+	         android:summary="@string/summary_Preferences_Images_FilePath"
+	         android:title="@string/title_Preferences_Images_FilePath"
+             android:defaultValue="QRReader/Images"/>
+         <EditTextPreference 
+             android:key="Preferences_Images_FilePrefix"
+	         android:summary="@string/summary_Preferences_Images_FilePrefix"
+	         android:title="@string/title_Preferences_Images_FilePrefix"
+             android:defaultValue="IMG_"/>
+         <ListPreference
+             android:key="Preferences_Images_Format"
+	         android:summary="@string/summary_Preferences_Images_Format"
+	         android:title="@string/title_Preferences_Images_Format"
+	         android:entries="@array/entries_Preferences_Images_Format"
+	         android:entryValues="@array/entryValues_Preferences_Images_Format"
+	         android:defaultValue="@string/fileformat_jpeg" />
+     </PreferenceScreen>  
+    
+     <PreferenceScreen 
+         android:key="Preferences_QRCodes"
+         android:summary="@string/summary_Preferences_QRCodes"
+         android:title="@string/title_Preferences_QRCodes">
+         <ListPreference
+             android:key="Preferences_QRCodes_SaveMethod"
+	         android:summary="@string/summary_Preferences_QRCodes_SaveMethod"
+	         android:title="@string/title_Preferences_QRCodes_SaveMethod"
+	         android:entries="@array/entries_Preferences_SaveMethod"
+	         android:entryValues="@array/entryValues_Preferences_SaveMethod"
+	         android:defaultValue="autoSave" />
+         <com.android.preferences.ValidateEditTextPreference
+             android:key="Preferences_QRCodes_FilePath"
+	         android:summary="@string/summary_Preferences_QRCodes_FilePath"
+	         android:title="@string/title_Preferences_QRCodes_FilePath"
+             android:defaultValue="QRReader/QR_Codes"/>
+         <EditTextPreference 
+             android:key="Preferences_QRCodes_FilePrefix"
+	         android:summary="@string/summary_Preferences_QRCodes_FilePrefix"
+	         android:title="@string/title_Preferences_QRCodes_FilePrefix"
+             android:defaultValue="QR_"/>
+     </PreferenceScreen>  
+     
+     <CheckBoxPreference 
+        android:key="Preferences_AutoFocus"
+        android:summary="@string/summary_Preferences_AutoFocus"
+        android:title="@string/title_Preferences_AutoFocus" 
+        android:defaultValue="false" />
+    
+     <CheckBoxPreference 
+        android:key="Preferences_ShowFPS"
+        android:summary="@string/summary_Preferences_ShowFPS"
+        android:title="@string/title_Preferences_ShowFPS" 
+        android:defaultValue="true" />
+     
+	 <com.android.preferences.PromptDialogPreference
+	     android:key="Prefereces_ResetPreferences" 
+	     android:title="@string/title_Prefereces_ResetPreferences"
+	     android:summary="@string/summary_Prefereces_ResetPreferences"
+	     android:persistent="false"
+         android:dialogIcon="@android:drawable/ic_dialog_alert"
+         android:dialogMessage="@string/dialogMessage_Prefereces_ResetPreferences"
+         android:positiveButtonText="@android:string/ok"
+         android:negativeButtonText="@android:string/cancel"/>
+
+</PreferenceScreen>

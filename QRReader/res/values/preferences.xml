@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_Preferences_Images">Images</string>
+    <string name="summary_Preferences_Images">Settings for captured images</string>
+    <string name="title_Preferences_QRCodes">QR codes</string>
+    <string name="summary_Preferences_QRCodes">Settings for decoded QR codes</string>
+    <string name="title_Preferences_AutoFocus">Use autofocus</string>
+    <string name="summary_Preferences_AutoFocus">Enables or disables autofocus feature when capturing image</string>
+    <string name="title_Preferences_ShowFPS">Show FPS</string>
+    <string name="summary_Preferences_ShowFPS">Displays or hides info about fps of camera</string>
+    <string name="title_Prefereces_ResetPreferences">Restore default settings</string>
+    <string name="summary_Prefereces_ResetPreferences">Restores first use settings</string>  
+    
+    <string name="title_Preferences_Images_SaveMethod">Saving of image</string>
+    <string name="summary_Preferences_Images_SaveMethod">Defines options when to save images</string>
+    <string name="title_Preferences_Images_FilePath">Storage path</string>
+    <string name="summary_Preferences_Images_FilePath">Defines path where to store captured images</string>
+    <string name="title_Preferences_Images_FilePrefix">File prefix</string>
+    <string name="summary_Preferences_Images_FilePrefix">Defines prefix of the files with the captured images</string>
+    <string name="title_Preferences_Images_Format">File format</string>
+    <string name="summary_Preferences_Images_Format">Defines the format in which will be images stored</string>
+    
+    <string name="title_Preferences_QRCodes_SaveMethod">Saving of QR code</string>
+    <string name="summary_Preferences_QRCodes_SaveMethod">Defines options when to QR codes</string>
+    <string name="title_Preferences_QRCodes_FilePath">Storage path</string>
+    <string name="summary_Preferences_QRCodes_FilePath">Defines path where to store decoded QR codes</string>
+    <string name="title_Preferences_QRCodes_FilePrefix">File prefix</string>
+    <string name="summary_Preferences_QRCodes_FilePrefix">Defines prefix of the files with the decoded QR codes</string>
+    <string name="dialogMessage_Prefereces_ResetPreferences">Do you wish to restore default settings?</string>  
+    
+	<string-array name="entries_Preferences_SaveMethod">
+		<item>Autosave</item>
+		<item>Prompt</item>
+		<item>Do not save</item>
+	</string-array>
+	<string-array name="entryValues_Preferences_SaveMethod">
+		<item>autoSave</item>
+		<item>prompty</item>
+		<item>notSave</item>
+	</string-array>  
+	
+	<string-array name="entries_Preferences_Images_Format">
+		<item>JPEG</item>
+		<item>RAW</item>
+	</string-array>
+	<string-array name="entryValues_Preferences_Images_Format">
+		<item>JPEG</item>
+		<item>RAW</item>
+	</string-array>  
+</resources>

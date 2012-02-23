@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Čtečka QR kódů</string>
+    <string name="err_alert">Chyba</string>
+    <string name="str_image">obrázek</string>
+    <string name="str_qrcode">QR kód</string>
+    <string name="dir_images">Obrázky</string>
+    <string name="dir_qrcodes">QR kódy</string>
+    
+    <string name="QRReaderActivity_StatusText_Capturing">(zachytávání obrazu)</string>
+    <string name="QRReaderActivity_StatusText_Saving">(ukládání obrazu)</string>
+    <string name="QRReaderActivity_StatusText_Processing">(zpracovávání obrazu)</string>
+    
+    <string name="CameraOptionsMenu_Preferences">Nastavení</string>
+    <string name="CameraOptionsMenu_Recent_QRCodes">Předchozí QR kódy</string>
+</resources>

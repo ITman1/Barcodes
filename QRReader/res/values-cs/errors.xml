@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Errors_Camera_Failure">Kamera je nedostupná! Pravděpodobně jí používá jiná aplikace.</string>
+    <string name="Errors_Camera_PictureCallback">Nebylo možné sejmout obraz! Vaše zařízení pravděpodobně nepodporuje zvolený formát obrazu, prosím zvolte jiný v nastavení obrazu.</string>
+    <string name="Errors_Storage_Mount">Externí úložiště je nedostupné! Pravděpodobně není vložena SD karta.</string>
+    <string name="Errors_Storage_MKDIRS">Nelze vytvořit adresářovou strukturu pro uložení souboru! Pravděpodobně z důvodu oprvánění nebo vnitřní chyby.</string>
+    <string name="Errors_Storage_OpenWrite">Nelze otevřít soubor pro zápis (%s)!</string>
+    <string name="Errors_Storage_Save">Nelze uložit soubor (%s)! Pravděpodobně není dostupné dostatečné volné místo v úložišti.</string>
+</resources>

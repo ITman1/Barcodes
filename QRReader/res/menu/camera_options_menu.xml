@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/settings" android:title="@string/CameraOptionsMenu_Preferences"></item>
+    <item android:id="@+id/recent_qrcodes" android:title="@string/CameraOptionsMenu_Recent_QRCodes"></item>
+</menu>
