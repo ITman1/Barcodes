@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">QR Code Reader</string>
-    <string name="err_alert">Error</string>
+
     <string name="str_image">image</string>
     <string name="str_qrcode">QR code</string>
     <string name="dir_images">Images</string>

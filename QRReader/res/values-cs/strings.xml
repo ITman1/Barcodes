@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Čtečka QR kódů</string>
-    <string name="err_alert">Chyba</string>
+
     <string name="str_image">obrázek</string>
     <string name="str_qrcode">QR kód</string>
     <string name="dir_images">Obrázky</string>

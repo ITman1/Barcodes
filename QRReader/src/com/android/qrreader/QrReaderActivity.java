@@ -33,11 +33,12 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.camera.CameraPreview;
 import com.android.camera.DroidCamera;
-import com.android.dialogs.FileDialog;
+import com.android.listviews.FileListActivity;
 import com.android.qrreader.R;
 
 public class QrReaderActivity extends Activity {
@@ -48,7 +49,9 @@ public class QrReaderActivity extends Activity {
     private static final String DEFAULT_IMAGE_PREFIX        = "IMG_";
     private static final String DEFAULT_IMAGE_FORMAT        = "JPEG";
     private static final String FPS_STR                     = "FPS: ";
+    private static final String SD_CARD_DIR                 = "/sdcard";
 
+    private RelativeLayout     cameraPreviewLayout;
 	private CameraPreview      cameraPreview;
 	private LayoutInflater     controlInflater;
 	
@@ -82,7 +85,7 @@ public class QrReaderActivity extends Activity {
                 Resources res = getResources();
                 String prefFormat = prefs.getString("Preferences_Images_Format", DEFAULT_IMAGE_FORMAT);
                 
-                droidCamera.getPreviewSurface().setVisibility(CameraPreview.INVISIBLE);
+                cameraPreviewLayout.setVisibility(CameraPreview.INVISIBLE);
                 if (prefFormat.equals(res.getString(R.string.fileformat_jpeg))) {
                     droidCamera.getCamera().takePicture(null, null, takePictureCallback);
                 } else if (prefFormat.equals(res.getString(R.string.fileformat_raw))) {
@@ -116,7 +119,7 @@ public class QrReaderActivity extends Activity {
             Resources res = getResources();
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
             String saveMethod = prefs.getString("Preferences_Images_SaveMethod", "autoSave");
-            if (data != null || !saveMethod.equals("notSave")) {
+            if (data != null && !saveMethod.equals("notSave")) {
                 File pictureFile;
                 
                 if (saveMethod.equals("autoSave")) {
@@ -144,7 +147,7 @@ public class QrReaderActivity extends Activity {
             }
 
             if (droidCamera != null) {
-                droidCamera.getPreviewSurface().setVisibility(CameraPreview.VISIBLE);
+                cameraPreviewLayout.setVisibility(CameraPreview.VISIBLE);
                 
                 statusText_TextView.setText(R.string.QRReaderActivity_StatusText_Processing);
                 //readQRCode();
@@ -183,6 +186,7 @@ public class QrReaderActivity extends Activity {
 
         // Getting view surface for the camera
         cameraPreview = (CameraPreview)findViewById(R.id.cameraPreview);
+        cameraPreviewLayout = (RelativeLayout)findViewById(R.id.cameraPreviewLayout);
         
         // Adding camera controls layout over the camera preview view
         controlInflater = LayoutInflater.from(getBaseContext());
@@ -240,8 +244,12 @@ public class QrReaderActivity extends Activity {
                 startActivity(new Intent(this, QrReaderSettingsActivity.class));
                 return true;
             case R.id.recent_qrcodes:
-                FileDialog fileDialog = new FileDialog(getBaseContext());
-                fileDialog.show();
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                Intent intent = new Intent(this, FileListActivity.class);
+                String cwd = prefs.getString("Preferences_QRCodes_FilePath", SD_CARD_DIR);
+                //intent.putExtra(FileListActivity.BASE_DIR, cwd);
+                intent.putExtra(FileListActivity.BASE_DIR, "/mnt/sdcard");
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

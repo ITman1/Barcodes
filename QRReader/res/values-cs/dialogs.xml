@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="err_alert">Chyba</string>
+    <string name="confirm_alert">Potvrzení</string>
+</resources>

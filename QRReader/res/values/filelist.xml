@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="FileListAdapter_goto_parent">(goto parent directory)</string>
+    <string name="FileListAdapter_empty">(empty directory)</string>
+    <string name="FileListActivity_delete_regular_file">Do you wish to delete file %s?</string>
+    <string name="FileListActivity_delete_folder">Do you wish to delete folder %s?</string>
+      
+    <string-array name="FileListAdapter_filetype_suffixes">
+        <item>QR</item>
+        <item>JPG</item>
+        <item>RAW</item>
+    </string-array>
+    <string-array name="FileListAdapter_filetype_drawables">
+        <item>file_qr</item>
+        <item>file_jpg</item>
+        <item>file_raw</item>
+    </string-array>
+</resources>

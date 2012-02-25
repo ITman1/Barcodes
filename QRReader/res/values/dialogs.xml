@@ -1,3 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="err_alert">Error</string>
+    <string name="confirm_alert">Confirm</string>
 </resources>

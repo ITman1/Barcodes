@@ -17,8 +17,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".QrReaderSettingsActivity">
-        </activity>
+        <activity android:name="com.android.qrreader.QrReaderSettingsActivity" />
+        <activity android:name="com.android.listviews.FileListActivity" />
     </application>
 
 </manifest>

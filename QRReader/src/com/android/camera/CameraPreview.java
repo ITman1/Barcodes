@@ -93,7 +93,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	        camera.release();  
 	    }
         previewing = false;
-        camera = null;
 	}
 	
 	public Camera getCamera() {
