@@ -4,12 +4,22 @@
     <string name="summary_Preferences_Images">Settings for captured images</string>
     <string name="title_Preferences_QRCodes">QR codes</string>
     <string name="summary_Preferences_QRCodes">Settings for decoded QR codes</string>
-    <string name="title_Preferences_AutoFocus">Use autofocus</string>
-    <string name="summary_Preferences_AutoFocus">Enables or disables autofocus feature when capturing image</string>
-    <string name="title_Preferences_ShowFPS">Show FPS</string>
-    <string name="summary_Preferences_ShowFPS">Displays or hides info about fps of camera</string>
+    <string name="title_Preferences_Camera">Camera</string>
+    <string name="summary_Preferences_Camera">Settings of the features of the camera</string>
+    <string name="title_Preferences_View">View</string>
+    <string name="summary_Preferences_View">Customization of the application and camera preview</string>
     <string name="title_Prefereces_ResetPreferences">Restore default settings</string>
     <string name="summary_Prefereces_ResetPreferences">Restores first use settings</string>  
+    
+    <string name="title_Preferences_Camera_AutoFocus">Use auto-focus</string>
+    <string name="summary_Preferences_Camera_AutoFocus">Enables or disables auto-focus feature when capturing image</string>
+    <string name="title_Preferences_Camera_Flash">Flash mode</string>
+    <string name="summary_Preferences_Camera_Flash">Defines when should be the flash invoked</string>
+
+    <string name="title_Preferences_View_ShowFPS">Show FPS</string>
+    <string name="summary_Preferences_View_ShowFPS">Displays or hides info about FPS of camera</string>
+    <string name="title_Preferences_View_ShowTarget">Target</string>
+    <string name="summary_Preferences_View_ShowTarget">Defines whether to display the target during camera previewing</string>
     
     <string name="title_Preferences_Images_SaveMethod">Saving of image</string>
     <string name="summary_Preferences_Images_SaveMethod">Defines options when to save images</string>
@@ -19,6 +29,8 @@
     <string name="summary_Preferences_Images_FilePrefix">Defines prefix of the files with the captured images</string>
     <string name="title_Preferences_Images_Format">File format</string>
     <string name="summary_Preferences_Images_Format">Defines the format in which will be images stored</string>
+    <string name="title_Preferences_Images_Clear">Clear storage directory</string>
+    <string name="summary_Preferences_Images_Clear">Clears all stored files inside set storage directory for images</string>
     
     <string name="title_Preferences_QRCodes_SaveMethod">Saving of QR code</string>
     <string name="summary_Preferences_QRCodes_SaveMethod">Defines options when to QR codes</string>
@@ -26,7 +38,12 @@
     <string name="summary_Preferences_QRCodes_FilePath">Defines path where to store decoded QR codes</string>
     <string name="title_Preferences_QRCodes_FilePrefix">File prefix</string>
     <string name="summary_Preferences_QRCodes_FilePrefix">Defines prefix of the files with the decoded QR codes</string>
+    <string name="title_Preferences_QRCodes_Clear">Clear storage directory</string>
+    <string name="summary_Preferences_QRCodes_Clear">Clears all stored files inside set storage directory for QR codes</string>  
+    
     <string name="dialogMessage_Prefereces_ResetPreferences">Do you wish to restore default settings?</string>  
+    <string name="dialogMessage_Prefereces_Images_Clear">Do you wish to delete all files from the image storage directory?</string>  
+    <string name="dialogMessage_Prefereces_QRCodes_Clear">Do you wish to delete all files from the QR code storage directory?</string>  
     
 	<string-array name="entries_Preferences_SaveMethod">
 		<item>Autosave</item>
@@ -46,5 +63,20 @@
 	<string-array name="entryValues_Preferences_Images_Format">
 		<item>JPEG</item>
 		<item>RAW</item>
+	</string-array>  
+	
+	<string-array name="entries_Preferences_Camera_Flash">
+		<item>Never use</item>
+		<item>Automatic</item>
+		<item>Always during snapshot</item>
+		<item>Always with red eye reduction</item>
+		<item>Use as a torch</item>
+	</string-array>
+	<string-array name="entryValues_Preferences_Camera_Flash">
+		<item>off</item>
+	    <item>auto</item>
+	    <item>on</item>
+		<item>redEye</item>
+		<item>torch</item>
 	</string-array>  
 </resources>

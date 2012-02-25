@@ -19,6 +19,7 @@
         </activity>
         <activity android:name="com.android.qrreader.QrReaderSettingsActivity" />
         <activity android:name="com.android.listviews.FileListActivity" />
+        <activity android:name="com.android.qrreader.QrReaderBrowseImagesActivity" />
     </application>
 
 </manifest>

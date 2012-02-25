@@ -1,7 +1,10 @@
 package com.android.camera;
 
+import java.util.List;
+
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.util.Log;
@@ -85,5 +88,16 @@ public class DroidCamera {
         camera.addCallbackBuffer(callbackBuffer);
         camera.addCallbackBuffer(callbackBuffer_2);
         camera.setPreviewCallbackWithBuffer(cb);
+    }
+    
+    public final boolean autoFocusSupport() {
+        Parameters camParams = camera.getParameters();
+        List<String> suppFocuses = camParams.getSupportedFocusModes();
+        
+        if (suppFocuses != null && suppFocuses.contains(Parameters.FOCUS_MODE_AUTO)) {
+            return true;
+        }
+        
+        return false;
     }
 } 

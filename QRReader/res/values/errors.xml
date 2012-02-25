@@ -6,4 +6,6 @@
     <string name="Errors_Storage_MKDIRS">Unable to create directory structure for saving file! Probably due to permissions or internal error.</string>
     <string name="Errors_Storage_OpenWrite">Unable to open file for write (%s)!</string>
     <string name="Errors_Storage_Save">Unable to save file (%s)! Probably no available space for new data.</string>
+    <string name="Errors_OI_Manager_Intent">Unable to open OI Manager, probably is not installed. Use Market to download and install.</string>
+    <string name="Errors_No_Open_Intent">Unable to find proper application to open this file!</string>
 </resources>

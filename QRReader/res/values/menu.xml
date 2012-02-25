@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="CameraOptionsMenu_Preferences">Settings</string>
+    <string name="CameraOptionsMenu_Recent_QRCodes">Recent QR codes</string>
+    <string name="CameraOptionsMenu_Recent_Images">Recent Images</string>
+      
+    <string name="BrowseOptionsMenu_ManageStorage">Manage this storage folder via OI File Manager</string>
+</resources>

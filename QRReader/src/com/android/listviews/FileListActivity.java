@@ -2,15 +2,18 @@ package com.android.listviews;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -24,8 +27,8 @@ public class FileListActivity extends ListActivity {
     public static final String CWD          = "CWD";
     public static final String BASE_DIR     = "BASE_DIR";
     
-    private String cwd                      = "/sdcard";
-    private String baseDir                  = "/";
+    protected String cwd                      = "/sdcard";
+    protected String baseDir                  = "/";
     private ArrayList<String> currPathList;
     
     private TextView path_TextView;
@@ -59,8 +62,11 @@ public class FileListActivity extends ListActivity {
         changeDir(cwd);
  
     }
-    // You then create your handler method:
+       
     protected void onLongListItemClick(View v, int position, long id) {
+        boolean hasGotoParent = !(new File(cwd)).equals(new File(baseDir));
+        if (hasGotoParent && position == 0) return;
+        
         String path = currPathList.get(position);
         int message;
         
@@ -70,10 +76,11 @@ public class FileListActivity extends ListActivity {
             message = R.string.FileListActivity_delete_regular_file;
         }
 
+        Resources res = getResources();
         pathToDelete = position;
         new AlertDialog.Builder(this)
         .setTitle(R.string.confirm_alert)
-        .setMessage(message)
+        .setMessage(String.format(res.getString(message), Filename.getFullFilename(path, File.separatorChar)))
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int whichButton) {
@@ -84,6 +91,7 @@ public class FileListActivity extends ListActivity {
             }
         })
         .setNegativeButton(android.R.string.no, null)
+        .setIcon(android.R.drawable.ic_delete)
         .show();
     } 
 
@@ -94,11 +102,22 @@ public class FileListActivity extends ListActivity {
         if ((new File(path)).isDirectory()) {
             changeDir(path);
         } else {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent,
-            "Select Picture"), 1);
+            File file = new File(path);
+            MimeTypeMap myMime = MimeTypeMap.getSingleton();
+            Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+
+            String mimeType = myMime.getMimeTypeFromExtension(Filename.getExtension(path));
+            intent.setDataAndType(Uri.fromFile(file),mimeType);
+            try {
+                startActivityForResult(intent, 0);
+            } catch (android.content.ActivityNotFoundException e) {
+                new AlertDialog.Builder(this)
+                .setTitle(R.string.err_alert)
+                .setMessage(R.string.Errors_No_Open_Intent)
+                .setNeutralButton(android.R.string.ok, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+            }
             
         }
     }
@@ -115,14 +134,24 @@ public class FileListActivity extends ListActivity {
             currPathList.add((parent != null)? parent : cwd);
         }
         
+        ArrayList<String> directories = new ArrayList<String>();
+        ArrayList<String> files = new ArrayList<String>();
         if (listOfFiles != null) {
             for (File file : listOfFiles) {
-                   
-                if (file.isFile() || file.isDirectory()) {
-                    currPathList.add(file.getAbsolutePath());
+                if (!file.isHidden()) {
+                    if (file.isFile()) {
+                        files.add(file.getAbsolutePath());
+                    } else if (file.isDirectory()) {
+                        directories.add(file.getAbsolutePath());
+                    }
                 }
             }
         }
+        
+        Collections.sort(directories);
+        Collections.sort(files);
+        currPathList.addAll(directories);
+        currPathList.addAll(files);
         
         cwd = dir.getAbsolutePath();
         path_TextView.setText(cwd);

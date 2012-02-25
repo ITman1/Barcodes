@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="CameraOptionsMenu_Preferences">Nastavení</string>
+    <string name="CameraOptionsMenu_Recent_QRCodes">Předchozí QR kódy</string>
+    <string name="CameraOptionsMenu_Recent_Images">Předchozí Obrázky</string>
+       
+    <string name="BrowseOptionsMenu_ManageStorage">Spravovat toto úložiště pomocí OI File manageru</string>
+</resources>

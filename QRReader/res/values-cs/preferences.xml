@@ -4,14 +4,24 @@
     <string name="summary_Preferences_Images">Nastavení pro zachycené obrázky</string>
     <string name="title_Preferences_QRCodes">QR kódy</string>
     <string name="summary_Preferences_QRCodes">Nastavení pro dekódované QR kódy</string>
-    <string name="title_Preferences_AutoFocus">Zapnout autofocus</string>
-    <string name="summary_Preferences_AutoFocus">Zapne nebo nebo vypne autofocus pro zachycení obrazu</string>
-    <string name="title_Preferences_ShowFPS">Zobrazit FPS</string>
-    <string name="summary_Preferences_ShowFPS">Zobrazí nebo skryje údaj o snímkové frekvenci kamery</string>
+    <string name="title_Preferences_Camera">Kamera</string>
+    <string name="summary_Preferences_Camera">Nastavení rozšíření kamery</string>
+    <string name="title_Preferences_View">Zobrazení</string>
+    <string name="summary_Preferences_View">Přizpůsobení zobrazení některých prvků aplikace</string>
     <string name="title_Prefereces_ResetPreferences">Obnovit výchozí nastavení</string>
     <string name="summary_Prefereces_ResetPreferences">Obnoví nastavení dostupné po nainstalování aplikace</string>  
     
-    <string name="title_Preferences_Images_SaveMethod">Ukládání obrazků</string>
+    <string name="title_Preferences_Camera_AutoFocus">Zapnout autofocus</string>
+    <string name="summary_Preferences_Camera_AutoFocus">Zapne nebo nebo vypne autofocus pro zachycení obrazu</string>
+    <string name="title_Preferences_Camera_Flash">Režim blesku</string>
+    <string name="summary_Preferences_Camera_Flash">Definuje za jakých okolnostech má bý blesk spuštěn</string>
+
+    <string name="title_Preferences_View_ShowFPS">Zobrazit FPS</string>
+    <string name="summary_Preferences_View_ShowFPS">Zobrazí nebo skryje údaj o snímkové frekvenci kamery</string>
+    <string name="title_Preferences_View_ShowTarget">Zobrazit terčík</string>
+    <string name="summary_Preferences_View_ShowTarget">Zviditelní nebo odstraní terčík z náhledu kamery</string>
+    
+    <string name="title_Preferences_Images_SaveMethod">Ukládání obrázků</string>
     <string name="summary_Preferences_Images_SaveMethod">Definuje způsob ukládání zachyceného obrázku</string>
     <string name="title_Preferences_Images_FilePath">Cesta k úložišti</string>
     <string name="summary_Preferences_Images_FilePath">Definuje cestu pro ukládání zachycených obrázků</string>
@@ -19,6 +29,8 @@
     <string name="summary_Preferences_Images_FilePrefix">Definuje předponu souboru pro zachycené obrázky</string>
     <string name="title_Preferences_Images_Format">Formát souboru</string>
     <string name="summary_Preferences_Images_Format">Definuje formát obrázku v jakém bude uložen</string>
+    <string name="title_Preferences_Images_Clear">Vymazat úložiště</string>
+    <string name="summary_Preferences_Images_Clear">Smaže všechny soubory z úložiště pro obrázky</string>
     
     <string name="title_Preferences_QRCodes_SaveMethod">Ukládání QR kódů</string>
     <string name="summary_Preferences_QRCodes_SaveMethod">Definuje způsob ukládání dekódovaného QR kódu</string>
@@ -26,11 +38,24 @@
     <string name="summary_Preferences_QRCodes_FilePath">Definuje cestu pro ukládání dekódovaných QR kódů</string>
     <string name="title_Preferences_QRCodes_FilePrefix">Předpona souborů</string>
     <string name="summary_Preferences_QRCodes_FilePrefix">Definuje předponu souboru pro dekódované QR kódy</string>  
+    <string name="title_Preferences_QRCodes_Clear">Vymazat úložiště</string>
+    <string name="summary_Preferences_QRCodes_Clear">Smaže všechny soubory z úložiště pro QR kódy</string>  
+    
     <string name="dialogMessage_Prefereces_ResetPreferences">Přejete si obnovit výchozí nastavení?</string>  
+    <string name="dialogMessage_Prefereces_Images_Clear">Přejete si smazat všechny soubory z adresáře pro obrázky?</string>  
+    <string name="dialogMessage_Prefereces_QRCodes_Clear">Přejete si smazat všechny soubory z adresáře pro QR kódy?</string> 
     
 	<string-array name="entries_Preferences_SaveMethod">
 		<item>Automaticky</item>
 		<item>Dotázat se</item>
 		<item>Neukládat</item>
+	</string-array>
+	
+	<string-array name="entries_Preferences_Camera_Flash">
+		<item>Nikdy nezapínat</item>
+		<item>Automaticky</item>
+		<item>Vždy během focení</item>
+		<item>Vždy s redukcí červených očí</item>
+		<item>Použít jako baterku</item>
 	</string-array>
 </resources>

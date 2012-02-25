@@ -12,8 +12,4 @@
     <string name="QRReaderActivity_StatusText_Capturing">(capturing image)</string>
     <string name="QRReaderActivity_StatusText_Saving">(saving image)</string>
     <string name="QRReaderActivity_StatusText_Processing">(processing image)</string>
-    
-    <string name="CameraOptionsMenu_Preferences">Settings</string>
-    <string name="CameraOptionsMenu_Recent_QRCodes">Recent QR codes</string>
-
 </resources>

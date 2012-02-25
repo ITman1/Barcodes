@@ -10,7 +10,4 @@
     <string name="QRReaderActivity_StatusText_Capturing">(zachytávání obrazu)</string>
     <string name="QRReaderActivity_StatusText_Saving">(ukládání obrazu)</string>
     <string name="QRReaderActivity_StatusText_Processing">(zpracovávání obrazu)</string>
-    
-    <string name="CameraOptionsMenu_Preferences">Nastavení</string>
-    <string name="CameraOptionsMenu_Recent_QRCodes">Předchozí QR kódy</string>
 </resources>

@@ -2,4 +2,7 @@
 <resources>
     <string name="err_alert">Error</string>
     <string name="confirm_alert">Confirm</string>
+    
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

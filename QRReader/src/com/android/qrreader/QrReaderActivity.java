@@ -6,15 +6,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
+import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.PreviewCallback;
 import android.os.Bundle;
@@ -31,6 +35,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -44,19 +49,19 @@ import com.android.qrreader.R;
 public class QrReaderActivity extends Activity {
     private static final String TAG = "com.android.qrreader::QrReaderActivity";
     
+    public static final String SD_CARD_DIR                  = "/sdcard";
     private static final String JPEG_FILE_SUFFIX            = ".jpg";
     private static final String RAW_FILE_SUFFIX             = ".raw";
     private static final String DEFAULT_IMAGE_PREFIX        = "IMG_";
     private static final String DEFAULT_IMAGE_FORMAT        = "JPEG";
     private static final String FPS_STR                     = "FPS: ";
-    private static final String SD_CARD_DIR                 = "/sdcard";
 
     private RelativeLayout     cameraPreviewLayout;
 	private CameraPreview      cameraPreview;
 	private LayoutInflater     controlInflater;
 	
     private TextView           fps_TextView;
-    private TextView           debug_TextView;
+    private ImageView          centerMark;
     private ImageButton        read_btn;
     private ProgressBar        statusProgress_ProgressBar; 
     private LinearLayout       status_LinearLayout;
@@ -71,9 +76,7 @@ public class QrReaderActivity extends Activity {
     private OnClickListener read_btn_OnClick = new OnClickListener() {
         public void onClick(View v) {
             Log.i(QrReaderActivity.TAG, "OnClickListener::read_btn_OnClick");
-            CharSequence str = debug_TextView.getText();
-        	debug_TextView.setText("Snap shot clicked!"+ new SimpleDateFormat("HH:mm:ss").
-        	        format(new Date()) + "\n" + str);
+
         	if (droidCamera != null && !takingPicture) {
         	    read_btn.setEnabled(false);
         	    takingPicture = true;
@@ -82,16 +85,21 @@ public class QrReaderActivity extends Activity {
                 droidCamera.getCamera().setPreviewCallback(null);
                 
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                Resources res = getResources();
-                String prefFormat = prefs.getString("Preferences_Images_Format", DEFAULT_IMAGE_FORMAT);
+                Boolean autoFocus = prefs.getBoolean("Preferences_Camera_AutoFocus", false);
                 
-                cameraPreviewLayout.setVisibility(CameraPreview.INVISIBLE);
-                if (prefFormat.equals(res.getString(R.string.fileformat_jpeg))) {
-                    droidCamera.getCamera().takePicture(null, null, takePictureCallback);
-                } else if (prefFormat.equals(res.getString(R.string.fileformat_raw))) {
-                    droidCamera.getCamera().takePicture(null, takePictureCallback, null);
+                if (autoFocus && droidCamera.autoFocusSupport()) {
+                    droidCamera.getCamera().autoFocus(autoFocusCallback);
+                } else {
+                    takePicture();
                 }
         	}
+        }
+    };
+    
+    private AutoFocusCallback autoFocusCallback = new AutoFocusCallback() {
+        @Override
+        public void onAutoFocus(boolean success, Camera camera) {
+            takePicture();
         }
     };
     
@@ -175,10 +183,7 @@ public class QrReaderActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        if (prefs.getBoolean(PreferenceManager.KEY_HAS_SET_DEFAULT_VALUES, false)) {
-            QrReaderSettingsActivity.resetSettings(getBaseContext());
-        }  
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
                
         // Setting main window view as camera preview from the layouts
         setContentView(R.layout.camera_preview);
@@ -196,7 +201,7 @@ public class QrReaderActivity extends Activity {
        
         // Getting handlers for other controls on the layout
         fps_TextView = (TextView) findViewById(R.id.fps_TextView);
-        debug_TextView = (TextView) findViewById(R.id.debug_TextView);
+        centerMark = (ImageView) findViewById(R.id.centerMark);
         read_btn = (ImageButton) findViewById(R.id.read_btn);
         statusProgress_ProgressBar = (ProgressBar) findViewById(R.id.currSnapshot_ProgressBar);
         status_LinearLayout = (LinearLayout) findViewById(R.id.status_LinearLayout);
@@ -239,20 +244,41 @@ public class QrReaderActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.i(TAG, "onOptionsItemSelected");
         
+        Intent intent;
+        String cwd;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext()); 
+        
         switch (item.getItemId()) {
             case R.id.settings:
                 startActivity(new Intent(this, QrReaderSettingsActivity.class));
                 return true;
             case R.id.recent_qrcodes:
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                Intent intent = new Intent(this, FileListActivity.class);
-                String cwd = prefs.getString("Preferences_QRCodes_FilePath", SD_CARD_DIR);
-                //intent.putExtra(FileListActivity.BASE_DIR, cwd);
-                intent.putExtra(FileListActivity.BASE_DIR, "/mnt/sdcard");
+                intent = new Intent(this, QrReaderBrowseImagesActivity.class);
+                cwd = prefs.getString("Preferences_QRCodes_FilePath", SD_CARD_DIR);
+                intent.putExtra(FileListActivity.BASE_DIR, cwd);
+                startActivity(intent);
+                return true;
+            case R.id.recent_images:
+                intent = new Intent(this, QrReaderBrowseImagesActivity.class);
+                cwd = prefs.getString("Preferences_Images_FilePath", SD_CARD_DIR);
+                intent.putExtra(FileListActivity.BASE_DIR, cwd);
                 startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    private void takePicture() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        Resources res = getResources();
+        String prefFormat = prefs.getString("Preferences_Images_Format", DEFAULT_IMAGE_FORMAT);
+        
+        cameraPreviewLayout.setVisibility(CameraPreview.INVISIBLE);
+        if (prefFormat.equals(res.getString(R.string.fileformat_jpeg))) {
+            droidCamera.getCamera().takePicture(null, null, takePictureCallback);
+        } else if (prefFormat.equals(res.getString(R.string.fileformat_raw))) {
+            droidCamera.getCamera().takePicture(null, takePictureCallback, null);
         }
     }
     
@@ -279,12 +305,53 @@ public class QrReaderActivity extends Activity {
         status_LinearLayout.setVisibility(LinearLayout.INVISIBLE);
         statusText_TextView.setText("");
     }
+       
+    private String getDemandedFlashMode() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String demanded = prefs.getString("Preferences_Camera_Flash", Parameters.FLASH_MODE_OFF);
+        
+        if (demanded.equals("off")) {
+            return Parameters.FLASH_MODE_OFF;
+        } else if (demanded.equals("auto")) {
+            return Parameters.FLASH_MODE_AUTO;
+        } else if (demanded.equals("on")) {
+            return Parameters.FLASH_MODE_ON;
+        } else if (demanded.equals("redEye")) {
+            return Parameters.FLASH_MODE_RED_EYE;
+        } else if (demanded.equals("torch")) {
+            return Parameters.FLASH_MODE_TORCH;
+        }
+        
+        return Parameters.FLASH_MODE_OFF;
+    }
     
     private void applySettings() {
+        
+        // Visibility of the FPS text view
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         fps_TextView.setVisibility(
-            (prefs.getBoolean("Preferences_ShowFPS", true))? TextView.VISIBLE : TextView.INVISIBLE
+            (prefs.getBoolean("Preferences_View_ShowFPS", true))? TextView.VISIBLE : TextView.INVISIBLE
         );      
+        
+        // Visibility of the center mark
+        centerMark.setVisibility(
+            (prefs.getBoolean("Preferences_View_ShowTarget", true))? ImageView.VISIBLE : ImageView.INVISIBLE
+        );
+        
+        if (droidCamera != null) {
+            Camera cam = droidCamera.getCamera();
+            Parameters camParams = cam.getParameters();
+            
+            // Flash mode
+            List<String> flashModes = camParams.getSupportedFlashModes();
+            String demandedFlashMode = getDemandedFlashMode();
+            
+            if (flashModes != null && flashModes.contains(demandedFlashMode)) {
+                camParams.setFlashMode(demandedFlashMode);
+                cam.setParameters(camParams);
+            }
+        }
+               
     }
        
     /** Create a File for saving an image or video */
@@ -330,16 +397,26 @@ public class QrReaderActivity extends Activity {
         showErrorAlert(R.string.Errors_Storage_Mount);
         return null;
     }
+    
+    private void showErrorAlert(int resID) {
+        showErrorAlert(this, resID);
+    }
+    
+    private void showErrorAlert(String message) {
+        showErrorAlert(this, message);
+    }
        
-	private void showErrorAlert(int resID) {
-	    showErrorAlert(getResources().getString(resID));
+	public static void showErrorAlert(Context context, int resID) {
+	    showErrorAlert(context, context.getResources().getString(resID));
 	}
 	
-	private void showErrorAlert(String message) {
-        new AlertDialog.Builder(this)
+	
+	public static void showErrorAlert(Context context, String message) {
+        new AlertDialog.Builder(context)
         .setTitle(R.string.err_alert)
         .setMessage(message)
         .setNeutralButton(android.R.string.ok, null)
+        .setIcon(android.R.drawable.ic_dialog_alert)
         .show();
     }
 }

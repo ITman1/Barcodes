@@ -7,6 +7,7 @@ import com.android.preferences.PromptDialogPreference;
 import com.android.preferences.PromptDialogPreference.PromptDialogPreferenceCallback;
 import com.android.preferences.ValidateEditTextPreference;
 import com.android.preferences.ValidateEditTextPreference.ValidateCallback;
+import com.filesystem.Operations;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -29,7 +30,6 @@ public class QrReaderSettingsActivity extends PreferenceActivity {
     private ValidateEditTextPreference pathQRCodesEditTextPref;
 
     public static void resetSettings(Context context) {
-        PreferenceManager.setDefaultValues(context, R.xml.preferences, false);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Editor editor = prefs.edit();
         Resources res = context.getResources();
@@ -47,12 +47,34 @@ public class QrReaderSettingsActivity extends PreferenceActivity {
         editor.commit();
     }
     
-    private PromptDialogPreferenceCallback onResultPromptDialogPreference = new PromptDialogPreferenceCallback() {
+    private PromptDialogPreferenceCallback onResultResetDialogPreference = new PromptDialogPreferenceCallback() {
         public void onResult(int which) {
-            Log.i(TAG, "PromptDialogPreferenceCallback::onResult");
+            Log.i(TAG, "onResultResetDialogPreference::onResult");
             if (which == DialogInterface.BUTTON_POSITIVE) {
                 resetSettings(getBaseContext());
                 restart();
+            }
+        }    
+    };
+    
+    private PromptDialogPreferenceCallback onResultClearImagesDialogPreference = new PromptDialogPreferenceCallback() {
+        public void onResult(int which) {
+            Log.i(TAG, "onResultClearImagesDialogPreference::onResult");
+            if (which == DialogInterface.BUTTON_POSITIVE) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                String path = prefs.getString("Preferences_Images_FilePath", null);
+                Operations.removeFiles(new File(path));
+            }
+        }    
+    };
+    
+    private PromptDialogPreferenceCallback onResultClearQRCodesDialogPreference = new PromptDialogPreferenceCallback() {
+        public void onResult(int which) {
+            Log.i(TAG, "onResultClearImagesDialogPreference::onResult");
+            if (which == DialogInterface.BUTTON_POSITIVE) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                String path = prefs.getString("Preferences_QRCodes_FilePath", null);
+                Operations.removeFiles(new File(path));
             }
         }    
     };
@@ -81,8 +103,16 @@ public class QrReaderSettingsActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         
-        PromptDialogPreference promptDialog = (PromptDialogPreference) findPreference("Prefereces_ResetPreferences");
-        promptDialog.setResultCallback(onResultPromptDialogPreference);
+        PromptDialogPreference promptDialog;
+        
+        promptDialog = (PromptDialogPreference) findPreference("Prefereces_ResetPreferences");
+        promptDialog.setResultCallback(onResultResetDialogPreference);
+        
+        promptDialog = (PromptDialogPreference) findPreference("Prefereces_Images_Clear");
+        promptDialog.setResultCallback(onResultClearImagesDialogPreference);
+        
+        promptDialog = (PromptDialogPreference) findPreference("Prefereces_QRCodes_Clear");
+        promptDialog.setResultCallback(onResultClearQRCodesDialogPreference);
         
         pathImagesEditTextPref = (ValidateEditTextPreference)findPreference("Preferences_Images_FilePath");
         pathImagesEditTextPref.setValidateCallback(pathValidateCallback);

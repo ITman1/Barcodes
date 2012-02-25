@@ -28,6 +28,16 @@
 	         android:entries="@array/entries_Preferences_Images_Format"
 	         android:entryValues="@array/entryValues_Preferences_Images_Format"
 	         android:defaultValue="@string/fileformat_jpeg" />
+         
+		 <com.android.preferences.PromptDialogPreference
+		     android:key="Prefereces_Images_Clear" 
+		     android:title="@string/title_Preferences_Images_Clear"
+		     android:summary="@string/summary_Preferences_Images_Clear"
+		     android:persistent="false"
+	         android:dialogIcon="@android:drawable/ic_dialog_alert"
+	         android:dialogMessage="@string/dialogMessage_Prefereces_Images_Clear"
+	         android:positiveButtonText="@string/yes"
+	         android:negativeButtonText="@string/no"/>
      </PreferenceScreen>  
     
      <PreferenceScreen 
@@ -51,20 +61,57 @@
 	         android:summary="@string/summary_Preferences_QRCodes_FilePrefix"
 	         android:title="@string/title_Preferences_QRCodes_FilePrefix"
              android:defaultValue="QR_"/>
+         
+		 <com.android.preferences.PromptDialogPreference
+		     android:key="Prefereces_QRCodes_Clear" 
+		     android:title="@string/title_Preferences_QRCodes_Clear"
+		     android:summary="@string/summary_Preferences_QRCodes_Clear"
+		     android:persistent="false"
+	         android:dialogIcon="@android:drawable/ic_dialog_alert"
+	         android:dialogMessage="@string/dialogMessage_Prefereces_QRCodes_Clear"
+	         android:positiveButtonText="@string/yes"
+	         android:negativeButtonText="@string/no"/>
      </PreferenceScreen>  
      
-     <CheckBoxPreference 
-        android:key="Preferences_AutoFocus"
-        android:summary="@string/summary_Preferences_AutoFocus"
-        android:title="@string/title_Preferences_AutoFocus" 
-        android:defaultValue="false" />
-    
-     <CheckBoxPreference 
-        android:key="Preferences_ShowFPS"
-        android:summary="@string/summary_Preferences_ShowFPS"
-        android:title="@string/title_Preferences_ShowFPS" 
-        android:defaultValue="true" />
+     <PreferenceScreen 
+         android:key="Preferences_Camera"
+         android:summary="@string/summary_Preferences_Camera"
+         android:title="@string/title_Preferences_Camera">
+         
+         <CheckBoxPreference 
+	         android:key="Preferences_Camera_AutoFocus"
+	         android:summary="@string/summary_Preferences_Camera_AutoFocus"
+	         android:title="@string/title_Preferences_Camera_AutoFocus" 
+	         android:defaultValue="false" />
+         
+         <ListPreference 
+	         android:key="Preferences_Camera_Flash"
+	         android:summary="@string/summary_Preferences_Camera_Flash"
+	         android:title="@string/title_Preferences_Camera_Flash"
+	         android:entries="@array/entries_Preferences_Camera_Flash"
+	         android:entryValues="@array/entryValues_Preferences_Camera_Flash"
+	         android:defaultValue="off" />
+     </PreferenceScreen>  
      
+        
+     <PreferenceScreen 
+         android:key="Preferences_View"
+         android:summary="@string/summary_Preferences_View"
+         android:title="@string/title_Preferences_View">
+         
+	     <CheckBoxPreference 
+	         android:key="Preferences_View_ShowFPS"
+	         android:summary="@string/summary_Preferences_View_ShowFPS"
+	         android:title="@string/title_Preferences_View_ShowFPS" 
+	         android:defaultValue="true" />
+	     
+	     <CheckBoxPreference 
+	         android:key="Preferences_View_ShowTarget"
+	         android:summary="@string/summary_Preferences_View_ShowTarget"
+	         android:title="@string/title_Preferences_View_ShowTarget" 
+	         android:defaultValue="true" />
+     </PreferenceScreen>  
+         
 	 <com.android.preferences.PromptDialogPreference
 	     android:key="Prefereces_ResetPreferences" 
 	     android:title="@string/title_Prefereces_ResetPreferences"
@@ -72,7 +119,7 @@
 	     android:persistent="false"
          android:dialogIcon="@android:drawable/ic_dialog_alert"
          android:dialogMessage="@string/dialogMessage_Prefereces_ResetPreferences"
-         android:positiveButtonText="@android:string/ok"
-         android:negativeButtonText="@android:string/cancel"/>
+         android:positiveButtonText="@string/yes"
+         android:negativeButtonText="@string/no"/>
 
 </PreferenceScreen>

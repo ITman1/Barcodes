@@ -2,4 +2,7 @@
 <resources>
     <string name="err_alert">Chyba</string>
     <string name="confirm_alert">Potvrzení</string>
+    
+    <string name="yes">Ano</string>
+    <string name="no">Ne</string>
 </resources>
