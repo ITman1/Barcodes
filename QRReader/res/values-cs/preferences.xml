@@ -29,8 +29,13 @@
     <string name="summary_Preferences_Images_FilePrefix">Definuje předponu souboru pro zachycené obrázky</string>
     <string name="title_Preferences_Images_Format">Formát souboru</string>
     <string name="summary_Preferences_Images_Format">Definuje formát obrázku v jakém bude uložen</string>
+    <string name="title_Preferences_Images_JpegQuality">JPEG kvalita</string>
+    <string name="summary_Preferences_Images_JpegQuality">Definuje kvalitu JPEG formátu v jakém budou ukládány obrázky</string>
+    <string name="dialogMessage_Preferences_Images_JpegQuality">Prosím nastavte kvalitu JPEG v procentech</string>
+    <string name="progessText_Preferences_Images_JpegQuality"> % maximální možné kvality</string>
     <string name="title_Preferences_Images_Clear">Vymazat úložiště</string>
     <string name="summary_Preferences_Images_Clear">Smaže všechny soubory z úložiště pro obrázky</string>
+    <string name="dialogMessage_Preferences_Images_Clear">Přejete si smazat všechny soubory z adresáře pro obrázky?</string>  
     
     <string name="title_Preferences_QRCodes_SaveMethod">Ukládání QR kódů</string>
     <string name="summary_Preferences_QRCodes_SaveMethod">Definuje způsob ukládání dekódovaného QR kódu</string>
@@ -40,11 +45,10 @@
     <string name="summary_Preferences_QRCodes_FilePrefix">Definuje předponu souboru pro dekódované QR kódy</string>  
     <string name="title_Preferences_QRCodes_Clear">Vymazat úložiště</string>
     <string name="summary_Preferences_QRCodes_Clear">Smaže všechny soubory z úložiště pro QR kódy</string>  
+    <string name="dialogMessage_Preferences_QRCodes_Clear">Přejete si smazat všechny soubory z adresáře pro QR kódy?</string> 
     
-    <string name="dialogMessage_Prefereces_ResetPreferences">Přejete si obnovit výchozí nastavení?</string>  
-    <string name="dialogMessage_Prefereces_Images_Clear">Přejete si smazat všechny soubory z adresáře pro obrázky?</string>  
-    <string name="dialogMessage_Prefereces_QRCodes_Clear">Přejete si smazat všechny soubory z adresáře pro QR kódy?</string> 
-    
+    <string name="dialogMessage_Preferences_ResetPreferences">Přejete si obnovit výchozí nastavení?</string>  
+   
 	<string-array name="entries_Preferences_SaveMethod">
 		<item>Automaticky</item>
 		<item>Dotázat se</item>

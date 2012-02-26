@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SeekBarPreference">
+        <attr name="maxProgress" format="integer" />
+        <attr name="defaultProgress" format="integer"/>
+        <attr name="progressText" format="string"/>
+        <attr name="android:key" />
+        <attr name="android:title" />
+        <attr name="android:summary" />
+        <attr name="android:dialogMessage" />
+        <attr name="android:positiveButtonText" />
+        <attr name="android:negativeButtonText" />
+    </declare-styleable>
+</resources>

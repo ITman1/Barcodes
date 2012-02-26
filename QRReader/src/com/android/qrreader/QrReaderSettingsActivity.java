@@ -22,6 +22,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.util.Log;
+import android.view.Window;
 
 public class QrReaderSettingsActivity extends PreferenceActivity {
     private static final String TAG = "com.android.qrreader::QrReaderSettingsActivity";
@@ -100,6 +101,7 @@ public class QrReaderSettingsActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "onCreate");
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         

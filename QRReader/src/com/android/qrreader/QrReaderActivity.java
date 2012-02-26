@@ -55,6 +55,7 @@ public class QrReaderActivity extends Activity {
     private static final String DEFAULT_IMAGE_PREFIX        = "IMG_";
     private static final String DEFAULT_IMAGE_FORMAT        = "JPEG";
     private static final String FPS_STR                     = "FPS: ";
+    private static final int DEFAULT_JPEG_QUALITY           = 90;
 
     private RelativeLayout     cameraPreviewLayout;
 	private CameraPreview      cameraPreview;
@@ -270,16 +271,20 @@ public class QrReaderActivity extends Activity {
     }
     
     private void takePicture() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+     /* SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         Resources res = getResources();
         String prefFormat = prefs.getString("Preferences_Images_Format", DEFAULT_IMAGE_FORMAT);
         
         cameraPreviewLayout.setVisibility(CameraPreview.INVISIBLE);
+        
         if (prefFormat.equals(res.getString(R.string.fileformat_jpeg))) {
             droidCamera.getCamera().takePicture(null, null, takePictureCallback);
         } else if (prefFormat.equals(res.getString(R.string.fileformat_raw))) {
             droidCamera.getCamera().takePicture(null, takePictureCallback, null);
-        }
+        } */
+        
+        cameraPreviewLayout.setVisibility(CameraPreview.INVISIBLE);
+        droidCamera.getCamera().takePicture(null, null, takePictureCallback);
     }
     
     private void startDroidCamera() {
@@ -348,8 +353,15 @@ public class QrReaderActivity extends Activity {
             
             if (flashModes != null && flashModes.contains(demandedFlashMode)) {
                 camParams.setFlashMode(demandedFlashMode);
-                cam.setParameters(camParams);
             }
+                                  
+            // JPEG quality
+            camParams.setJpegQuality(
+                prefs.getInt("Preferences_Images_JpegQuality", DEFAULT_JPEG_QUALITY)
+            );
+            
+            // Finally set the new one parameters
+            cam.setParameters(camParams);
         }
                
     }

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res/com.android.qrreader" >
      <PreferenceScreen 
          android:key="Preferences_Images"
          android:summary="@string/summary_Preferences_Images"
@@ -21,21 +23,28 @@
 	         android:summary="@string/summary_Preferences_Images_FilePrefix"
 	         android:title="@string/title_Preferences_Images_FilePrefix"
              android:defaultValue="IMG_"/>
-         <ListPreference
+  <!--   <ListPreference
              android:key="Preferences_Images_Format"
 	         android:summary="@string/summary_Preferences_Images_Format"
 	         android:title="@string/title_Preferences_Images_Format"
 	         android:entries="@array/entries_Preferences_Images_Format"
 	         android:entryValues="@array/entryValues_Preferences_Images_Format"
-	         android:defaultValue="@string/fileformat_jpeg" />
-         
+	         android:defaultValue="@string/fileformat_jpeg" />  -->
+         <com.android.preferences.SeekBarPreference
+             android:key="Preferences_Images_JpegQuality"
+	         android:summary="@string/summary_Preferences_Images_JpegQuality"
+	         android:title="@string/title_Preferences_Images_JpegQuality"
+	         android:dialogMessage="@string/dialogMessage_Preferences_Images_JpegQuality" 
+    		 ads:maxProgress="100"
+	         ads:defaultProgress="90"
+	         ads:progressText="@string/progessText_Preferences_Images_JpegQuality" />
 		 <com.android.preferences.PromptDialogPreference
 		     android:key="Prefereces_Images_Clear" 
 		     android:title="@string/title_Preferences_Images_Clear"
 		     android:summary="@string/summary_Preferences_Images_Clear"
 		     android:persistent="false"
 	         android:dialogIcon="@android:drawable/ic_dialog_alert"
-	         android:dialogMessage="@string/dialogMessage_Prefereces_Images_Clear"
+	         android:dialogMessage="@string/dialogMessage_Preferences_Images_Clear"
 	         android:positiveButtonText="@string/yes"
 	         android:negativeButtonText="@string/no"/>
      </PreferenceScreen>  
@@ -68,7 +77,7 @@
 		     android:summary="@string/summary_Preferences_QRCodes_Clear"
 		     android:persistent="false"
 	         android:dialogIcon="@android:drawable/ic_dialog_alert"
-	         android:dialogMessage="@string/dialogMessage_Prefereces_QRCodes_Clear"
+	         android:dialogMessage="@string/dialogMessage_Preferences_QRCodes_Clear"
 	         android:positiveButtonText="@string/yes"
 	         android:negativeButtonText="@string/no"/>
      </PreferenceScreen>  
@@ -118,7 +127,7 @@
 	     android:summary="@string/summary_Prefereces_ResetPreferences"
 	     android:persistent="false"
          android:dialogIcon="@android:drawable/ic_dialog_alert"
-         android:dialogMessage="@string/dialogMessage_Prefereces_ResetPreferences"
+         android:dialogMessage="@string/dialogMessage_Preferences_ResetPreferences"
          android:positiveButtonText="@string/yes"
          android:negativeButtonText="@string/no"/>
 
