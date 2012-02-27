@@ -10,6 +10,9 @@
     <string name="summary_Preferences_View">Přizpůsobení zobrazení některých prvků aplikace</string>
     <string name="title_Prefereces_ResetPreferences">Obnovit výchozí nastavení</string>
     <string name="summary_Prefereces_ResetPreferences">Obnoví nastavení dostupné po nainstalování aplikace</string>  
+    <string name="dialogMessage_Preferences_ResetPreferences">Přejete si obnovit výchozí nastavení?</string>  
+    <string name="title_Prefereces_About">O aplikaci</string>
+    <string name="summary_Prefereces_About">Zobrazí informace o aplikaci a dustupných rozšíření na tomto zařízení</string> 
     
     <string name="title_Preferences_Camera_AutoFocus">Zapnout autofocus</string>
     <string name="summary_Preferences_Camera_AutoFocus">Zapne nebo nebo vypne autofocus pro zachycení obrazu</string>
@@ -46,8 +49,6 @@
     <string name="title_Preferences_QRCodes_Clear">Vymazat úložiště</string>
     <string name="summary_Preferences_QRCodes_Clear">Smaže všechny soubory z úložiště pro QR kódy</string>  
     <string name="dialogMessage_Preferences_QRCodes_Clear">Přejete si smazat všechny soubory z adresáře pro QR kódy?</string> 
-    
-    <string name="dialogMessage_Preferences_ResetPreferences">Přejete si obnovit výchozí nastavení?</string>  
    
 	<string-array name="entries_Preferences_SaveMethod">
 		<item>Automaticky</item>

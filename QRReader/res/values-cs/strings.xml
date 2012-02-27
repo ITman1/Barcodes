@@ -10,4 +10,13 @@
     <string name="QRReaderActivity_StatusText_Capturing">(zachytávání obrazu)</string>
     <string name="QRReaderActivity_StatusText_Saving">(ukládání obrazu)</string>
     <string name="QRReaderActivity_StatusText_Processing">(zpracovávání obrazu)</string>
+    
+    <string name="QRReaderAboutActivity_Title">O aplikaci</string>
+    <string name="QRReaderAboutActivity_License">License</string>
+    <string name="QRReaderAboutActivity_License_Text">Apache License, version 2.0</string>
+    <string name="QRReaderAboutActivity_Author">Autor</string>
+    <string name="QRReaderAboutActivity_Author_Text">Radim Loskot</string>
+    <string name="QRReaderAboutActivity_Summary">Popis</string>
+    <string name="QRReaderAboutActivity_Summary_Text">Popis aplikace tady</string>
+    <string name="QRReaderAboutActivity_Features">Podporované rozšíření</string>
 </resources>

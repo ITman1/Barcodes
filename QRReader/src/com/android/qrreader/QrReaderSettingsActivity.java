@@ -2,7 +2,9 @@ package com.android.qrreader;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
+import com.android.camera.DroidCamera;
 import com.android.preferences.PromptDialogPreference;
 import com.android.preferences.PromptDialogPreference.PromptDialogPreferenceCallback;
 import com.android.preferences.ValidateEditTextPreference;
@@ -16,10 +18,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
+import android.hardware.Camera.Parameters;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.CheckBoxPreference;
+import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.text.Editable;
 import android.util.Log;
 import android.view.Window;
@@ -80,6 +88,13 @@ public class QrReaderSettingsActivity extends PreferenceActivity {
         }    
     };
     
+    private OnPreferenceClickListener onAboutPreferenceClick = new OnPreferenceClickListener() {
+        public boolean onPreferenceClick(Preference preference) {
+            startActivity(new Intent(getBaseContext(), QrReaderAboutActivity.class));
+            return true;
+        }
+    };
+    
     private static boolean isFilenameValid(String file) {
         File f = new File(file);
         try {
@@ -105,24 +120,43 @@ public class QrReaderSettingsActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         
-        PromptDialogPreference promptDialog;
+        PromptDialogPreference promptDialogPreference;
         
-        promptDialog = (PromptDialogPreference) findPreference("Prefereces_ResetPreferences");
-        promptDialog.setResultCallback(onResultResetDialogPreference);
+        promptDialogPreference = (PromptDialogPreference) findPreference("Prefereces_ResetPreferences");
+        promptDialogPreference.setResultCallback(onResultResetDialogPreference);
         
-        promptDialog = (PromptDialogPreference) findPreference("Prefereces_Images_Clear");
-        promptDialog.setResultCallback(onResultClearImagesDialogPreference);
+        promptDialogPreference = (PromptDialogPreference) findPreference("Prefereces_Images_Clear");
+        promptDialogPreference.setResultCallback(onResultClearImagesDialogPreference);
         
-        promptDialog = (PromptDialogPreference) findPreference("Prefereces_QRCodes_Clear");
-        promptDialog.setResultCallback(onResultClearQRCodesDialogPreference);
+        promptDialogPreference = (PromptDialogPreference) findPreference("Prefereces_QRCodes_Clear");
+        promptDialogPreference.setResultCallback(onResultClearQRCodesDialogPreference);
         
         pathImagesEditTextPref = (ValidateEditTextPreference)findPreference("Preferences_Images_FilePath");
         pathImagesEditTextPref.setValidateCallback(pathValidateCallback);
         
         pathQRCodesEditTextPref = (ValidateEditTextPreference)findPreference("Preferences_QRCodes_FilePath");
         pathQRCodesEditTextPref.setValidateCallback(pathValidateCallback);
+        
+        CheckBoxPreference autoFocusPreference = (CheckBoxPreference)findPreference("Preferences_Camera_AutoFocus");
+        ListPreference flashPreference = (ListPreference)findPreference("Preferences_Camera_Flash");
+        
+        DroidCamera droidCamera = DroidCamera.open();
+        if (droidCamera != null) {
+            // Enable/Disable autofocus preference
+            autoFocusPreference.setEnabled(droidCamera.autoFocusSupport());
+
+            // Enable/Disable flash preference whether at least on flash mode exists
+            Parameters camParams = droidCamera.getCamera().getParameters();
+            List<String> flashModes = camParams.getSupportedFlashModes();
+
+            flashPreference.setEnabled(flashModes != null);
+        }
+        
+        PreferenceScreen aboutApplication = (PreferenceScreen)findPreference("Prefereces_About");
+        aboutApplication.setOnPreferenceClickListener(onAboutPreferenceClick);
+        
     }
-    
+
     public void restart() {
         Log.i(TAG, "restart");
         Intent intent = getIntent();

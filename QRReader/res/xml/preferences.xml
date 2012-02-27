@@ -130,5 +130,10 @@
          android:dialogMessage="@string/dialogMessage_Preferences_ResetPreferences"
          android:positiveButtonText="@string/yes"
          android:negativeButtonText="@string/no"/>
+	 
+	 <PreferenceScreen
+	     android:key="Prefereces_About" 
+	     android:title="@string/title_Prefereces_About"
+	     android:summary="@string/summary_Prefereces_About" />
 
 </PreferenceScreen>

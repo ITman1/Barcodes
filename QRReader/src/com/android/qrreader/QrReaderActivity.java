@@ -21,6 +21,7 @@ import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.PreviewCallback;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -161,16 +162,48 @@ public class QrReaderActivity extends Activity {
                 statusText_TextView.setText(R.string.QRReaderActivity_StatusText_Processing);
                 //readQRCode();
                 
-                droidCamera.startPreviewing(cameraPreview);
-                droidCamera.setPreviewCallback(droidCamera_PreviewCallback);
-                status_LinearLayout.setVisibility(LinearLayout.INVISIBLE);
-                statusText_TextView.setText("");
-                read_btn.setEnabled(true);
-                takingPicture = false;
+                String FILENAME = "my_qr_file.qr";
+                String string = "hello qr code!";
+
+                FileOutputStream fos;
+                try {
+                    fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+                    fos.write(string.getBytes());
+                    fos.close();
+                    
+                    Intent qrIntent = new Intent(Intent.ACTION_VIEW);
+                    File qr_file = getFileStreamPath(FILENAME);
+                    
+                    String test = Uri.fromFile(qr_file).toString();
+                    
+                    qrIntent.setData(Uri.fromFile(qr_file));
+                    startActivityForResult(qrIntent, 0);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                
+
             }
             
         }
     };
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (droidCamera != null) {
+            droidCamera.startPreviewing(cameraPreview);
+            droidCamera.setPreviewCallback(droidCamera_PreviewCallback);
+            status_LinearLayout.setVisibility(LinearLayout.INVISIBLE);
+            statusText_TextView.setText("");
+            read_btn.setEnabled(true);
+            takingPicture = false;
+        }
+    }
+
+
     
     /** Called when the activity is first created. */
     @Override
@@ -184,7 +217,11 @@ public class QrReaderActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        SharedPreferences prefs = getBaseContext().getSharedPreferences(
+                PreferenceManager.KEY_HAS_SET_DEFAULT_VALUES, Context.MODE_PRIVATE);
+        if (!prefs.getBoolean(PreferenceManager.KEY_HAS_SET_DEFAULT_VALUES, false)) {
+            QrReaderSettingsActivity.resetSettings(getBaseContext());
+        }
                
         // Setting main window view as camera preview from the layouts
         setContentView(R.layout.camera_preview);
