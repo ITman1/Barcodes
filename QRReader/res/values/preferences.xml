@@ -57,7 +57,7 @@
 	</string-array>
 	<string-array name="entryValues_Preferences_SaveMethod">
 		<item>autoSave</item>
-		<item>prompty</item>
+		<item>prompt</item>
 		<item>notSave</item>
 	</string-array>  
 	

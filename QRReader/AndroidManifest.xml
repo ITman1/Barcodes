@@ -11,27 +11,63 @@
     <uses-feature android:name="android.hardware.camera.autofocus"/>
 
     <application android:icon="@drawable/ic_launcher" android:label="@string/app_name">
-        <activity android:name="com.android.qrreader.QrReaderActivity" >
+        <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.android.qrreader.QrReaderSettingsActivity" />
-        <activity android:name="com.android.listviews.FileListActivity" />
-        <activity android:name="com.android.qrreader.QrReaderBrowseImagesActivity" />
-        <activity android:name="com.android.qrreader.QrReaderAboutActivity" />
-        <activity android:name="com.android.qrreader.QrReaderOpenQrActivity" >
+        <activity android:name=".SettingsActivity" />
+        <activity android:name=".BrowseQrCodesActivity" />
+        <activity android:name=".BrowseImagesActivity" />
+        <activity android:name=".AboutActivity" />
+        <activity android:name=".OpenQrActivity" android:label="@string/open_qr_code">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-      		    <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="file" />
+                <data android:host="*" />
+                <data android:pathPattern=".*\\.qr" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
                 <data android:scheme="file" />
                 <data android:host="*" />
                 <data android:mimeType="*/*" />
-                <data android:pathPattern=".*\\.qr"  />
+                <data android:pathPattern=".*\\.qr" />
             </intent-filter>
-
+            
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content" />
+                <data android:host="*" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.qr" />
+            </intent-filter>
+            
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="http" />
+                <data android:host="*" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.qr" />
+            </intent-filter>
+            
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="https" />
+                <data android:host="*" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.qr" />
+            </intent-filter>
         </activity>           
         
     </application>

@@ -47,16 +47,19 @@ import com.android.camera.DroidCamera;
 import com.android.listviews.FileListActivity;
 import com.android.qrreader.R;
 
-public class QrReaderActivity extends Activity {
+public class MainActivity extends Activity {
     private static final String TAG = "com.android.qrreader::QrReaderActivity";
     
     public static final String SD_CARD_DIR                  = "/sdcard";
-    private static final String JPEG_FILE_SUFFIX            = ".jpg";
-    private static final String RAW_FILE_SUFFIX             = ".raw";
+    private static final String JPEG_FILE_EXTENSION         = ".jpg";
+    private static final String RAW_FILE_EXTENSION          = ".raw";
+    private static final String QR_FILE_EXTENSION           = ".qr";
     private static final String DEFAULT_IMAGE_PREFIX        = "IMG_";
+    private static final String DEFAULT_QR_PREFIX           = "QR_";
     private static final String DEFAULT_IMAGE_FORMAT        = "JPEG";
     private static final String FPS_STR                     = "FPS: ";
     private static final int DEFAULT_JPEG_QUALITY           = 90;
+    private static String TMP_QR_FILENAME                   = ".tmp_qr_code.qr";
 
     private RelativeLayout     cameraPreviewLayout;
 	private CameraPreview      cameraPreview;
@@ -74,10 +77,13 @@ public class QrReaderActivity extends Activity {
     
     private long               lastTimeFPS                  = System.currentTimeMillis();
     private long               lastTimeSnapshot             = System.currentTimeMillis();
+    
+    private byte[]             snapshotData;
+    private byte[]             QRCodeData;
        
     private OnClickListener read_btn_OnClick = new OnClickListener() {
         public void onClick(View v) {
-            Log.i(QrReaderActivity.TAG, "OnClickListener::read_btn_OnClick");
+            Log.i(MainActivity.TAG, "OnClickListener::read_btn_OnClick");
 
         	if (droidCamera != null && !takingPicture) {
         	    read_btn.setEnabled(false);
@@ -107,7 +113,7 @@ public class QrReaderActivity extends Activity {
     
     private PreviewCallback droidCamera_PreviewCallback = new PreviewCallback() {
         public void onPreviewFrame(byte[] data, Camera camera) {
-            Log.i(QrReaderActivity.TAG, "PreviewCallback::onPreviewFrame");
+            Log.i(MainActivity.TAG, "PreviewCallback::onPreviewFrame");
             fps_TextView.setText(FPS_STR + (long)(1 / (double)((System.currentTimeMillis()
                     - lastTimeFPS) / (double)1000)));
             lastTimeFPS = System.currentTimeMillis();
@@ -118,74 +124,28 @@ public class QrReaderActivity extends Activity {
     private PictureCallback takePictureCallback = new PictureCallback () {
         public void onPictureTaken(byte[] data, Camera camera) {
             Log.i(TAG, "onPictureTaken");
+            
+            // Display taking snapshot text and wait if needed (preventing filename mismatch)
             statusText_TextView.setText(R.string.QRReaderActivity_StatusText_Saving);
             long currTimeSnapshot = System.currentTimeMillis();
+            
             if (currTimeSnapshot - lastTimeSnapshot < 1000 && currTimeSnapshot > lastTimeSnapshot) {
                 android.os.SystemClock.sleep(currTimeSnapshot - lastTimeSnapshot);
             }
-            
             lastTimeSnapshot = System.currentTimeMillis();
             
-            Resources res = getResources();
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-            String saveMethod = prefs.getString("Preferences_Images_SaveMethod", "autoSave");
-            if (data != null && !saveMethod.equals("notSave")) {
-                File pictureFile;
-                
-                if (saveMethod.equals("autoSave")) {
-                    pictureFile = getImageFile();
-                } else {
-                    pictureFile = null; //TODO TODO TODO
-                }
-                if (pictureFile != null) { 
-                    try {
-                        FileOutputStream fos = new FileOutputStream(pictureFile);
-                        fos.write(data);
-                        fos.close();
-                    } catch (FileNotFoundException e) {
-                        Log.e(TAG, "File not found: " + e.getMessage());
-                        showErrorAlert(String.format(res.getString(R.string.
-                                Errors_Storage_OpenWrite), res.getString(R.string.str_image)));
-                    } catch (IOException e) {
-                        Log.e(TAG, "Error accessing file: " + e.getMessage());
-                        showErrorAlert(String.format(res.getString(R.string.
-                                Errors_Storage_Save), res.getString(R.string.str_image)));
-                    }
-                }
-            } else {
-                showErrorAlert(R.string.Errors_Camera_PictureCallback);
-            }
+            
 
-            if (droidCamera != null) {
+
+            if (data != null) {
                 cameraPreviewLayout.setVisibility(CameraPreview.VISIBLE);
-                
                 statusText_TextView.setText(R.string.QRReaderActivity_StatusText_Processing);
-                //readQRCode();
                 
-                String FILENAME = "my_qr_file.qr";
-                String string = "hello qr code!";
-
-                FileOutputStream fos;
-                try {
-                    fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
-                    fos.write(string.getBytes());
-                    fos.close();
-                    
-                    Intent qrIntent = new Intent(Intent.ACTION_VIEW);
-                    File qr_file = getFileStreamPath(FILENAME);
-                    
-                    String test = Uri.fromFile(qr_file).toString();
-                    
-                    qrIntent.setData(Uri.fromFile(qr_file));
-                    startActivityForResult(qrIntent, 0);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
+                //byte[] QRCodeData = readQRCode(data, FORMAT_JPEG);
+                QRCodeData = new String("MEBKM:URL:google.com;TITLE:Google;;").getBytes();
                 
-
+                snapshotData = data;
+                startOpenQrIntent(QRCodeData);
             }
             
         }
@@ -193,18 +153,128 @@ public class QrReaderActivity extends Activity {
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (droidCamera != null) {
-            droidCamera.startPreviewing(cameraPreview);
-            droidCamera.setPreviewCallback(droidCamera_PreviewCallback);
-            status_LinearLayout.setVisibility(LinearLayout.INVISIBLE);
-            statusText_TextView.setText("");
-            read_btn.setEnabled(true);
-            takingPicture = false;
+        /* Just format saving feature - TODO in future
+        String prefFormat = prefs.getString("Preferences_Images_Format", DEFAULT_IMAGE_FORMAT);
+        if (prefFormat.equals("JPEG")) {
+            fileExtension = JPEG_FILE_EXTENSION;
+        } else if (prefFormat.equals("RAW")) {
+            fileExtension = RAW_FILE_EXTENSION;
+        }*/
+        
+        String fileExtension = JPEG_FILE_EXTENSION;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String imageSaveMethod = prefs.getString("Preferences_Images_SaveMethod", "autoSave");
+        String qrcodeSaveMethod = prefs.getString("Preferences_Images_SaveMethod", "autoSave");
+        
+        if ((imageSaveMethod.equals("autoSave")) 
+                || ((resultCode & OpenQrActivity.RESULT_SAVE_IMAGE_BUTTON_CLICKED) > 0)
+                || ((resultCode & OpenQrActivity.RESULT_SAVE_BOTH_BUTTON_CLICKED) > 0)) {
+                
+                savePicture(snapshotData, fileExtension);
+        }
+        
+        if ((qrcodeSaveMethod.equals("autoSave")) 
+                || ((resultCode & OpenQrActivity.RESULT_SAVE_QRCODE_CLICKED) > 0)
+                || ((resultCode & OpenQrActivity.RESULT_SAVE_BOTH_BUTTON_CLICKED) > 0)) {
+                    
+                saveQRCode(QRCodeData);
+        }
+
+        takingPicture = false;
+    }
+    
+    private void startOpenQrIntent(byte[] decoded_qr) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        FileOutputStream fos;
+        boolean imagePromptToSave = prefs.getString("Preferences_Images_SaveMethod",
+                "autoSave").equals("prompt");
+        boolean qrcodePromptToSave = prefs.getString("Preferences_QRCodes_SaveMethod",
+                "autoSave").equals("prompt");
+        
+        try {
+            fos = openFileOutput(TMP_QR_FILENAME, Context.MODE_PRIVATE);
+            fos.write(decoded_qr);
+            fos.close();
+            
+            Intent qrIntent = new Intent(getBaseContext(), OpenQrActivity.class);
+            File qr_file = getFileStreamPath(TMP_QR_FILENAME);
+            
+            qrIntent.setAction(Intent.ACTION_VIEW);
+            qrIntent.setData(Uri.fromFile(qr_file));
+            
+            if (imagePromptToSave) 
+                qrIntent.putExtra(OpenQrActivity.EXTRA_ADD_SAVE_IMAGE_BUTTON, new String());
+            if (qrcodePromptToSave) 
+                qrIntent.putExtra(OpenQrActivity.EXTRA_ADD_SAVE_QRCODE_BUTTON, new String());
+            if (imagePromptToSave && qrcodePromptToSave) 
+                qrIntent.putExtra(OpenQrActivity.EXTRA_ADD_SAVE_BOTH_BUTTON, new String());
+            
+            startActivityForResult(qrIntent, 0);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void savePicture(byte[] data, String extension) {
+        if (data != null) {
+            Resources res = getResources();
+            File pictureFile = getImageFile(extension);
+
+            if (pictureFile != null) { 
+                try {
+                    FileOutputStream fos = new FileOutputStream(pictureFile);
+                    fos.write(data);
+                    fos.close();
+                } catch (FileNotFoundException e) {
+                    Log.e(TAG, "File not found: " + e.getMessage());
+                    showErrorAlert(String.format(res.getString(R.string.
+                            Errors_Storage_OpenWrite), res.getString(R.string.str_image)));
+                } catch (IOException e) {
+                    Log.e(TAG, "Error accessing file: " + e.getMessage());
+                    showErrorAlert(String.format(res.getString(R.string.
+                            Errors_Storage_Save), res.getString(R.string.str_image)));
+                }
+            }
+        } else {
+            showErrorAlert(R.string.Errors_Camera_PictureCallback);
+        }
+    }
+    
+    private void saveQRCode(byte[] data) {
+        if (data != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            Resources res = getResources();
+            
+            // Get output directory and create it
+            String qrDir = prefs.getString("Preferences_QRCodes_FilePath", SD_CARD_DIR);
+            if (!createDirectoryStructure(new File(qrDir))) return;
+            
+            // Get output QR file
+            String filePrefix = prefs.getString("Preferences_QRCodes_FilePrefix", DEFAULT_QR_PREFIX);
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            File qrFile = new File(qrDir + File.separator + filePrefix + timeStamp + QR_FILE_EXTENSION);
+
+            // Write output QR file
+            if (qrFile != null) { 
+                try {
+                    FileOutputStream fos = new FileOutputStream(qrFile);
+                    fos.write(data);
+                    fos.close();
+                } catch (FileNotFoundException e) {
+                    Log.e(TAG, "File not found: " + e.getMessage());
+                    showErrorAlert(String.format(res.getString(R.string.
+                            Errors_Storage_OpenWrite), res.getString(R.string.str_qrcode)));
+                } catch (IOException e) {
+                    Log.e(TAG, "Error accessing file: " + e.getMessage());
+                    showErrorAlert(String.format(res.getString(R.string.
+                            Errors_Storage_Save), res.getString(R.string.str_qrcode)));
+                }
+            }
         }
     }
 
-
-    
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -220,7 +290,7 @@ public class QrReaderActivity extends Activity {
         SharedPreferences prefs = getBaseContext().getSharedPreferences(
                 PreferenceManager.KEY_HAS_SET_DEFAULT_VALUES, Context.MODE_PRIVATE);
         if (!prefs.getBoolean(PreferenceManager.KEY_HAS_SET_DEFAULT_VALUES, false)) {
-            QrReaderSettingsActivity.resetSettings(getBaseContext());
+            SettingsActivity.resetSettings(getBaseContext());
         }
                
         // Setting main window view as camera preview from the layouts
@@ -288,16 +358,16 @@ public class QrReaderActivity extends Activity {
         
         switch (item.getItemId()) {
             case R.id.settings:
-                startActivity(new Intent(this, QrReaderSettingsActivity.class));
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.recent_qrcodes:
-                intent = new Intent(this, QrReaderBrowseImagesActivity.class);
+                intent = new Intent(this, BrowseImagesActivity.class);
                 cwd = prefs.getString("Preferences_QRCodes_FilePath", SD_CARD_DIR);
                 intent.putExtra(FileListActivity.BASE_DIR, cwd);
                 startActivity(intent);
                 return true;
             case R.id.recent_images:
-                intent = new Intent(this, QrReaderBrowseImagesActivity.class);
+                intent = new Intent(this, BrowseImagesActivity.class);
                 cwd = prefs.getString("Preferences_Images_FilePath", SD_CARD_DIR);
                 intent.putExtra(FileListActivity.BASE_DIR, cwd);
                 startActivity(intent);
@@ -308,15 +378,13 @@ public class QrReaderActivity extends Activity {
     }
     
     private void takePicture() {
-     /* SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        Resources res = getResources();
+     /* Just format saving feature - TODO in future
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String prefFormat = prefs.getString("Preferences_Images_Format", DEFAULT_IMAGE_FORMAT);
-        
-        cameraPreviewLayout.setVisibility(CameraPreview.INVISIBLE);
-        
-        if (prefFormat.equals(res.getString(R.string.fileformat_jpeg))) {
+
+        if (prefFormat.equals(res.getString("JPEG")) {
             droidCamera.getCamera().takePicture(null, null, takePictureCallback);
-        } else if (prefFormat.equals(res.getString(R.string.fileformat_raw))) {
+        } else if (prefFormat.equals("RAW")) {
             droidCamera.getCamera().takePicture(null, takePictureCallback, null);
         } */
         
@@ -333,8 +401,13 @@ public class QrReaderActivity extends Activity {
             return;
         } 
         
-        droidCamera.startPreviewing(cameraPreview);
-        droidCamera.setPreviewCallback(droidCamera_PreviewCallback);
+        if (takingPicture == false) {
+            droidCamera.startPreviewing(cameraPreview);
+            droidCamera.setPreviewCallback(droidCamera_PreviewCallback);
+            status_LinearLayout.setVisibility(LinearLayout.INVISIBLE);
+            statusText_TextView.setText("");
+            read_btn.setEnabled(true);
+        }
     }
     
     private void stopDroidCamera() {
@@ -404,7 +477,7 @@ public class QrReaderActivity extends Activity {
     }
        
     /** Create a File for saving an image or video */
-    private File getImageFile(){
+    private File getImageFile(String extension){
         Log.i(TAG, "getOutputMediaFile");
 
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -415,36 +488,34 @@ public class QrReaderActivity extends Activity {
                     File.separator + res.getString(R.string.app_name);
             File imagesDir = new File(prefs.getString("Preferences_Images_FilePath", defaultDir));
     
-            // Create the storage directory if it does not exist
-            if (!imagesDir.exists()){
-                if (!imagesDir.mkdirs()){
-                    Log.e(TAG, "Failed to create directory structure!");
-                    showErrorAlert(R.string.Errors_Storage_MKDIRS);
-                    return null;
-                }
-            }
+            if (!createDirectoryStructure(imagesDir)) return null;
     
             // Create a media file name
             File imageFile;
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
             String filePrefix = prefs.getString("Preferences_Images_FilePrefix", DEFAULT_IMAGE_PREFIX);
-            String prefFormat = prefs.getString("Preferences_Images_Format", DEFAULT_IMAGE_FORMAT);
-            String fileSuffix = JPEG_FILE_SUFFIX;
-            
-            if (prefFormat.equals(res.getString(R.string.fileformat_jpeg))) {
-                fileSuffix = JPEG_FILE_SUFFIX;
-            } else if (prefFormat.equals(res.getString(R.string.fileformat_raw))) {
-                fileSuffix = RAW_FILE_SUFFIX;
-            }
+
             
             imageFile = new File(imagesDir.getPath() + File.separator + filePrefix + timeStamp + 
-                    fileSuffix);
+                    extension);
     
             return imageFile;
         }
         Log.e(TAG, "Not mounted sd card!");
         showErrorAlert(R.string.Errors_Storage_Mount);
         return null;
+    }
+    
+    private boolean createDirectoryStructure(File dir) {
+        // Create the storage directory if it does not exist
+        if (!dir.exists()){
+            if (!dir.mkdirs()){
+                Log.e(TAG, "Failed to create directory structure!");
+                showErrorAlert(R.string.Errors_Storage_MKDIRS);
+                return false;
+            }
+        }
+        return true;
     }
     
     private void showErrorAlert(int resID) {

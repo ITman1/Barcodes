@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Čtečka QR kódů</string>
+    <string name="open_qr_code">Otevřít QR kód</string>
 
     <string name="str_image">obrázek</string>
     <string name="str_qrcode">QR kód</string>
@@ -19,4 +20,8 @@
     <string name="QRReaderAboutActivity_Summary">Popis</string>
     <string name="QRReaderAboutActivity_Summary_Text">Popis aplikace tady</string>
     <string name="QRReaderAboutActivity_Features">Podporované rozšíření</string>
+    
+    <string name="QRReaderOpenQrActivity_SaveImageButtonText">Uložit obrázek</string>
+    <string name="QRReaderOpenQrActivity_SaveQRCodeButtonText">Uložit QR kód</string>
+    <string name="QRReaderOpenQrActivity_SaveBothButtonText">Uložit oboje</string>
 </resources>

@@ -32,7 +32,7 @@ import android.text.Editable;
 import android.util.Log;
 import android.view.Window;
 
-public class QrReaderSettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends PreferenceActivity {
     private static final String TAG = "com.android.qrreader::QrReaderSettingsActivity";
     
     private ValidateEditTextPreference pathImagesEditTextPref;
@@ -90,7 +90,7 @@ public class QrReaderSettingsActivity extends PreferenceActivity {
     
     private OnPreferenceClickListener onAboutPreferenceClick = new OnPreferenceClickListener() {
         public boolean onPreferenceClick(Preference preference) {
-            startActivity(new Intent(getBaseContext(), QrReaderAboutActivity.class));
+            startActivity(new Intent(getBaseContext(), AboutActivity.class));
             return true;
         }
     };
@@ -155,6 +155,7 @@ public class QrReaderSettingsActivity extends PreferenceActivity {
         PreferenceScreen aboutApplication = (PreferenceScreen)findPreference("Prefereces_About");
         aboutApplication.setOnPreferenceClickListener(onAboutPreferenceClick);
         
+        droidCamera.release();
     }
 
     public void restart() {

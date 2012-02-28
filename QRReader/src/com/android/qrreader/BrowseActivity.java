@@ -10,7 +10,7 @@ import android.view.MenuItem;
 import com.android.listviews.FileListActivity;
 import com.android.qrreader.R;
 
-public class QrReaderBrowseActivity extends FileListActivity {
+public class BrowseActivity extends FileListActivity {
 
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);      
@@ -36,7 +36,7 @@ public class QrReaderBrowseActivity extends FileListActivity {
                     startActivity(intent);  
                 } catch (ActivityNotFoundException e) {
                     e.printStackTrace();
-                    QrReaderActivity.showErrorAlert(this, R.string.Errors_OI_Manager_Intent);
+                    MainActivity.showErrorAlert(this, R.string.Errors_OI_Manager_Intent);
                 } 
                 return true;
             default:

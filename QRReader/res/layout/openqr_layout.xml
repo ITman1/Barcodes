@@ -5,7 +5,7 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/openResultTitle"
+        android:id="@+id/QRCodeResultTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -16,14 +16,8 @@
         android:id="@+id/QRCodeImage"
         android:layout_width="wrap_content"
         android:layout_height="100dp"
-        android:layout_gravity="center_horizontal" />
-
-    <TextView
-        android:id="@+id/QRCodeResultTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="QR code decoded informations"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:layout_gravity="center_horizontal"
+        android:padding="10dp" />
 
     <LinearLayout
         android:id="@+id/QRCodeResult"
@@ -38,18 +32,11 @@
         android:layout_height="wrap_content" >
         
 	    <LinearLayout
-	        android:id="@+id/buttonLayout"
+	        android:id="@+id/buttonsLayout"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentBottom="true"
 	        android:layout_centerHorizontal="true" >
-
-	        <Button
-	            android:id="@+id/closeButton"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="@string/close"
-	            android:width="100dp" />
 	
 	    </LinearLayout>
 

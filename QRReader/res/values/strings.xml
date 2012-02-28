@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">QR Code Reader</string>
+    <string name="open_qr_code">Open QR code</string>
 
     <string name="str_image">image</string>
     <string name="str_qrcode">QR code</string>
     <string name="dir_images">Images</string>
     <string name="dir_qrcodes">QR Codes</string>
-    <string name="fileformat_jpeg">JPEG</string>
-    <string name="fileformat_raw">RAW</string>
     
     <string name="QRReaderActivity_StatusText_Capturing">(capturing image)</string>
     <string name="QRReaderActivity_StatusText_Saving">(saving image)</string>
@@ -22,5 +21,7 @@
     <string name="QRReaderAboutActivity_Summary_Text">Application summary text here</string>
     <string name="QRReaderAboutActivity_Features">Support of the features</string>
     
-    <!-- <string name="QRReaderOpenQrActivity_OpenResultTitle">Open result title</string> -->
+    <string name="QRReaderOpenQrActivity_SaveImageButtonText">Save image</string>
+    <string name="QRReaderOpenQrActivity_SaveQRCodeButtonText">Save QR code</string>
+    <string name="QRReaderOpenQrActivity_SaveBothButtonText">Save both</string>
 </resources>

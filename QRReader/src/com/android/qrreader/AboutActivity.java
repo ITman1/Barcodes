@@ -12,7 +12,7 @@ import android.os.Bundle;
 import android.view.Window;
 import android.widget.TextView;
 
-public class QrReaderAboutActivity extends Activity {
+public class AboutActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,6 +46,8 @@ public class QrReaderAboutActivity extends Activity {
             
             textView = (TextView) findViewById(R.id.CameraAutoFocus);
             if (droidCamera.autoFocusSupport()) textView.setText(R.string.yes);
+            
+            droidCamera.release();
         }
 
     
