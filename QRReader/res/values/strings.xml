@@ -7,7 +7,7 @@
     <string name="str_qrcode">QR code</string>
     <string name="dir_images">Images</string>
     <string name="dir_qrcodes">QR Codes</string>
-    
+       
     <string name="QRReaderActivity_StatusText_Capturing">(capturing image)</string>
     <string name="QRReaderActivity_StatusText_Saving">(saving image)</string>
     <string name="QRReaderActivity_StatusText_Processing">(processing image)</string>
@@ -24,4 +24,13 @@
     <string name="QRReaderOpenQrActivity_SaveImageButtonText">Save image</string>
     <string name="QRReaderOpenQrActivity_SaveQRCodeButtonText">Save QR code</string>
     <string name="QRReaderOpenQrActivity_SaveBothButtonText">Save both</string>
+    
+    <string name="InstallationManagerActivity_unknown">(unknown)</string>
+    <string name="InstallationManagerActivity_brief">Brief:</string>
+    <string name="InstallationManagerActivity_uninstall">Uninstall</string>
+    <string name="InstallationManagerActivity_packageManager">Package manager</string>
+    <string name="InstallationManagerActivity_path">Package path:</string>
+    <string name="InstallationManagerActivity_install">Install</string>
+    <string name="InstallationManagerActivity_browse">Browse</string>
+    <string name="InstallationManagerActivity_pickFileTitle">Please pick your package</string>
 </resources>

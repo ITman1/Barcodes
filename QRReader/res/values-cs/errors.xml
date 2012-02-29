@@ -8,4 +8,7 @@
     <string name="Errors_Storage_Save">Nelze uložit soubor (%s)! Pravděpodobně není dostupné dostatečné volné místo v úložišti.</string>
     <string name="Errors_OI_Manager_Intent">Nelze spustit OI Manager, pravděpodobně není nainstalován. Pro jeho využití je zapotřebí ho stánout a nainstalovat z Marketu.</string>
     <string name="Errors_No_Open_Intent">Nebyla nalezena vhodná aplikace pro otevření daného souboru!</string>
+    <string name="Errors_Package_Corrupted">Balíček je poškozen!</string>
+    <string name="Errors_Package_Install">Instalace balíčku selhala!</string>
+    <string name="Errors_Package_Not_Found">Balíček nebyl nalezen!</string>
 </resources>

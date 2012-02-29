@@ -13,6 +13,8 @@
     <string name="dialogMessage_Preferences_ResetPreferences">Do you wish to restore default settings?</string>  
     <string name="title_Prefereces_About">About application</string>
     <string name="summary_Prefereces_About">Shows the informations about this application and supported device features</string> 
+    <string name="title_Prefereces_InstallationManager">Package manager</string>
+    <string name="summary_Prefereces_InstallationManager">Opens package manager where you can install additional packages</string> 
     
     <string name="title_Preferences_Camera_AutoFocus">Use auto-focus</string>
     <string name="summary_Preferences_Camera_AutoFocus">Enables or disables auto-focus feature when capturing image</string>

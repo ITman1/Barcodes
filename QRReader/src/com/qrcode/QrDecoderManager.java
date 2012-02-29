@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.qrcode.decoders.QrDecoder.LexicalError;
-import com.qrcode.decoders.QrDecoder.SemanticError;
-import com.qrcode.decoders.QrDecoder.SyntaxError;
 import com.qrcode.decoders.QrDecoder;
 import com.qrcode.qrcodes.QrCode;
 

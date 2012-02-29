@@ -13,6 +13,8 @@
     <string name="dialogMessage_Preferences_ResetPreferences">Přejete si obnovit výchozí nastavení?</string>  
     <string name="title_Prefereces_About">O aplikaci</string>
     <string name="summary_Prefereces_About">Zobrazí informace o aplikaci a dustupných rozšíření na tomto zařízení</string> 
+    <string name="title_Prefereces_InstallationManager">Správce balíčků</string>
+    <string name="summary_Prefereces_InstallationManager">Otevře správce instalovatelných balíčků</string> 
     
     <string name="title_Preferences_Camera_AutoFocus">Zapnout autofocus</string>
     <string name="summary_Preferences_Camera_AutoFocus">Zapne nebo nebo vypne autofocus pro zachycení obrazu</string>

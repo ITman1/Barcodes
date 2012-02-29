@@ -21,6 +21,7 @@
         <activity android:name=".BrowseQrCodesActivity" />
         <activity android:name=".BrowseImagesActivity" />
         <activity android:name=".AboutActivity" />
+        <activity android:name=".InstallationManagerActivity" />
         <activity android:name=".OpenQrActivity" android:label="@string/open_qr_code">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

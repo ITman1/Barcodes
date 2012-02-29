@@ -95,6 +95,13 @@ public class SettingsActivity extends PreferenceActivity {
         }
     };
     
+    private OnPreferenceClickListener onInstallationManagerClick = new OnPreferenceClickListener() {
+        public boolean onPreferenceClick(Preference preference) {
+            startActivity(new Intent(getBaseContext(), InstallationManagerActivity.class));
+            return true;
+        }
+    };
+    
     private static boolean isFilenameValid(String file) {
         File f = new File(file);
         try {
@@ -154,6 +161,9 @@ public class SettingsActivity extends PreferenceActivity {
         
         PreferenceScreen aboutApplication = (PreferenceScreen)findPreference("Prefereces_About");
         aboutApplication.setOnPreferenceClickListener(onAboutPreferenceClick);
+        
+        PreferenceScreen installationManager = (PreferenceScreen)findPreference("Prefereces_InstallationManager");
+        installationManager.setOnPreferenceClickListener(onInstallationManagerClick);
         
         droidCamera.release();
     }

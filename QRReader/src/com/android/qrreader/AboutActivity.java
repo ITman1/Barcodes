@@ -6,7 +6,6 @@ import com.android.camera.DroidCamera;
 
 import android.app.Activity;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.hardware.Camera.Parameters;
 import android.os.Bundle;
 import android.view.Window;

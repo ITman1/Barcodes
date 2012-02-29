@@ -131,6 +131,11 @@
          android:positiveButtonText="@string/yes"
          android:negativeButtonText="@string/no"/>
 	 
+	<PreferenceScreen
+	     android:key="Prefereces_InstallationManager" 
+	     android:title="@string/title_Prefereces_InstallationManager"
+	     android:summary="@string/summary_Prefereces_InstallationManager" />
+	 
 	 <PreferenceScreen
 	     android:key="Prefereces_About" 
 	     android:title="@string/title_Prefereces_About"

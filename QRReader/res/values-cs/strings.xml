@@ -7,7 +7,7 @@
     <string name="str_qrcode">QR kód</string>
     <string name="dir_images">Obrázky</string>
     <string name="dir_qrcodes">QR kódy</string>
-    
+       
     <string name="QRReaderActivity_StatusText_Capturing">(zachytávání obrazu)</string>
     <string name="QRReaderActivity_StatusText_Saving">(ukládání obrazu)</string>
     <string name="QRReaderActivity_StatusText_Processing">(zpracovávání obrazu)</string>
@@ -24,4 +24,13 @@
     <string name="QRReaderOpenQrActivity_SaveImageButtonText">Uložit obrázek</string>
     <string name="QRReaderOpenQrActivity_SaveQRCodeButtonText">Uložit QR kód</string>
     <string name="QRReaderOpenQrActivity_SaveBothButtonText">Uložit oboje</string>
+    
+    <string name="InstallationManagerActivity_unknown">(neznámý)</string>
+    <string name="InstallationManagerActivity_brief">Popis:</string>
+    <string name="InstallationManagerActivity_uninstall">Odinstalovat</string>
+    <string name="InstallationManagerActivity_packageManager">Správce balíčků</string>
+    <string name="InstallationManagerActivity_path">Cesta k balíčku:</string>
+    <string name="InstallationManagerActivity_install">Instalovat</string>
+    <string name="InstallationManagerActivity_browse">Procházet</string>
+    <string name="InstallationManagerActivity_pickFileTitle">Prosím vyberte balíček</string>
 </resources>

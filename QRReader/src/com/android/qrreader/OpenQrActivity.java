@@ -9,10 +9,6 @@ import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import com.qrcode.QrDecoderManager;
-import com.qrcode.QrCodes;
 import com.android.qrreader.R;
 
 public class OpenQrActivity extends Activity {

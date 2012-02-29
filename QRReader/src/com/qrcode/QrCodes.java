@@ -1,7 +1,5 @@
 package com.qrcode;
 
-import com.qrcode.decoders.ComodoQrDecoder;
-import com.qrcode.decoders.ZxingQrDecoder;
 import com.qrcode.qrcodes.QrCode;
 
 final public class QrCodes {
