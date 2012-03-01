@@ -69,30 +69,23 @@ public class InstallableQrCodeViewManager {
     }
     
     public View getViewForQrCode(QrCode qrCode) {
-        AdapterFactory adapterFactory = AdapterFactory.getFactory();
-        Adapter adapter = adapterFactory.getAdapter(qrCode.getClass(), View.class);
-        
-        if (adapter != null) {
-            try {
-                QrCodeViewProvider provider = (QrCodeViewProvider)adapter.getProvider(qrCode);
-                return provider.getView(context);
-            } catch (ClassCastException e) {
-                e.printStackTrace();
-            }
-
-        }
-        
-        return null;
+        QrCodeViewProvider provider = getProviderForQrCode(qrCode);
+        return (provider != null)? provider.getView(context) : null;
     }
     
-    public String getSubTitleForQrCode(QrCode qrCode) {
+    public String getTitleForQrCode(QrCode qrCode) {
+        QrCodeViewProvider provider = getProviderForQrCode(qrCode);
+        return (provider != null)? provider.getTitleName(context) : null;
+    }
+    
+    public QrCodeViewProvider getProviderForQrCode(QrCode qrCode) {
         AdapterFactory adapterFactory = AdapterFactory.getFactory();
         Adapter adapter = adapterFactory.getAdapter(qrCode.getClass(), View.class);
         
         if (adapter != null) {
             try {
                 QrCodeViewProvider provider = (QrCodeViewProvider)adapter.getProvider(qrCode);
-                return provider.getTitleName(context);
+                return provider;
             } catch (ClassCastException e) {
                 e.printStackTrace();
             }

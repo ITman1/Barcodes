@@ -44,7 +44,17 @@
     <string name="OpenQrActivity_RawResult_DataNone">(žádná)</string>
     
     <string name="QrCode_Title_Url">(URL odkaz)</string>
+    <string name="QrCode_Title_Url_GoTo">Přejít na</string>
+    
     <string name="QrCode_Title_Mail">(mail)</string>
+    <string name="QrCode_Title_Mail_Receiver">Příjemce</string>
+    <string name="QrCode_Title_Mail_Subject">Předmět</string>
+    <string name="QrCode_Title_Mail_Body">Tělo</string>
+    <string name="QrCode_Title_Mail_Send">Odeslat mail</string>
+    
     <string name="QrCode_Title_Telephone">(telefon)</string>
+    <string name="QrCode_Title_Telephone_Number">Telefonní číslo</string>
+    <string name="QrCode_Title_Telephone_Call">VOLAT</string>
+    
     <string name="QrCode_Title_Contact">(kontakt)</string>
 </resources>

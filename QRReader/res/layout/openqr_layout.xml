@@ -4,39 +4,59 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/QRCodeResultTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Open Result Title"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/QRCodeResultSubTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/OpenQrActivity_SubTitle_NoDecoder"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-    <ImageView
-        android:id="@+id/QRCodeImage"
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:layout_gravity="center_horizontal"
-        android:padding="10dp" />
+    <ScrollView 
+        android:id="@+id/scrollView" 
+        android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_marginBottom="50dip">
+    	
+        <LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:orientation="vertical" >
     
-    <LinearLayout
-        android:id="@+id/QRCodeResult"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-    </LinearLayout>
+		    <TextView
+		        android:id="@+id/QRCodeResultTitle"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center_horizontal"
+		        android:text="Open Result Title"
+		        android:focusable="true"
+		        android:textAppearance="?android:attr/textAppearanceLarge" >
+		        
+        		<requestFocus></requestFocus>
+        	</TextView>
+		
+		    <TextView
+		        android:id="@+id/QRCodeResultSubTitle"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center_horizontal"
+		        android:text="@string/OpenQrActivity_SubTitle_NoDecoder"
+		        android:textAppearance="?android:attr/textAppearanceMedium" />
+		    <ImageView
+		        android:id="@+id/QRCodeImage"
+		        android:layout_width="wrap_content"
+		        android:layout_height="150dp"
+		        android:layout_gravity="center_horizontal"
+		        android:padding="10dp" />
+	       
+		    <LinearLayout
+		        android:id="@+id/QRCodeResult"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="vertical"
+		        android:padding="5dp" >
+		    </LinearLayout>
+		</LinearLayout>
+	</ScrollView>
     
     <RelativeLayout
         android:id="@+id/relativeLayout1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-50dip" 
+        android:gravity="bottom" >
         
 	    <LinearLayout
 	        android:id="@+id/buttonsLayout"

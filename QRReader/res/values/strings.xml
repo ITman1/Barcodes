@@ -44,7 +44,17 @@
     <string name="OpenQrActivity_RawResult_DataNone">(none)</string>
     
     <string name="QrCode_Title_Url">(URL link)</string>
+    <string name="QrCode_Title_Url_GoTo">Go to</string>
+    
     <string name="QrCode_Title_Mail">(mail)</string>
+    <string name="QrCode_Title_Mail_Receiver">Receiver</string>
+    <string name="QrCode_Title_Mail_Subject">Subject</string>
+    <string name="QrCode_Title_Mail_Body">Body</string>
+    <string name="QrCode_Title_Mail_Send">Send mail</string>
+    
     <string name="QrCode_Title_Telephone">(telephone)</string>
+    <string name="QrCode_Title_Telephone_Number">Telephone number</string>
+    <string name="QrCode_Title_Telephone_Call">CALL</string>
+    
     <string name="QrCode_Title_Contact">(contact)</string>
 </resources>

@@ -25,6 +25,8 @@
     <string name="summary_Preferences_View_ShowFPS">Zobrazí nebo skryje údaj o snímkové frekvenci kamery</string>
     <string name="title_Preferences_View_ShowTarget">Zobrazit terčík</string>
     <string name="summary_Preferences_View_ShowTarget">Zviditelní nebo odstraní terčík z náhledu kamery</string>
+    <string name="title_Preferences_View_ShowDecodedImage">Zobrazit dekódovaný obrázek</string>
+    <string name="summary_Preferences_View_ShowDecodedImage">Definuje zda se má zobrazit v okně pro výsledek dekódování i náhled obrázku</string>
     
     <string name="title_Preferences_Images_SaveMethod">Ukládání obrázků</string>
     <string name="summary_Preferences_Images_SaveMethod">Definuje způsob ukládání zachyceného obrázku</string>

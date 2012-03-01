@@ -15,6 +15,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.qrreader.R;
@@ -82,6 +83,7 @@ public class OpenQrActivity extends Activity {
         } else {
             resultTitle.setText(R.string.OpenQrActivity_Title_QrFound);
         }
+        resultTitle.requestFocusFromTouch();
         
         // Decoding QR code
         QrCode qrCode = decoderManager.decodeQrCode(qrCodeData);
@@ -98,8 +100,9 @@ public class OpenQrActivity extends Activity {
             displayRAW(qrCodeData);
             return;
         } else {
-            resultSubTitle.setText(viewManager.getSubTitleForQrCode(qrCode));
+            resultSubTitle.setText(viewManager.getTitleForQrCode(qrCode));
             resultView.addView(view);
+            ((ScrollView)findViewById(R.id.scrollView)).fullScroll(ScrollView.FOCUS_UP);
         }
     }
     

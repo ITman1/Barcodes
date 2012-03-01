@@ -1,7 +1,7 @@
 package com.qrcode.qrcodes;
 
 public class UrlQrCode extends QrCode {
-    final private static String HTTP_SCHEME = "http://";
+    final public static String HTTP_SCHEME = "http://";
     
     private String address;
 
@@ -21,7 +21,7 @@ public class UrlQrCode extends QrCode {
         return address;
     }
     
-    public String getLink() {
+    public String getUri() {
         return HTTP_SCHEME + address;
     }
 }

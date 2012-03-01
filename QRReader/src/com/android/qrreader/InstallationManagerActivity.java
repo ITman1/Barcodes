@@ -23,7 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class InstallationManagerActivity extends Activity {
-    
+
     final private static String PICK_FILE_INTENT        = "org.openintents.action.PICK_FILE";
     final private static String PICK_FILE_INTENT_TITLE  = "org.openintents.extra.TITLE";
     
@@ -44,8 +44,6 @@ public class InstallationManagerActivity extends Activity {
             } catch (android.content.ActivityNotFoundException e) {
                 MainActivity.showErrorAlert(InstallationManagerActivity.this, R.string.Errors_OI_Manager_Intent);
             }
-            startActivity(getIntent());
-            finish();
         }
     };
     
@@ -134,8 +132,9 @@ public class InstallationManagerActivity extends Activity {
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            pathEdit.setText(data.getData().toString().substring(7));
+        String path;
+        if (resultCode == RESULT_OK && (path = data.getData().getPath()) != null ) {
+            pathEdit.setText(path);
         }
     }
 

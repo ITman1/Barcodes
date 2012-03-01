@@ -119,6 +119,12 @@
 	         android:summary="@string/summary_Preferences_View_ShowTarget"
 	         android:title="@string/title_Preferences_View_ShowTarget" 
 	         android:defaultValue="true" />
+	     
+	     <CheckBoxPreference 
+	         android:key="Preferences_View_ShowDecodedImage"
+	         android:summary="@string/summary_Preferences_View_ShowDecodedImage"
+	         android:title="@string/title_Preferences_View_ShowDecodedImage" 
+	         android:defaultValue="true" />
      </PreferenceScreen>  
          
 	 <com.android.preferences.PromptDialogPreference

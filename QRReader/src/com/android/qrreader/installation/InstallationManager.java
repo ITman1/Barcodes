@@ -14,6 +14,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.net.Uri;
 
 import com.filesystem.Filename;
 import com.filesystem.Operations;
@@ -141,7 +142,7 @@ final public class InstallationManager {
         
         if (!packageFile.exists()) {
             throw new FileNotFoundException();
-        } else if (getPackageClasses(packageFile, null).isEmpty() || !Filename.getExtension(packagePath).equalsIgnoreCase(PACKAGE_EXTENSION)) {
+        } else if (!Filename.getExtension(packagePath).equalsIgnoreCase(PACKAGE_EXTENSION) || getPackageClasses(packageFile, null).isEmpty()) {
             throw new CorruptedPackage();
         }
         

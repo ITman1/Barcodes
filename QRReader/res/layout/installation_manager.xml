@@ -11,23 +11,28 @@
         android:padding="5dp" 
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="5dp"
+            android:focusable="true"
+            android:text="@string/InstallationManagerActivity_path"
+            android:textAppearance="?android:attr/textAppearanceSmall">
+            
+        	<requestFocus></requestFocus>
+        </TextView>
+
         <LinearLayout
             android:id="@+id/linearLayout3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
-            
-            <TextView
-	            android:id="@+id/textView1"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="@string/InstallationManagerActivity_path"
-	            android:paddingRight="5dp"
-	            android:textAppearance="?android:attr/textAppearanceSmall" />
 	
 	        <EditText
 	            android:id="@+id/pathEdit"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
+	            android:lines="1"
 	            android:layout_weight="1" />
 
 	        <Button

@@ -23,8 +23,10 @@
 
     <string name="title_Preferences_View_ShowFPS">Show FPS</string>
     <string name="summary_Preferences_View_ShowFPS">Displays or hides info about FPS of camera</string>
-    <string name="title_Preferences_View_ShowTarget">Target</string>
+    <string name="title_Preferences_View_ShowTarget">Show target</string>
     <string name="summary_Preferences_View_ShowTarget">Defines whether to display the target during camera previewing</string>
+    <string name="title_Preferences_View_ShowDecodedImage">Display decoded image</string>
+    <string name="summary_Preferences_View_ShowDecodedImage">Defines whether to show the decoded image when the window with the result is displayed</string>
     
     <string name="title_Preferences_Images_SaveMethod">Saving of image</string>
     <string name="summary_Preferences_Images_SaveMethod">Defines options when to save images</string>

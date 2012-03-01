@@ -143,7 +143,7 @@ public class MainActivity extends Activity {
                 statusText_TextView.setText(R.string.QRReaderActivity_StatusText_Processing);
                 
                 //byte[] QRCodeData = readQRCode(data, FORMAT_JPEG);
-                QRCodeData = new String("http://www.google.com").getBytes();
+                QRCodeData = new String("tel:+12125551212").getBytes();
                 
                 snapshotData = data;
                 startOpenQrIntent(QRCodeData);
@@ -191,11 +191,14 @@ public class MainActivity extends Activity {
                 "autoSave").equals("prompt");
         boolean qrcodePromptToSave = prefs.getString("Preferences_QRCodes_SaveMethod",
                 "autoSave").equals("prompt");
+        boolean showImage = prefs.getBoolean("Preferences_View_ShowDecodedImage", true);
         
         try {
-            fos = openFileOutput(TMP_QR_FILENAME, Context.MODE_PRIVATE);
-            fos.write(decoded_qr);
-            fos.close();
+            if (showImage) {
+                fos = openFileOutput(TMP_QR_FILENAME, Context.MODE_PRIVATE);
+                fos.write(decoded_qr);
+                fos.close();
+            }
             
             fos = openFileOutput(TMP_QR_IMAGE_FILENAME, Context.MODE_PRIVATE);
             fos.write(snapshotData);
@@ -213,8 +216,8 @@ public class MainActivity extends Activity {
                 qrIntent.putExtra(OpenQrActivity.EXTRA_ADD_SAVE_QRCODE_BUTTON, new String());
             if (imagePromptToSave && qrcodePromptToSave) 
                 qrIntent.putExtra(OpenQrActivity.EXTRA_ADD_SAVE_BOTH_BUTTON, new String());
-            
-            qrIntent.putExtra(OpenQrActivity.EXTRA_IMAGE, getFileStreamPath(TMP_QR_IMAGE_FILENAME).getAbsolutePath());
+            if (showImage)
+                qrIntent.putExtra(OpenQrActivity.EXTRA_IMAGE, getFileStreamPath(TMP_QR_IMAGE_FILENAME).getAbsolutePath());
             
             startActivityForResult(qrIntent, 0);
         } catch (FileNotFoundException e) {
