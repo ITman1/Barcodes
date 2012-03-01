@@ -52,7 +52,7 @@ final public class QrDecoderManager {
             int i = 0;
             for (byte ch : data) {
                 i++;
-                if (ch == URI_SCHEME_DELIMITER && ch >= FIRST_PRINTABLE_CHAR) return data.toString().substring(i);
+                if (ch == URI_SCHEME_DELIMITER && ch >= FIRST_PRINTABLE_CHAR) return new String(data).substring(0, i - 1);
                     
             }
         }
@@ -71,11 +71,7 @@ final public class QrDecoderManager {
         for (QrDecoder decoder : decoders) {
             if (decoder.isSupported(scheme)) passedDecoders.add(decoder);
         }
-        
-        if (passedDecoders.isEmpty()) {
-            return null;
-        }
-        
+                
         for (QrDecoder decoder : passedDecoders) {
             //try {
                 qrCode = decoder.decode(data);
@@ -87,7 +83,7 @@ final public class QrDecoderManager {
                 qrCode = null;
             }*/
             
-            if (qrCode != null) return qrCode;
+            return qrCode;
         }
         
         return null;

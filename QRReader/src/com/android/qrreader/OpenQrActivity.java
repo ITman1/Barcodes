@@ -1,15 +1,27 @@
 package com.android.qrreader;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Formatter;
+
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+
 import com.android.qrreader.R;
+import com.android.qrreader.qrcode.InstallableQrCodeViewManager;
+import com.android.qrreader.qrcode.InstallableQrDecoderManager;
+import com.filesystem.Operations;
+import com.qrcode.qrcodes.QrCode;
 
 public class OpenQrActivity extends Activity {
     public static final String EXTRA_IMAGE                   = "EXTRA_IMAGE";
@@ -28,6 +40,10 @@ public class OpenQrActivity extends Activity {
     public static final int MAX_RESULT_CODES                 = 0xFF;
     
     private LinearLayout buttonsLayout;
+    private TextView resultTitle;
+    private TextView resultSubTitle;
+    private LinearLayout resultView;
+    private ImageView qrCodeImage;
     
     private OnClickListener resultButtonOnClick = new OnClickListener() {
         public void onClick(View v) {
@@ -41,15 +57,106 @@ public class OpenQrActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         
-        setContentView(R.layout.openqr_layout);
-               
+        // Inflating layout
+        setContentView(R.layout.openqr_layout);  
+        
+        // Getting references for later use
+        resultTitle = (TextView) findViewById(R.id.QRCodeResultTitle);
+        resultSubTitle = (TextView) findViewById(R.id.QRCodeResultSubTitle);
+        resultView = (LinearLayout) findViewById(R.id.QRCodeResult);
+        qrCodeImage = (ImageView) findViewById(R.id.QRCodeImage);
+        
+        // Inflating result buttons and inserting image if exists
         createResultButtons();
+        insertQrCodeImage();
+                        
+        // Getting QR code decoder and QR view manager
+        InstallableQrDecoderManager decoderManager =  InstallableQrDecoderManager.getDecoderManager(this);
+        InstallableQrCodeViewManager viewManager = InstallableQrCodeViewManager.getViewManager(this);
         
-        InstallableQrDecoderManager manager =  InstallableQrDecoderManager.getDecoderManager(this);
+        // Getting QR data from the intent
+        byte[] qrCodeData = getQrCodeData();
+        if (qrCodeData == null) {
+            resultTitle.setText(R.string.OpenQrActivity_Title_QrNoFound);
+            return;
+        } else {
+            resultTitle.setText(R.string.OpenQrActivity_Title_QrFound);
+        }
         
-        /*byte[] qrCodeData = getQrCodeData(getIntent().getData());
+        // Decoding QR code
+        QrCode qrCode = decoderManager.decodeQrCode(qrCodeData);
+        if (qrCode == null) {
+            resultSubTitle.setText(R.string.OpenQrActivity_SubTitle_NoDecoder);
+            displayRAW(qrCodeData);
+            return;
+        }
         
-        QrCode qrCode = QrCodes*/
+        // Getting the view for the QR code
+        View view = viewManager.getViewForQrCode(qrCode);
+        if (view == null) {
+            resultSubTitle.setText(R.string.OpenQrActivity_SubTitle_NoView);
+            displayRAW(qrCodeData);
+            return;
+        } else {
+            resultSubTitle.setText(viewManager.getSubTitleForQrCode(qrCode));
+            resultView.addView(view);
+        }
+    }
+    
+    private void insertQrCodeImage() {
+        Intent intent = getIntent();
+        String imagePath = intent.getStringExtra(EXTRA_IMAGE);
+        
+        if (imagePath != null) {
+            File imageFile = new File(imagePath);
+            if (imageFile.exists()) {
+                qrCodeImage.setImageURI(Uri.fromFile(imageFile));
+                return;
+            }
+        }
+        LinearLayout imageParent = (LinearLayout)(qrCodeImage.getParent());
+        imageParent.removeView(qrCodeImage);       
+    }
+    
+    private static String toHexString(byte[] bytes) {  
+        StringBuilder stringBuilder = new StringBuilder(2 * bytes.length);  
+      
+        Formatter formatter = new Formatter(stringBuilder);  
+        for (byte currByte : bytes) {  
+            formatter.format(" %02x", currByte);  
+        }  
+      
+        return stringBuilder.toString();  
+    }  
+    
+    private void displayRAW(byte[] data) {
+        LayoutInflater resultInflater = LayoutInflater.from(getBaseContext());
+        LinearLayout rawResult = (LinearLayout) resultInflater.inflate(R.layout.openqr_rawresult, null);
+        
+        String rawData = toHexString(data);
+        String rawText = new String(data);
+        
+        if (!rawText.isEmpty()) {
+            ((TextView)rawResult.findViewById(R.id.rawText)).setText(rawText);
+        }
+        
+        if (!rawData.isEmpty()) {
+            ((TextView)rawResult.findViewById(R.id.rawData)).setText(rawData);
+        }
+        
+        resultView.addView(rawResult);
+    }
+    
+    private byte[] getQrCodeData() {
+        Uri data = getIntent().getData();
+        File qrFile = new File(data.getPath());
+        
+        try {
+            return Operations.readFile(qrFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
     
     private void addButton(int id, int textResID) {

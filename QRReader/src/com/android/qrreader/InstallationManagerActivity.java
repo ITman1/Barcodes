@@ -6,8 +6,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.android.qrreader.InstallationManager.CorruptedPackage;
-import com.android.qrreader.InstallationManager.PackageInfo;
+import com.android.qrreader.installation.InstallationManager;
+import com.android.qrreader.installation.InstallationManager.CorruptedPackage;
+import com.android.qrreader.installation.InstallationManager.PackageInfo;
 
 import android.app.Activity;
 import android.content.Intent;

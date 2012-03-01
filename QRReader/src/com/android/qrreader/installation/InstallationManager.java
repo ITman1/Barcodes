@@ -1,4 +1,4 @@
-package com.android.qrreader;
+package com.android.qrreader.installation;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 
 import com.filesystem.Filename;
+import com.filesystem.Operations;
 
 import dalvik.system.DexClassLoader;
 
@@ -50,13 +51,13 @@ final public class InstallationManager {
     };
     
     public class PackageClass {
-        String packagePath;
-        String className;
+        public String packagePath;
+        public String className;
     }
     
     public class PackageInfo {
-        String name;
-        String brief;
+        public String name;
+        public String brief;
     }
     
     private static InstallationManager installationManager;
@@ -93,7 +94,7 @@ final public class InstallationManager {
         PackageClass currClass = new PackageClass();
         String tag = new String();
         
-        PackageResourceXML resourceXML = new PackageResourceXML(packageFile, CLASSES_XML);
+        PackageResourceXML resourceXML = new PackageResourceXML(context, packageFile, CLASSES_XML);
         
         if (resourceXML.open()) {
             try {
@@ -134,7 +135,7 @@ final public class InstallationManager {
         return classes;
     }
     
-    File installPackage(String packagePath) throws CorruptedPackage, IOException, FileNotFoundException {
+    public File installPackage(String packagePath) throws CorruptedPackage, IOException, FileNotFoundException {
         File packageFile = new File(packagePath);
         File installedFile = new File(installDirectory.getAbsolutePath() + File.separator + Filename.getFullFilename(packagePath));
         
@@ -144,19 +145,7 @@ final public class InstallationManager {
             throw new CorruptedPackage();
         }
         
-        FileChannel fromChannel = null;
-        FileChannel toChannel = null;
-        try {
-            fromChannel = new FileInputStream(packageFile).getChannel();
-            toChannel = new FileOutputStream(installedFile).getChannel();
-
-            long sourceSize = fromChannel.size();
-            long alreadyCopied = 0;
-            while((alreadyCopied += toChannel.transferFrom(fromChannel, 0, sourceSize - alreadyCopied)) < sourceSize);
-        } finally {
-            if(fromChannel != null) fromChannel.close();
-            if(toChannel != null) toChannel.close();
-        }
+        Operations.copyFile(packageFile, installedFile);
         
         fireInstallationCallbacks();
         return installedFile;
@@ -189,12 +178,22 @@ final public class InstallationManager {
         );
         return classLoader.loadClass(className).newInstance();
     }
+    
+    public Class<?> dexLoad(String packagePath, String className) throws ClassNotFoundException {
+        DexClassLoader classLoader = new DexClassLoader(
+            packagePath, 
+            context.getFilesDir().getAbsolutePath(),
+            null, 
+            getClass().getClassLoader()
+        );
+        return classLoader.loadClass(className);
+    }
         
     public PackageInfo getPackageInfo(File packageFile) {
         PackageInfo packageInfo = new PackageInfo();
         String tag = new String();
 
-        PackageResourceXML resourceXML = new PackageResourceXML(packageFile, PACKAGE_XML);
+        PackageResourceXML resourceXML = new PackageResourceXML(context, packageFile, PACKAGE_XML);
         
         if (resourceXML.open()) {
             try {

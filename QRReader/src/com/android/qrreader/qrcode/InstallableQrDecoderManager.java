@@ -1,12 +1,13 @@
-package com.android.qrreader;
+package com.android.qrreader.qrcode;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
 
-import com.android.qrreader.InstallationManager.InstallationCallback;
-import com.android.qrreader.InstallationManager.PackageClass;
+import com.android.qrreader.installation.InstallationManager;
+import com.android.qrreader.installation.InstallationManager.InstallationCallback;
+import com.android.qrreader.installation.InstallationManager.PackageClass;
 import com.qrcode.decoders.QrDecoder;
 import com.qrcode.QrDecoderManager;
 import com.qrcode.qrcodes.QrCode;
@@ -52,6 +53,8 @@ final public class InstallableQrDecoderManager {
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (ClassCastException e) {
                     e.printStackTrace();
                 }
             }

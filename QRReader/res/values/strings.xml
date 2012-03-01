@@ -33,4 +33,18 @@
     <string name="InstallationManagerActivity_install">Install</string>
     <string name="InstallationManagerActivity_browse">Browse</string>
     <string name="InstallationManagerActivity_pickFileTitle">Please pick your package</string>
+    
+    <string name="OpenQrActivity_Title_QrFound">QR code found</string>
+    <string name="OpenQrActivity_Title_QrNoFound">QR code not found</string>
+    <string name="OpenQrActivity_SubTitle_NoDecoder">(but proper decoder not found)</string>
+    <string name="OpenQrActivity_SubTitle_NoView">(but proper view not found)</string>
+    <string name="OpenQrActivity_RawResult_TextTitle">RAW text:</string>
+    <string name="OpenQrActivity_RawResult_DataTitle">RAW data:</string>
+    <string name="OpenQrActivity_RawResult_TextNone">(none)</string>
+    <string name="OpenQrActivity_RawResult_DataNone">(none)</string>
+    
+    <string name="QrCode_Title_Url">(URL link)</string>
+    <string name="QrCode_Title_Mail">(mail)</string>
+    <string name="QrCode_Title_Telephone">(telephone)</string>
+    <string name="QrCode_Title_Contact">(contact)</string>
 </resources>

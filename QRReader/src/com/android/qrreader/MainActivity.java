@@ -60,6 +60,7 @@ public class MainActivity extends Activity {
     private static final String FPS_STR                     = "FPS: ";
     private static final int DEFAULT_JPEG_QUALITY           = 90;
     private static String TMP_QR_FILENAME                   = ".tmp_qr_code.qr";
+    private static String TMP_QR_IMAGE_FILENAME             = ".tmp_qr_code.jpg";
 
     private RelativeLayout     cameraPreviewLayout;
 	private CameraPreview      cameraPreview;
@@ -142,7 +143,7 @@ public class MainActivity extends Activity {
                 statusText_TextView.setText(R.string.QRReaderActivity_StatusText_Processing);
                 
                 //byte[] QRCodeData = readQRCode(data, FORMAT_JPEG);
-                QRCodeData = new String("MEBKM:URL:google.com;TITLE:Google;;").getBytes();
+                QRCodeData = new String("http://www.google.com").getBytes();
                 
                 snapshotData = data;
                 startOpenQrIntent(QRCodeData);
@@ -196,6 +197,10 @@ public class MainActivity extends Activity {
             fos.write(decoded_qr);
             fos.close();
             
+            fos = openFileOutput(TMP_QR_IMAGE_FILENAME, Context.MODE_PRIVATE);
+            fos.write(snapshotData);
+            fos.close();
+            
             Intent qrIntent = new Intent(getBaseContext(), OpenQrActivity.class);
             File qr_file = getFileStreamPath(TMP_QR_FILENAME);
             
@@ -208,6 +213,8 @@ public class MainActivity extends Activity {
                 qrIntent.putExtra(OpenQrActivity.EXTRA_ADD_SAVE_QRCODE_BUTTON, new String());
             if (imagePromptToSave && qrcodePromptToSave) 
                 qrIntent.putExtra(OpenQrActivity.EXTRA_ADD_SAVE_BOTH_BUTTON, new String());
+            
+            qrIntent.putExtra(OpenQrActivity.EXTRA_IMAGE, getFileStreamPath(TMP_QR_IMAGE_FILENAME).getAbsolutePath());
             
             startActivityForResult(qrIntent, 0);
         } catch (FileNotFoundException e) {

@@ -33,4 +33,18 @@
     <string name="InstallationManagerActivity_install">Instalovat</string>
     <string name="InstallationManagerActivity_browse">Procházet</string>
     <string name="InstallationManagerActivity_pickFileTitle">Prosím vyberte balíček</string>
+    
+    <string name="OpenQrActivity_Title_QrFound">QR kód nalezen</string>
+    <string name="OpenQrActivity_Title_QrNoFound">QR kód nenalezen</string>
+    <string name="OpenQrActivity_SubTitle_NoDecoder">(odpovídající dekodér nenalezen)</string>
+    <string name="OpenQrActivity_SubTitle_NoView">(odpovídající pohled nenalezen)</string>
+    <string name="OpenQrActivity_RawResult_TextTitle">RAW text:</string>
+    <string name="OpenQrActivity_RawResult_DataTitle">RAW data:</string>
+    <string name="OpenQrActivity_RawResult_TextNone">(žádný)</string>
+    <string name="OpenQrActivity_RawResult_DataNone">(žádná)</string>
+    
+    <string name="QrCode_Title_Url">(URL odkaz)</string>
+    <string name="QrCode_Title_Mail">(mail)</string>
+    <string name="QrCode_Title_Telephone">(telefon)</string>
+    <string name="QrCode_Title_Contact">(kontakt)</string>
 </resources>

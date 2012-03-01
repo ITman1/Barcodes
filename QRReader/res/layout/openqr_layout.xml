@@ -12,13 +12,20 @@
         android:text="Open Result Title"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <TextView
+        android:id="@+id/QRCodeResultSubTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/OpenQrActivity_SubTitle_NoDecoder"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
     <ImageView
         android:id="@+id/QRCodeImage"
         android:layout_width="wrap_content"
         android:layout_height="100dp"
         android:layout_gravity="center_horizontal"
         android:padding="10dp" />
-
+    
     <LinearLayout
         android:id="@+id/QRCodeResult"
         android:layout_width="match_parent"
