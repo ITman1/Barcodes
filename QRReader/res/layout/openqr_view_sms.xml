@@ -18,7 +18,7 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_alignTop="@+id/linearLayout1"
-	        android:text="@string/QrCode_Title_Mail_Receiver"
+	        android:text="@string/QrCode_Title_Sms_Receiver"
 	        android:textAppearance="?android:attr/textAppearanceMedium" />
 	
 	    <EditText
@@ -26,28 +26,15 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:focusableInTouchMode="true"
-	        android:inputType="textEmailAddress" >
+	        android:inputType="phone" >
 
     	</EditText>
-
-	    <TextView
-	        android:id="@+id/textView2"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="@string/QrCode_Title_Mail_Subject"
-	        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-	    <EditText
-	        android:id="@+id/subjectEdit"
-	        android:layout_width="match_parent"
-	        android:focusableInTouchMode="true"
-	        android:layout_height="wrap_content" />
 
 	    <TextView
 	        android:id="@+id/textView3"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:text="@string/QrCode_Title_Mail_Body"
+	        android:text="@string/QrCode_Title_Sms_Body"
 	        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 	    <EditText
@@ -59,11 +46,11 @@
 	        android:inputType="textMultiLine" />
 	    
 	    <Button
-	        android:id="@+id/sendMail"
+	        android:id="@+id/sendSms"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="center_horizontal"
-	        android:text="@string/QrCode_Title_Mail_Send" />
+	        android:text="@string/QrCode_Title_Sms_Send" />
 
     </LinearLayout>
 

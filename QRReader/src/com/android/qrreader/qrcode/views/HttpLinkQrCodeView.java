@@ -4,26 +4,24 @@ import java.util.regex.Pattern;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.text.SpannableString;
-import android.text.style.UnderlineSpan;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.adapter.Adapter;
 import com.android.qrreader.R;
-import com.qrcode.qrcodes.UrlQrCode;
+import com.qrcode.qrcodes.HttpLinkQrCode;
 
-public class UrlQrCodeView implements Adapter {
-    public class UrlQrCodeViewProvider implements QrCodeViewProvider {
-        private UrlQrCode qrCode;
+public class HttpLinkQrCodeView implements Adapter {
+    public class HttpLinkQrCodeViewProvider implements QrCodeViewProvider {
+        final private static String HTTP_SCHEME = "http";
+        private HttpLinkQrCode qrCode;
         
         private RelativeLayout resultView;
         
-        private UrlQrCodeViewProvider(UrlQrCode qrCode) {
+        private HttpLinkQrCodeViewProvider(HttpLinkQrCode qrCode) {
             this.qrCode = qrCode;
         }
         
@@ -33,9 +31,9 @@ public class UrlQrCodeView implements Adapter {
                 resultView = (RelativeLayout) resultInflater.inflate(R.layout.openqr_view_url, null);
                 
                 TextView urlLink = (TextView)resultView.findViewById(R.id.linkURL);
-                urlLink.setText(qrCode.getUri());
+                urlLink.setText(qrCode.getLink().toExternalForm());
                 Pattern pattern = Pattern.compile("^.*$");
-                Linkify.addLinks(urlLink, pattern, UrlQrCode.HTTP_SCHEME);
+                Linkify.addLinks(urlLink, pattern, HTTP_SCHEME);
             }
 
             return resultView;
@@ -49,12 +47,12 @@ public class UrlQrCodeView implements Adapter {
     
     @Override
     public Object getProvider(Object o) {
-        return new UrlQrCodeViewProvider((UrlQrCode) o);
+        return new HttpLinkQrCodeViewProvider((HttpLinkQrCode) o);
     }
     
     @Override
     public Class<?> getAdapteeClass() {
-        return UrlQrCode.class;
+        return HttpLinkQrCode.class;
     }
     
     @Override

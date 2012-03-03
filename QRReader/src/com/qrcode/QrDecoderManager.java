@@ -1,5 +1,7 @@
 package com.qrcode;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,8 +11,7 @@ import com.qrcode.qrcodes.QrCode;
 
 final public class QrDecoderManager {
     final private static List<String> DECODER_CLASSES = Arrays.asList(
-            "com.qrcode.decoders.ComodoQrDecoder",
-            "com.qrcode.decoders.ZxingQrDecoder"
+            "com.qrcode.decoders.BaseQrDecoder"
     );
     final public static char URI_SCHEME_DELIMITER = ':';
     final public static char FIRST_PRINTABLE_CHAR = ' ';
@@ -58,6 +59,16 @@ final public class QrDecoderManager {
         }
         return null;
     }
+    
+    public static String decodeUri(String encodedUri) {
+        if (encodedUri != null) {
+            try {
+                return URLDecoder.decode(encodedUri.replace("+", "%2B"), "UTF-8").replace("%2B", "+");
+            } catch (UnsupportedEncodingException e) {}
+        }
+        return null;
+    }
+
     
     public static QrCode decodeQrCode(ArrayList<QrDecoder> decoders, byte[] data) {
         ArrayList<QrDecoder> passedDecoders = new ArrayList<QrDecoder>();

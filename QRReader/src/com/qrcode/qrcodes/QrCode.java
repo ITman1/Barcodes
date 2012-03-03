@@ -1,7 +1,9 @@
 package com.qrcode.qrcodes;
 
+import com.qrcode.QrCodes;
+
 public abstract class QrCode {
-    public abstract String getType();
-    public abstract byte[] encode();
-    
+    public byte[] encode(Class<?> encoder) {
+        return QrCodes.encodeQrCode(this, encoder);
+    }
 }

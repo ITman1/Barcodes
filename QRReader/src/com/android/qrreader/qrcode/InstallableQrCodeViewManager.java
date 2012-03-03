@@ -13,8 +13,9 @@ import com.android.qrreader.installation.InstallationManager.PackageClass;
 import com.android.qrreader.qrcode.views.ContactQrCodeView;
 import com.android.qrreader.qrcode.views.MailQrCodeView;
 import com.android.qrreader.qrcode.views.QrCodeViewProvider;
+import com.android.qrreader.qrcode.views.SmsQrCodeView;
 import com.android.qrreader.qrcode.views.TelephoneQrCodeView;
-import com.android.qrreader.qrcode.views.UrlQrCodeView;
+import com.android.qrreader.qrcode.views.HttpLinkQrCodeView;
 import com.qrcode.qrcodes.QrCode;
 
 public class InstallableQrCodeViewManager {
@@ -41,10 +42,11 @@ public class InstallableQrCodeViewManager {
     
     private void loadInternalAdapters() {
         AdapterFactory adapterFactory = AdapterFactory.getFactory();
-        adapterFactory.registerAdapter(UrlQrCodeView.class);
+        adapterFactory.registerAdapter(HttpLinkQrCodeView.class);
         adapterFactory.registerAdapter(MailQrCodeView.class);
         adapterFactory.registerAdapter(ContactQrCodeView.class);
         adapterFactory.registerAdapter(TelephoneQrCodeView.class);
+        adapterFactory.registerAdapter(SmsQrCodeView.class);
     }
     
     private void loadInstalledAdapters() {

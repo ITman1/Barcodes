@@ -1,24 +1,18 @@
 package com.android.qrreader.qrcode.views;
 
-import java.util.regex.Pattern;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.provider.ContactsContract.CommonDataKinds.Email;
-import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.adapter.Adapter;
 import com.android.qrreader.R;
 import com.qrcode.qrcodes.MailQrCode;
-import com.qrcode.qrcodes.UrlQrCode;
 
 public class MailQrCodeView  implements Adapter {
     public class MailQrCodeViewProvider implements QrCodeViewProvider {

@@ -1,29 +1,36 @@
 package com.qrcode.qrcodes;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-public class MailQrCode extends QrCode {
-    final private static String MAILTO_SCHEMA = "mailto";
-    final private static String MAILTO_RECEIVER_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z][A-Za-z]+$";
-    
+public class SmsQrCode extends QrCode {
     private String receiver;
-    private String subject;
     private String body;
+    private String subject;
 
     public boolean setReceiver(String receiver) {
-        if (receiver.matches(MAILTO_RECEIVER_REGEX)) {
+        try {
+            char leadingChar = receiver.charAt(0);
+            
+            if (leadingChar == '+') {
+                Integer.parseInt(receiver.substring(1));
+            } else {
+                Integer.parseInt(receiver);
+            }
+            
             this.receiver = receiver;
             return true;
-        }
+        } catch (IndexOutOfBoundsException e) {} 
+          catch (NumberFormatException e) {}
         return false;
     }
     
     public String getReceiver() {
         return receiver;
     }
-    
+        
+    @Override
+    public String toString() {
+        return receiver;
+    }
+
     public void setSubject(String subject) {
         this.subject = subject;
     }

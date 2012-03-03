@@ -1,5 +1,5 @@
 package com.qrcode.qrcodes;
 
-public class ContactQrCode {
+public class ContactQrCode extends QrCode {
 
 }

@@ -52,6 +52,14 @@
     <string name="QrCode_Title_Mail_Body">Tělo</string>
     <string name="QrCode_Title_Mail_Send">Odeslat mail</string>
     
+    <string name="QrCode_Title_Sms">(SMS)</string>
+    <string name="QrCode_Title_Sms_Receiver">Číslo příjemce</string>
+    <string name="QrCode_Title_Sms_Body">Text zprávy</string>
+    <string name="QrCode_Title_Sms_Send">Odeslat SMS</string>
+    <string name="QrCode_Title_Sms_Sending">Odesílám SMS...</string>
+    <string name="QrCode_Title_Sms_Sending_Error">Nezdařilo se odeslat SMS, zkuste to později!</string>
+    <string name="QrCode_Title_Sms_Sending_Success">SMS byla úspěšně odeslána.</string>
+    
     <string name="QrCode_Title_Telephone">(telefon)</string>
     <string name="QrCode_Title_Telephone_Number">Telefonní číslo</string>
     <string name="QrCode_Title_Telephone_Call">VOLAT</string>

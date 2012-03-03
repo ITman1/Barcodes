@@ -52,6 +52,14 @@
     <string name="QrCode_Title_Mail_Body">Body</string>
     <string name="QrCode_Title_Mail_Send">Send mail</string>
     
+    <string name="QrCode_Title_Sms">(SMS)</string>
+    <string name="QrCode_Title_Sms_Receiver">Receiver number</string>
+    <string name="QrCode_Title_Sms_Body">Content</string>
+    <string name="QrCode_Title_Sms_Send">Send SMS</string>
+    <string name="QrCode_Title_Sms_Sending">Sending SMS...</string>
+    <string name="QrCode_Title_Sms_Sending_Error">Unable to send SMS, try it later!</string>
+    <string name="QrCode_Title_Sms_Sending_Success">SMS has been successfully sent.</string>
+    
     <string name="QrCode_Title_Telephone">(telephone)</string>
     <string name="QrCode_Title_Telephone_Number">Telephone number</string>
     <string name="QrCode_Title_Telephone_Call">CALL</string>

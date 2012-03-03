@@ -2,7 +2,6 @@ package com.android.qrreader.qrcode.views;
 
 import com.adapter.Adapter;
 import com.android.qrreader.R;
-import com.qrcode.qrcodes.MailQrCode;
 import com.qrcode.qrcodes.TelephoneQrCode;
 
 import android.content.Context;
@@ -13,13 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class TelephoneQrCodeView implements Adapter {
     
     public class TelephoneQrCodeViewProvider implements QrCodeViewProvider {
+        final private static String TEL_SCHEMA = "tel"; 
         private TelephoneQrCode qrCode;
         
         private Context context;
@@ -29,7 +28,7 @@ public class TelephoneQrCodeView implements Adapter {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_CALL);
-                intent.setData(Uri.parse(qrCode.getUri()));
+                intent.setData(Uri.parse(TEL_SCHEMA + ":" + qrCode.getTelephone()));
                 Resources res = context.getResources();
                 context.startActivity(Intent.createChooser(intent,  res.getString(R.string.QrCode_Title_Telephone_Call)));    
             }

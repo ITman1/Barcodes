@@ -139,14 +139,17 @@ public class MainActivity extends Activity {
 
 
             if (data != null) {
-                cameraPreviewLayout.setVisibility(CameraPreview.VISIBLE);
                 statusText_TextView.setText(R.string.QRReaderActivity_StatusText_Processing);
                 
                 //byte[] QRCodeData = readQRCode(data, FORMAT_JPEG);
-                QRCodeData = new String("tel:+12125551212").getBytes();
+                QRCodeData = new String("sms:154?body=fdgdfhgfklj").getBytes();
                 
                 snapshotData = data;
                 startOpenQrIntent(QRCodeData);
+            } else {
+                status_LinearLayout.setVisibility(LinearLayout.INVISIBLE);
+                statusText_TextView.setText("");
+                cameraPreviewLayout.setVisibility(CameraPreview.VISIBLE);
             }
             
         }
@@ -182,6 +185,7 @@ public class MainActivity extends Activity {
         }
 
         takingPicture = false;
+        cameraPreviewLayout.setVisibility(CameraPreview.VISIBLE);
     }
     
     private void startOpenQrIntent(byte[] decoded_qr) {
@@ -195,13 +199,13 @@ public class MainActivity extends Activity {
         
         try {
             if (showImage) {
-                fos = openFileOutput(TMP_QR_FILENAME, Context.MODE_PRIVATE);
-                fos.write(decoded_qr);
+                fos = openFileOutput(TMP_QR_IMAGE_FILENAME, Context.MODE_PRIVATE);
+                fos.write(snapshotData);
                 fos.close();
             }
             
-            fos = openFileOutput(TMP_QR_IMAGE_FILENAME, Context.MODE_PRIVATE);
-            fos.write(snapshotData);
+            fos = openFileOutput(TMP_QR_FILENAME, Context.MODE_PRIVATE);
+            fos.write(decoded_qr);
             fos.close();
             
             Intent qrIntent = new Intent(getBaseContext(), OpenQrActivity.class);
@@ -218,6 +222,8 @@ public class MainActivity extends Activity {
                 qrIntent.putExtra(OpenQrActivity.EXTRA_ADD_SAVE_BOTH_BUTTON, new String());
             if (showImage)
                 qrIntent.putExtra(OpenQrActivity.EXTRA_IMAGE, getFileStreamPath(TMP_QR_IMAGE_FILENAME).getAbsolutePath());
+            
+            qrIntent.putExtra(OpenQrActivity.EXTRA_INTERNAL_INTENT, OpenQrActivity.EXTRA_INTERNAL_INTENT);
             
             startActivityForResult(qrIntent, 0);
         } catch (FileNotFoundException e) {
@@ -293,7 +299,6 @@ public class MainActivity extends Activity {
         
         // Setting window features and flags for the making available the whole display
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         

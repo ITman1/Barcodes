@@ -41,7 +41,7 @@ final public class AdapterFactory {
     public Adapter getAdapter(Class<?> adapteeClass, Class<?> resultClass) {
         try {
             Class<?> adapterClass = adapterMap.get(new Pair<Class<?>, Class<?> >(adapteeClass, resultClass));
-            return (Adapter)adapterClass.newInstance();
+            return (adapterClass != null)? (Adapter)adapterClass.newInstance() : null;
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {

@@ -2,12 +2,16 @@ package com.android.qrreader;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Formatter;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -25,7 +29,13 @@ import com.filesystem.Operations;
 import com.qrcode.qrcodes.QrCode;
 
 public class OpenQrActivity extends Activity {
+    
+    public interface OnPauseCallback {
+        void onPause();
+    }
+    
     public static final String EXTRA_IMAGE                   = "EXTRA_IMAGE";
+    public static final String EXTRA_INTERNAL_INTENT         = "EXTRA_INTERNAL_INTENT";
     
     public static final String EXTRA_ADD_SAVE_IMAGE_BUTTON   = "EXTRA_ADD_SAVE_IMAGE_BUTTON";
     public static final String EXTRA_ADD_SAVE_QRCODE_BUTTON  = "EXTRA_ADD_SAVE_QRCODE_BUTTON";
@@ -46,6 +56,8 @@ public class OpenQrActivity extends Activity {
     private LinearLayout resultView;
     private ImageView qrCodeImage;
     
+    private List<OnPauseCallback> OnPauseCallbacks = new ArrayList<OnPauseCallback>();
+    
     private OnClickListener resultButtonOnClick = new OnClickListener() {
         public void onClick(View v) {
             setResult(v.getId(), null);
@@ -55,8 +67,11 @@ public class OpenQrActivity extends Activity {
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
+        
+        if (getIntent().getStringExtra(EXTRA_INTERNAL_INTENT) != null) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
         
         // Inflating layout
         setContentView(R.layout.openqr_layout);  
@@ -104,6 +119,22 @@ public class OpenQrActivity extends Activity {
             resultView.addView(view);
             ((ScrollView)findViewById(R.id.scrollView)).fullScroll(ScrollView.FOCUS_UP);
         }
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        for (OnPauseCallback callback : OnPauseCallbacks) {
+            callback.onPause();
+        }
+    }
+    
+    public void registerOnPauseCallback(OnPauseCallback callback) {
+        OnPauseCallbacks.add(callback);
+    }
+    
+    public void releaseOnPauseCallback(OnPauseCallback callback) {
+        OnPauseCallbacks.remove(callback);
     }
     
     private void insertQrCodeImage() {
