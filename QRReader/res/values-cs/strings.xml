@@ -42,6 +42,9 @@
     <string name="OpenQrActivity_RawResult_DataTitle">RAW data:</string>
     <string name="OpenQrActivity_RawResult_TextNone">(žádný)</string>
     <string name="OpenQrActivity_RawResult_DataNone">(žádná)</string>
+    <string name="OpenQrActivity_RawResult_TryLuck">Zkusit štěstí!</string>
+    <string name="OpenQrActivity_RawResult_TryLuckBrief">Pokusí se odeslat dekódovaný text jako akci. Tato akce může, ale nemusí, být zachycena jinou aplikací, která může být zchopna zpracovat dekódovaný QR kód!</string>
+    <string name="OpenQrActivity_RawResult_TryLuckWith">Zkusit štěstí s?</string>
     
     <string name="QrCode_Title_Url">(URL odkaz)</string>
     <string name="QrCode_Title_Url_GoTo">Přejít na</string>
@@ -59,6 +62,8 @@
     <string name="QrCode_Title_Sms_Sending">Odesílám SMS...</string>
     <string name="QrCode_Title_Sms_Sending_Error">Nezdařilo se odeslat SMS, zkuste to později!</string>
     <string name="QrCode_Title_Sms_Sending_Success">SMS byla úspěšně odeslána.</string>
+    <string name="QrCode_Title_Sms_Sending_NoReciever">Chybí číslo příjemce!</string>
+    <string name="QrCode_Title_Sms_Sending_NoBody">Chybí tělo zprávy!</string>
     
     <string name="QrCode_Title_Telephone">(telefon)</string>
     <string name="QrCode_Title_Telephone_Number">Telefonní číslo</string>

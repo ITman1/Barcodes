@@ -1,3 +1,14 @@
+///////////////////////////////////////////////////////////////////////////////
+// Project:    QR Reader for Android
+// Package:    com.qrcode.decoders
+// File:       BaseQrDecoder.java
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Contains the QR code decoder with the most common URI schemas.
+///////////////////////////////////////////////////////////////////////////////
+
 package com.qrcode.decoders;
 
 import java.net.MalformedURLException;
@@ -17,15 +28,34 @@ import com.qrcode.qrcodes.SmsQrCode;
 import com.qrcode.qrcodes.TelephoneQrCode;
 import com.qrcode.qrcodes.HttpLinkQrCode;;
 
-//http://code.google.com/p/zxing/wiki/BarcodeContents
-public class BaseQrDecoder extends QrDecoder {
+/**
+ * The Class BaseQrDecoder implements the QR code decoder which decodes the
+ * most common QR codes stored in the URI format.
+ */
+// http://code.google.com/p/zxing/wiki/BarcodeContents
+// http://en.wikipedia.org/wiki/URI_scheme
+// http://sixrevisions.com/web-development/qr-codes-uri-schemes/
+final public class BaseQrDecoder extends QrDecoder {
+    
+    /** The HTTP: schema for the {@link com.qrcode.qrcodes.HttpLinkQrCode HttpLinkQrCode}. */
     final private static String HTTP_SCHEMA         = "http";
+    
+    /** The MAILTO: schema for the {@link com.qrcode.qrcodes.MailQrCode MailQrCode}. */
     final private static String MAILTO_SCHEMA       = "mailto";
+    
+    /** The TEL: schema for the {@link com.qrcode.qrcodes.TelephoneQrCode TelephoneQrCode}. */
     final private static String TELEPHONE_SCHEMA    = "tel";
+    
+    /** The URLTO: schema for the {@link com.qrcode.qrcodes.HttpLinkQrCode HttpLinkQrCode}. */
     final private static String URLTO_SCHEMA        = "URLTO";
+    
+    /** The SMS: schema for the {@link com.qrcode.qrcodes.SmsQrCode SmsQrCode}. */
     final private static String SMS_SCHEMA          = "sms";
+    
+    /** The SMSTO: schema for the {@link com.qrcode.qrcodes.SmsQrCode SmsQrCode}. */
     final private static String SMSTO_SCHEMA        = "SMSTO";
     
+    /** The list contains all supported schemas. */
     final private static List<String> SUPPORTED_SCHEMAS = Arrays.asList(
             HTTP_SCHEMA,
             MAILTO_SCHEMA,
@@ -34,35 +64,63 @@ public class BaseQrDecoder extends QrDecoder {
             SMS_SCHEMA,
             SMSTO_SCHEMA
     );
+    
+    /** The name of this decoder. */
     final private static String DECODER_NAME = "Base decoder";
     
+    /** The regular expression which matches the SUBJECT query. */
     final private static String MAILTO_QUERY_SUBJECT_REGEX = "[&?]Subject=(([^&]*))";
+    
+    /** The regular expression which matches the BODY query. */
     final private static String MAILTO_QUERY_BODY_REGEX = "[&?]Body=(([^&]*))";
+    
+    /** The regular expression which matches the whole SMS/SMSTO encoded QR code. */
     final private static String SMS_URI_NUMBERS_REXEG = "^(([+]?[0-9]+),)*([+]?[0-9]+)([?]Body=(.*))?$";
+    
+    /** The regular expression which matches the whole SMS encoded QR code in the format "sms:number:text". */
     final private static String SMS_URI_BROKEN_REGEX = "^([+]?[0-9]+):(.*)$";;
     
+    /**
+     * Instantiates this decoder.
+     */
     public BaseQrDecoder() {
         super(SUPPORTED_SCHEMAS, DECODER_NAME);
     }
 
+    /**
+     * Decodes the data to the one of these specific QR codes:
+     * {@link com.qrcode.qrcodes.HttpLinkQrCode HttpLinkQrCode},
+     * {@link com.qrcode.qrcodes.MailQrCode MailQrCode},
+     * {@link com.qrcode.qrcodes.TelephoneQrCode TelephoneQrCode},
+     * {@link com.qrcode.qrcodes.SmsQrCode SmsQrCode}.
+     * 
+     * @see com.qrcode.decoders.QrDecoder#decode(byte[]) decode(byte[])
+     */
+    @Override
     public QrCode decode(byte[] data) {
         String schema = QrDecoderManager.getUriScheme(data);
-        if (schema.equalsIgnoreCase(HTTP_SCHEMA)) {
+        if (schema.equalsIgnoreCase(HTTP_SCHEMA)) {             // HTTP:
             return urlQrCode(data);  
-        } else if (schema.equalsIgnoreCase(URLTO_SCHEMA)) {
+        } else if (schema.equalsIgnoreCase(URLTO_SCHEMA)) {     // URLTO:
             return urltoQrCode(data);
-        } else if (schema.equalsIgnoreCase(MAILTO_SCHEMA)) {
+        } else if (schema.equalsIgnoreCase(MAILTO_SCHEMA)) {    // MAILTO:
             return mailQrCode(data);
-        } else if (schema.equalsIgnoreCase(TELEPHONE_SCHEMA)) {
+        } else if (schema.equalsIgnoreCase(TELEPHONE_SCHEMA)) { // TEL:
             return telephoneQrCode(data);
-        } else if (schema.equalsIgnoreCase(SMS_SCHEMA)) {
+        } else if (schema.equalsIgnoreCase(SMS_SCHEMA)) {       // SMS:
             return smsQrCode(data);
-        } else if (schema.equalsIgnoreCase(SMSTO_SCHEMA)) {
+        } else if (schema.equalsIgnoreCase(SMSTO_SCHEMA)) {     // SMSTO:
             return smstoQrCode(data);
         }
         return null;
     }
     
+    /**
+     * Decodes the HTTP link QR code. (HTTP: schema)
+     *
+     * @param data The serialized QR code.
+     * @return The HTTP link QR code.
+     */
     private HttpLinkQrCode urlQrCode(byte[] data) {
         HttpLinkQrCode urlQrCode = new HttpLinkQrCode();
         String urlString = new String(data);
@@ -74,6 +132,12 @@ public class BaseQrDecoder extends QrDecoder {
         }
     }
     
+    /**
+     * Decodes the HTTP link QR code. (URLTO: schema)
+     *
+     * @param data The serialized QR code.
+     * @return The HTTP link QR code.
+     */
     private HttpLinkQrCode urltoQrCode(byte[] data) {
         HttpLinkQrCode urlQrCode = new HttpLinkQrCode();
         String urlString = new String(data).substring(URLTO_SCHEMA.length() + 1);
@@ -85,6 +149,12 @@ public class BaseQrDecoder extends QrDecoder {
         }
     }
     
+    /**
+     * Decodes the SMS link QR code. (SMS: schema)
+     *
+     * @param data The serialized QR code.
+     * @return The SMS link QR code.
+     */
     private SmsQrCode smsQrCode(byte[] data) {
         SmsQrCode smsQrCode = new SmsQrCode();
         String strData = new String(data).substring(SMS_SCHEMA.length() + 1);
@@ -100,33 +170,23 @@ public class BaseQrDecoder extends QrDecoder {
         return null;
     }
     
+    /**
+     * Decodes the SMS link QR code. (SMSTO: schema)
+     *
+     * @param data The serialized QR code.
+     * @return The SMS link QR code.
+     */
     private SmsQrCode smstoQrCode(byte[] data) {
         SmsQrCode urlQrCode = new SmsQrCode();
         return (urlQrCode.setReceiver(new String(data).substring(SMSTO_SCHEMA.length() + 1)))? urlQrCode : null;
     }
-    
-    private String regexMatch(String pattern, String against, int group) {
-        if (pattern != null && against != null) {
-            Pattern bodyPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-            Matcher matcher = bodyPattern.matcher(against);
-            if (group < matcher.groupCount() + 1 && matcher.find()) {
-                return matcher.group(group);
-            }
-        }
-            
-        return null;
-    }
-    
-    private boolean regexMatches(String pattern, String against) {
-        if (pattern != null && against != null) {
-            Pattern bodyPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-            Matcher matcher = bodyPattern.matcher(against);
-            return matcher.matches();
-        }
-            
-        return false;
-    }
-    
+        
+    /**
+     * Decodes the Mail link QR code. (MAILTO: schema)
+     *
+     * @param data The serialized QR code.
+     * @return The Mail link QR code.
+     */
     private MailQrCode mailQrCode(byte[] data) {
         String mailtoStr = new String(data);
 
@@ -153,10 +213,55 @@ public class BaseQrDecoder extends QrDecoder {
         return (mailQrCode.setReceiver(receiver))? mailQrCode : null;
     }
     
+    /**
+     * Decodes the Telephone link QR code. (TEL: schema)
+     *
+     * @param data The serialized QR code.
+     * @return The Telephone link QR code.
+     */
     private TelephoneQrCode telephoneQrCode(byte[] data) {
         TelephoneQrCode telephoneQrCode = new TelephoneQrCode();
         String telephone = new String(data).substring(TELEPHONE_SCHEMA.length() + 1);
         return (telephoneQrCode.setTelephone(telephone))? telephoneQrCode : null;
     }
     
+    /**
+     * Returns the match group on the passed string.
+     *
+     * @param pattern The pattern by which to match.
+     * @param against The string on which to match.
+     * @param group The position of the requested match group.
+     * @return The match group on success or null on fail.
+     */
+    private String regexMatch(String pattern, String against, int group) {
+        if (pattern != null && against != null) {
+            Pattern bodyPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = bodyPattern.matcher(against);
+            if (group < matcher.groupCount() + 1 && matcher.find()) {
+                return matcher.group(group);
+            }
+        }
+            
+        return null;
+    }
+    
+    /**
+     * Tests whether the whole string matches the pattern (case insensitive).
+     *
+     * @param pattern The pattern by which to match.
+     * @param against The string on which to match.
+     * @return True, if the whole string matches the pattern, otherwise false.
+     */
+    private boolean regexMatches(String pattern, String against) {
+        if (pattern != null && against != null) {
+            Pattern bodyPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = bodyPattern.matcher(against);
+            return matcher.matches();
+        }
+            
+        return false;
+    }
+    
 }
+
+//End of the file

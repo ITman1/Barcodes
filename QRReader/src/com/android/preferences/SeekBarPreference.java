@@ -24,6 +24,10 @@ import com.android.qrreader.R;
 
 /**
  * The Class SeekBarPreference implements the dialog preference with the seek bar.
+ * 
+ * @see android.content.DialogInterface DialogPreference
+ * 
+ * @version 1.0
  */
 public class SeekBarPreference extends DialogPreference {
     

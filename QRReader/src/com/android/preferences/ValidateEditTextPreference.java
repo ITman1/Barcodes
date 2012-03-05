@@ -27,6 +27,8 @@ import android.util.Log;
  * EditTextPreference EditTextPreference} about validating the input text in real time.
  * 
  * @see android.preference.EditTextPreference EditTextPreference
+ * 
+ * @version 1.0
  */
 public class ValidateEditTextPreference extends EditTextPreference {
     

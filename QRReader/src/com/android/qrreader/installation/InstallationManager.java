@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Project:    QR Reader for Android
-// Package:    com.android.installation
+// Package:    com.android.qrreader.installation
 // File:       InstallationManager.java
 // Date:       March 2012
 // Author:     Radim Loskot
@@ -30,10 +30,47 @@ import dalvik.system.DexClassLoader;
 
 /**
  * The Class InstallationManager handles the loading of external packages from the 
- * application internal directory where can be stored .jar packages (plug-ins) 
+ * application internal directory where can be stored as .jar packages (plug-ins) 
  * that can contain installable classes. This class also provides the 
  * installing/uninstalling methods for plug-in management and interface for retrieving 
- * installed classes on demand to other specific installable managers.
+ * installed classes on demand to other specific installable managers. 
+ * <p>
+ * The all necessary classes for loading the installable classes(including) should be compiled
+ * inside classes.dex file in the root of the package. For letting know this manager that
+ * some installable classes exist it should be provided the description XML resource
+ * inside the package {@value #CLASSES_XML}. This XML describes the name of the main 
+ * installable classes and destination names which serve as the identifier for
+ * specific managers that handle loading and constructing the objects only from
+ * specific destinations.
+ * <p>
+ * He is example of the {@value #CLASSES_XML}. In this example is class with
+ * destination "QrDecoder" that ensures that only manager that manages the
+ * loading of QR decoders will notice it. The class tag tells only the name of
+ * class with the namespace in which is stored inside classes.dex file.
+ * <code><pre>
+ * &lt;?xml version="1.0" encoding="utf-8"?&gt;
+ * &lt;classes&gt;
+ *     &lt;destination-class&gt;
+ *         &lt;destination&gt;QrDecoder&lt;/destination&gt;
+ *         &lt;class&gt;com.sample.decoders.ComodoQrDecoder&lt;/class&gt;
+ *     &lt;/destination-class&gt;
+ *     ... other installable classes
+ * &lt;/classes&gt;
+ * </pre></code>
+ * <p>
+ * It is recommended also include the package description XML inside the package.
+ * This XML {@value #PACKAGE_XML} describes the name of the package and short brief. 
+ * <code><pre>
+ * &lt;?xml version="1.0" encoding="utf-8"?&gt;
+ * &lt;package&gt;
+ *     &lt;name&gt;Comodo NTT Decoders&lt;/name&gt;
+ *     &lt;brief&gt;Contains QR decoders for the Comodo format&lt;/brief&gt;
+ * &lt;/package&gt;
+ * </pre></code>
+ * 
+ * @see dalvik.system.DexClassLoader
+ * 
+ * @version 1.0
  */
 final public class InstallationManager {
     
@@ -51,7 +88,7 @@ final public class InstallationManager {
     /** The default directory for plug-ins in the internal storage. */
     final private static String INSTALL_DIRECTORY       = "packages";
     
-    /** The name of the XMl which contains packaged classes inside plug-in. */
+    /** The name of the XMl which contains packaged installable classes inside plug-in. */
     final private static String CLASSES_XML             = "res/classes.xml";
     
     /** The name of the XML which describes the plug-in (eg. name or brief). */

@@ -7,7 +7,7 @@
     <string name="str_qrcode">QR code</string>
     <string name="dir_images">Images</string>
     <string name="dir_qrcodes">QR Codes</string>
-       
+    
     <string name="QRReaderActivity_StatusText_Capturing">(capturing image)</string>
     <string name="QRReaderActivity_StatusText_Saving">(saving image)</string>
     <string name="QRReaderActivity_StatusText_Processing">(processing image)</string>
@@ -42,6 +42,9 @@
     <string name="OpenQrActivity_RawResult_DataTitle">RAW data:</string>
     <string name="OpenQrActivity_RawResult_TextNone">(none)</string>
     <string name="OpenQrActivity_RawResult_DataNone">(none)</string>
+    <string name="OpenQrActivity_RawResult_TryLuck">Try luck!</string>
+    <string name="OpenQrActivity_RawResult_TryLuckBrief">Tries to send the decoded text as an action. This action might be captured by an 3rd party application which can handle this decoded QR code!</string>
+    <string name="OpenQrActivity_RawResult_TryLuckWith">Try luck with?</string>
     
     <string name="QrCode_Title_Url">(URL link)</string>
     <string name="QrCode_Title_Url_GoTo">Go to</string>
@@ -59,6 +62,8 @@
     <string name="QrCode_Title_Sms_Sending">Sending SMS...</string>
     <string name="QrCode_Title_Sms_Sending_Error">Unable to send SMS, try it later!</string>
     <string name="QrCode_Title_Sms_Sending_Success">SMS has been successfully sent.</string>
+    <string name="QrCode_Title_Sms_Sending_NoReciever">No receiver specified!</string>
+    <string name="QrCode_Title_Sms_Sending_NoBody">No body specified!</string>
     
     <string name="QrCode_Title_Telephone">(telephone)</string>
     <string name="QrCode_Title_Telephone_Number">Telephone number</string>

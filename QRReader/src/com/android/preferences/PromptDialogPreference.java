@@ -21,6 +21,8 @@ import android.util.Log;
  * The Class PromptDialogPreference implements the preference prompt dialog.
  * 
  * @see android.content.DialogInterface DialogPreference
+ * 
+ * @version 1.0
  */
 public class PromptDialogPreference extends DialogPreference {
     
