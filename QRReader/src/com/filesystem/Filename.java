@@ -244,6 +244,37 @@ final public class Filename {
     public boolean isSubDirectory(String subDirPath) {
         return isSubDirectory(fullPath, subDirPath);
     }
+    
+    /**
+     * Checks if is a filename valid.
+     *
+     * @param fullPath The full path to the file.
+     * @return True, if is filename valid, otherwise false.
+     */
+    public static boolean isFilenameValid(String fullPath) {
+        File f = new File(fullPath);
+        try {
+           f.getCanonicalPath();
+           return true;
+        } catch (IOException e) {
+           return false;
+        }
+    }
+    
+    /**
+     * Checks if is this filename valid.
+     *
+     * @return True, if is filename valid, otherwise false.
+     */
+    public boolean isFilenameValid() {
+        File f = new File(fullPath);
+        try {
+           f.getCanonicalPath();
+           return true;
+        } catch (IOException e) {
+           return false;
+        }
+    }
 }
 
 //End of the file

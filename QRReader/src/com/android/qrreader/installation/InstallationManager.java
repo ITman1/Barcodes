@@ -88,7 +88,7 @@ final public class InstallationManager {
     /** The default directory for plug-ins in the internal storage. */
     final private static String INSTALL_DIRECTORY       = "packages";
     
-    /** The name of the XMl which contains packaged installable classes inside plug-in. */
+    /** The name of the XML which contains packaged installable classes inside plug-in. */
     final private static String CLASSES_XML             = "res/classes.xml";
     
     /** The name of the XML which describes the plug-in (eg. name or brief). */
