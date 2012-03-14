@@ -23,8 +23,8 @@ LOCAL_C_INCLUDES         += ../BarcodesLibrary/include
 LOCAL_STATIC_LIBRARIES   += BarcodesLibrary
 LOCAL_CFLAGS             += -fPIC
 
-LOCAL_MODULE             := QRBarcodesLibrary
-LOCAL_SRC_FILES          := test.cpp
+LOCAL_MODULE             := JNI_QRBarcodesLibrary
+LOCAL_SRC_FILES          := JNI_QRBarcodesLibrary.cpp
 LOCAL_LDLIBS             += -llog -ldl -lz
 
 include $(BUILD_SHARED_LIBRARY)

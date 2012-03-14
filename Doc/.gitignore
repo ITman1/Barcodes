@@ -1,2 +1,10 @@
 tmp/
 out/
+*.gz
+*.aux
+*.log
+*.out
+*.pdf
+*.toc
+TODO.TXT
+*.xlsx

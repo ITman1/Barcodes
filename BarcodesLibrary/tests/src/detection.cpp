@@ -20,6 +20,5 @@
 #include <BarcodesLibrary.h>
 
 int main() {
-    int i = testMELib();
-    return i;
+    return 0;
 }

@@ -55,6 +55,8 @@ import com.android.camera.CameraPreview;
 import com.android.camera.DroidCamera;
 import com.android.listviews.FileListActivity;
 import com.android.qrreader.R;
+import com.qrcode.QrCodes;
+import com.qrcode.QrCodes.Image;
 
 /**
  * The Class of the main activity of the application QR Reader for Android.
@@ -218,8 +220,10 @@ public class MainActivity extends Activity {
             if (data != null) {     // There are some data from the camera
                 // Calling the decode method via JNI from the Barcode Library
                 statusText_TextView.setText(R.string.QRReaderActivity_StatusText_Processing);
-                //byte[] QRCodeData = readQRCode(data, FORMAT_JPEG);
-                QRCodeData = new String("skype:225154").getBytes();
+                Image image = new Image();
+                image.data = data;
+                image.imageFormat = QrCodes.ImageFormats.JPEG;
+                QRCodeData = QrCodes.readQrCode(image, QrCodes.Requests.GET_QR_CODE, QrCodes.Flags.ALL_FEATURES);
                 snapshotData = data;
                 startOpenQrIntent();
             } else {                // There are not any data, ignoring the fact (error)
@@ -767,6 +771,7 @@ public class MainActivity extends Activity {
         .setIcon(android.R.drawable.ic_dialog_alert)
         .show();
     }
+
 }
 
 //End of the file

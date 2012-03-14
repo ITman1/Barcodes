@@ -52,7 +52,7 @@ public class FileListAdapter extends ArrayAdapter<String> {
          * Instantiates a new extension-icon conversion object.
          *
          * @param context The context.
-         * @param prefix The file extension.
+         * @param extension The file extension.
          * @param resourceName The resource name of the icon.
          */
         public ExtensionToIcon(Activity context, String extension, String resourceName) {

@@ -70,7 +70,7 @@ final public class QrDecoderManager {
     /**
      * Decodes the QR code.
      *
-     * @param The byte array that should contain the serialized QR code object.
+     * @param data The byte array that should contain the serialized QR code object.
      * @return The specific QR code object on success or null when no proprietary
      * decoder has been found.
      */
@@ -151,7 +151,7 @@ final public class QrDecoderManager {
      * Decodes the QR code with specified decoders.
      *
      * @param decoders The list with the decoders to be used for decoding of the QR code.
-     * @param The byte array that should contain the serialized QR code object.
+     * @param data The byte array that should contain the serialized QR code object.
      * @return The specific QR code object on success or null when no proprietary
      * decoder has been found.
      */

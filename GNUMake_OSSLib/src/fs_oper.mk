@@ -49,7 +49,7 @@ endif
 # @param $1 filepath to the source location
 # @param $2 filepath to the destination location
 ifeq ($(OSS_OS_NAME), windows)
-    oss_cp = ROBOCOPY $(subst /, \, "$1" "$2") ^& IF %ERRORLEVEL% LEQ 1 exit 0
+    oss_cp = -ROBOCOPY $(subst /,\, "$1" "$2" $(if $(call eq,$(origin 3),undefined),"*","$3")) /E
 else
     oss_cp = cp -f $1 $2
 endif

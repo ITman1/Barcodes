@@ -31,13 +31,12 @@ import com.qrcode.qrcodes.QrCode;
  * the views is used of the {@link com.adapter.AdapterRegistry adapter registry}. The
  * view {@link com.adapter.Adapter adapters} are registered locally and are loaded
  * from the internal package {@link com.android.qrreader.qrcode.views} and from the
- * plug-ins through the {@link com.android.qrreader.installation.InstallationManager
- * installation manager}. 
+ * plug-ins through the {@link com.android.qrreader.installation.InstallationManager installation manager}. 
  * <p>
  * For providing the installable view classes inside installable .jar packages 
  * should be used the destination {@value #CLASS_DESTINATION}. The adapter provider
- * of the QR code views should implement the {@link com.android.qrreader.qrcode.
- * views.QrCodeViewProvider QrCodeViewProvider}.
+ * of the QR code views should implement the 
+ * {@link com.android.qrreader.qrcode.views.QrCodeViewProvider QrCodeViewProvider}.
  * 
  * @see com.adapter.AdapterRegistry AdapterRegistry
  * @see com.android.qrreader.qrcode.views.QrCodeViewProvider QrCodeViewProvider
@@ -56,8 +55,8 @@ public class InstallableQrCodeViewManager {
     /** The context. */
     final private Context context;
     
-    /** The callback which is called by {@link com.android.qrreader.installation.
-     * InstallationManager installation manager} when a list of plug-ins has changed. */
+    /** The callback which is called by {@link com.android.qrreader.installation.InstallationManager installation manager}
+     *  when a list of plug-ins has changed. */
     private InstallationCallback packagesChanged = new InstallationCallback() {
         public void packageListChanged() {
             loadInstalledAdapters();
@@ -95,8 +94,8 @@ public class InstallableQrCodeViewManager {
     }
     
     /**
-     * Loads the installed adapters via {@link com.android.qrreader.installation.
-     * InstallationManager installation manager} and registers them inside 
+     * Loads the installed adapters via {@link com.android.qrreader.installation.InstallationManager installation manager}
+     * and registers them inside 
      * the {@link com.adapter.AdapterRegistry adapter registry}.
      */
     private void loadInstalledAdapters() {
@@ -150,8 +149,7 @@ public class InstallableQrCodeViewManager {
      * @param qrCode The specific QR code.
      * @return The title for passed QR code.
      * 
-     * @see com.android.qrreader.qrcode.views.QrCodeViewProvider
-     * #getTitleName(Context) getTitleName(Context)
+     * @see com.android.qrreader.qrcode.views.QrCodeViewProvider#getTitleName(Context) getTitleName(Context)
      */
     public String getTitleForQrCode(QrCode qrCode) {
         QrCodeViewProvider provider = getProviderForQrCode(qrCode);

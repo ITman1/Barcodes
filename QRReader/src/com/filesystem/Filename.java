@@ -140,7 +140,6 @@ final public class Filename {
      *
      * @param fullPath The full path to the file.
      * @param pathSeparator The path separator by which to parse the path.
-     * @param extensionSeparator The extension separator by which to parse the file extension.
      * @return The filename with the file extension.
      * 
      * @see #getFullFilename(String)

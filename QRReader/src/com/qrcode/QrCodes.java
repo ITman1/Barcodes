@@ -14,6 +14,7 @@ package com.qrcode;
 
 import com.qrcode.qrcodes.QrCode;
 
+// TODO - comment this file
 /**
  * The Class QrCodes groups together the major methods for decoding 
  * and encoding the QR codes.
@@ -24,6 +25,40 @@ import com.qrcode.qrcodes.QrCode;
  * @version 1.0
  */
 final public class QrCodes {
+        
+    final public class ImageFormats {
+        final public static int JPEG = 0x01;
+    };
+    
+    final public class Requests {
+        final public static int GET_QR_CODE = 0x01;
+    };
+    
+    final public class Flags {
+        final public static int ALL_FEATURES = 0x01;
+    };
+    
+    public static class Size {
+        public int width        = -1;
+        public int height       = -1;
+    }
+    
+    public static class Point {
+        public int x;
+        public int y;
+    }
+    
+    public static class DetectedMark {
+        public Point[] points;
+        public double match;
+        public int flags;
+    };
+    
+    public static class Image {
+        public Size size;
+        public byte[] data;
+        public int imageFormat;
+    };
 
     /**
      * Decodes the QR code.
@@ -49,6 +84,13 @@ final public class QrCodes {
      */
     public static byte[] encodeQrCode(QrCode qrCode, Class<?> encoder) {
         return QrEncoderManager.getEncoderManager().encodeQrCode(qrCode, encoder);
+    }
+    
+    public static native byte[] readQrCode(Image image, int request, int flags);
+    public static native DetectedMark[] detectQrCode(Image image, int request, int flags);
+    
+    static {
+        System.loadLibrary("JNI_QRBarcodesLibrary");
     }
 }
 

@@ -40,10 +40,10 @@ import com.qrcode.qrcodes.QrCode;
 
 /**
  * The Class OpenQrActivity implements the activity which opens the QR code
- * saved in the file and tries to decode them via {@link com.android.qrreader.
- * qrcode.InstallableQrDecoderManager InstallableQrDecoderManager} and then
- * display their content where the correct view is found by {@link com.android.
- * qrreader.qrcode.InstallableQrCodeViewManager InstallableQrCodeViewManager}.
+ * saved in the file and tries to decode them via 
+ * {@link com.android.qrreader.qrcode.InstallableQrDecoderManager InstallableQrDecoderManager} 
+ * and then display their content where the correct view is found by 
+ * {@link com.android.qrreader.qrcode.InstallableQrCodeViewManager InstallableQrCodeViewManager}.
  * <p>
  * This activity also serves for a decision whether to save the image or QR code.
  */
@@ -226,7 +226,7 @@ public class OpenQrActivity extends Activity {
     }
     
     /**
-     * Inserts the preview of the image only if {@see #EXTRA_IMAGE} is attached.
+     * Inserts the preview of the image only if {@link #EXTRA_IMAGE} is attached.
      */
     private void insertQrCodeImage() {
         Intent intent = getIntent();

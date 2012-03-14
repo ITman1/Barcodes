@@ -15,8 +15,12 @@ BARCODES_LIB   := libBarcodesLibrary$(OSS_SHARED_LIBRARY_EXTENSION)
 
 # Flags and options for compiler
 CXXFLAGS :=	$(CXXOPT) -g -Wall -fmessage-length=0
-INCLUDES := -I../include
-LIBS     := -L./$(TESTSDIR) -lBarcodesLibrary
+INCLUDES := -I../include -I$(OPENCV_DIR)/build/include
+LIBS     := -L./$(TESTSDIR) -lBarcodesLibrary -L$(OPENCV_DIR)\build\x86\mingw\lib \
+           -llibopencv_core231 -llibopencv_imgproc231 \
+           -llibopencv_calib3d231 -llibopencv_video231 -llibopencv_features2d231 \
+           -llibopencv_ml231 -llibopencv_highgui231 -llibopencv_objdetect231 \
+           -llibopencv_contrib231 -llibopencv_legacy231 -llibopencv_flann231
 
 # Lists of sources and output executable programs
 SRCS     := $(shell $(call oss_ls,$(SRCDIR)))
@@ -24,7 +28,7 @@ EXECS    := $(patsubst %,$(TESTSDIR)/%,$(patsubst %.cpp,%$(OSS_EXECUTABLE_EXTENS
 
 # Universal rule for compiling/linking executable program
 $(TESTSDIR)/%$(OSS_EXECUTABLE_EXTENSION) : $(SRCDIR)/%.cpp
-	$(CXX) -o $@ $< $(INCLUDES) $(LIBS)
+	$(CXX) $(CXXFLAGS) -o $@ $< $(INCLUDES) $(LIBS)
 
 # Main entrance rule
 all: clean-builds $(TESTSDIR) $(BARCODES_LIB) $(EXECS)
@@ -46,7 +50,7 @@ $(TESTSDIR):
 
 # Debug
 debug:
-	$(MAKE) -B all CXXOPT="-g3 -D debugging"
+	$(MAKE) -B all CXXOPT="-ggdb3 -D debugging"
 
 # Release
 release:

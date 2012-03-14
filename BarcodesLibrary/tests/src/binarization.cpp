@@ -17,9 +17,17 @@
  * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
  */
 
+#include <iostream>
+
 #include <BarcodesLibrary.h>
 
+using namespace barcodes;
+
 int main() {
-    int i = testMELib();
-    return i;
+	QrBarcode barcode;
+	Image image = Image::fromFileGrayscale("../img/2012-03-08 14.34.03.jpg");
+	barcode.detect(image);
+	//image.data;
+	std::cout << endl << "END";
+    return 0;
 }

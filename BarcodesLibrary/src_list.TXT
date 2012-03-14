@@ -1,1 +1,3 @@
-Barcode.cpp
+Image.cpp
+barcodes/Barcode.cpp
+barcodes/qr/QrBarcode.cpp

@@ -26,9 +26,10 @@ import com.qrcode.qrcodes.QrCode;
 
 /**
  * The Class InstallableQrDecoderManager provides the interface for decoding 
- * the {@link com.qrcode.qrcodes.QrCode QR codes}. It uses the {@link com.qrcode.
- * QrDecoderManager QrDecoderManager} for actual decoding. This class only extends 
- * the manager about installing the custom decoders via plug-ins. 
+ * the {@link com.qrcode.qrcodes.QrCode QR codes}. It uses the 
+ * {@link com.qrcode.QrDecoderManager QrDecoderManager}
+ * for actual decoding. This class only extends the manager about installing 
+ * the custom decoders via plug-ins. 
  * <p>
  * For providing the installable decoder classes inside installable .jar packages 
  * should be used the destination {@value #CLASS_DESTINATION}. The decoder should
@@ -56,8 +57,8 @@ final public class InstallableQrDecoderManager {
     /** The list containing all decoders. */
     private ArrayList<QrDecoder> decoders = new ArrayList<QrDecoder>();
     
-    /** The callback which is called by {@link com.android.qrreader.installation.
-     * InstallationManager installation manager} when a list of plug-ins has changed. */
+    /** The callback which is called by {@link com.android.qrreader.installation.InstallationManager installation manager}
+     * when a list of plug-ins has changed. */
     private InstallationCallback packagesChanged = new InstallationCallback() {
         public void packageListChanged() {
             reloadDecoders();
