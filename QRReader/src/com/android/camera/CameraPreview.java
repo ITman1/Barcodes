@@ -210,6 +210,15 @@ public class CameraPreview extends SurfaceView {
 	        removeCamera();
 	    }
 	}
+	
+	/**
+     * Returns whether preview is active.
+     * 
+     * @return True if camera preview is active, otherwise false.
+     */
+    public boolean isPreviewing() {
+        return previewing;
+    }
 }
 
 // End of the file

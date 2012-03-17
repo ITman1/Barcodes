@@ -26,7 +26,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PixelFormat;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.Parameters;
@@ -35,6 +38,8 @@ import android.hardware.Camera.PreviewCallback;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -55,8 +60,12 @@ import com.android.camera.CameraPreview;
 import com.android.camera.DroidCamera;
 import com.android.listviews.FileListActivity;
 import com.android.qrreader.R;
+import com.android.views.DrawingCanvas;
+import com.android.views.DrawingCanvas.Line;
 import com.qrcode.QrCodes;
+import com.qrcode.QrCodes.DetectedMark;
 import com.qrcode.QrCodes.Image;
+import com.qrcode.QrCodes.Point;
 
 /**
  * The Class of the main activity of the application QR Reader for Android.
@@ -127,6 +136,8 @@ public class MainActivity extends Activity {
     /** The reference to the camera. */
     private DroidCamera        droidCamera;
     
+    private DrawingCanvas      drawingCanvas;
+    
     /** Variable informs that read button has been pushed and no snapshot 
      * has been returned yet. */
     private boolean            takingPicture;
@@ -144,6 +155,55 @@ public class MainActivity extends Activity {
     
     /** The reference to the decoded QR data. */
     private byte[]             QRCodeData;
+    
+    private byte[]             previewDetectionImage;
+    
+    DetectedMark[] detectedMarks;
+    
+    Object detectedMarksLock = new Object();
+    
+    private Handler invalidateHandler = new Handler() {
+        public void  handleMessage(Message msg) {
+            Paint paint = new Paint();
+            paint.setColor(Color.GREEN);
+            paint.setStrokeWidth(2);
+            
+            drawingCanvas.removeLines();
+            
+            synchronized (detectedMarksLock) {
+                if (detectedMarks != null) {
+                    for (DetectedMark detectedMark : detectedMarks) {
+                        Point[] points = detectedMark.points;
+                        int length = points.length;
+                        for (int i = 0; i < length; i++) {
+                            drawingCanvas.addLine(new Line(points[i].x, points[i].y, points[(i + 1) % length].x, points[(i + 1) % length].y, paint));
+                        }
+                    }
+                }
+            };
+            
+            drawingCanvas.invalidate();
+        }
+    };
+    
+    class DetectionThread extends Thread {
+        public void run() {
+           Rect previewSize = droidCamera.previewRect();
+            Image image = new Image();
+            image.data = previewDetectionImage;
+            image.colorFormat = 0x03;
+            image.compressed = false;
+            image.size = new QrCodes.Size(previewSize.width(), previewSize.height());
+            
+            synchronized (detectedMarksLock) {
+                detectedMarks = QrCodes.detectQrCode(image, 0, 0);
+            };
+                       
+            invalidateHandler.sendEmptyMessage(0);
+        }
+    };
+    
+    DetectionThread detectionThread = new DetectionThread();
        
     /** The listener of the click on the read button */
     private OnClickListener read_btn_OnClick = new OnClickListener() {
@@ -196,6 +256,13 @@ public class MainActivity extends Activity {
                     - lastTimeFPS) / (double)1000)));
             lastTimeFPS = System.currentTimeMillis();
             
+            if (data!= null && !detectionThread.isAlive()) {
+                previewDetectionImage = data.clone();
+                detectionThread = new DetectionThread();
+                detectionThread.setPriority(Thread.NORM_PRIORITY + 1); 
+                detectionThread.start();
+            }
+            
             // Returning the data buffer to the processing queue
             camera.addCallbackBuffer(data);
         }
@@ -222,7 +289,7 @@ public class MainActivity extends Activity {
                 statusText_TextView.setText(R.string.QRReaderActivity_StatusText_Processing);
                 Image image = new Image();
                 image.data = data;
-                image.imageFormat = QrCodes.ImageFormats.JPEG;
+                image.compressed = true;
                 QRCodeData = QrCodes.readQrCode(image, QrCodes.Requests.GET_QR_CODE, QrCodes.Flags.ALL_FEATURES);
                 snapshotData = data;
                 startOpenQrIntent();
@@ -443,9 +510,12 @@ public class MainActivity extends Activity {
         // Getting view surface for the camera
         cameraPreview = (CameraPreview)findViewById(R.id.cameraPreview);
         cameraPreviewLayout = (RelativeLayout)findViewById(R.id.cameraPreviewLayout);
-        
-        // Adding camera controls layout over the camera preview view
+               
+        // Adding drawing canvas and camera controls layout over the camera preview view
         LayoutInflater controlInflater = LayoutInflater.from(getBaseContext());
+        drawingCanvas = new DrawingCanvas(this);
+        this.addContentView(drawingCanvas, new LayoutParams(LayoutParams.FILL_PARENT, 
+                LayoutParams.FILL_PARENT));
         View cameraControls = controlInflater.inflate(R.layout.camera_controls, null);
         this.addContentView(cameraControls, new LayoutParams(LayoutParams.FILL_PARENT, 
                 LayoutParams.FILL_PARENT));
@@ -496,6 +566,11 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "onDestroy");
+        try {
+            detectionThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         stopDroidCamera();
     }
     

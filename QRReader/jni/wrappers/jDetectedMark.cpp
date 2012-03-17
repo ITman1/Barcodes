@@ -3,18 +3,17 @@
 using namespace jni;
 using namespace std;
 
-const string jDetectedMark::CLASS_NAME = "com/qrcode/QrCodes/DetectedMark";
+const string jDetectedMark::CLASS_NAME = "com/qrcode/QrCodes$DetectedMark";
 
-jDetectedMark::jDetectedMark(JNIEnv * env) {
-	JNIWrapper(env, CLASS_NAME);
-}
+// TODO: DELETE
+#include <android/log.h>
+#define DEBUG_TAG "jDetectedMark.cpp"
 
-jDetectedMark::jDetectedMark(JNIEnv *env, jobject jObject) {
-	JNIWrapper(env, jObject);
-}
+jDetectedMark::jDetectedMark(JNIEnv *env) : JNIWrapper(env, CLASS_NAME) {}
 
-jDetectedMark::jDetectedMark(JNIEnv *env, DetectedMark detectedMark) {
-	JNIWrapper(env, CLASS_NAME);
+jDetectedMark::jDetectedMark(JNIEnv *env, jobject jObject) : JNIWrapper(env, jObject) {}
+
+jDetectedMark::jDetectedMark(JNIEnv *env, DetectedMark detectedMark) : JNIWrapper(env, CLASS_NAME) {
 	setPoints(detectedMark.points);
 	setMatch(detectedMark.match);
 	setFlags(detectedMark.flags);
@@ -23,24 +22,26 @@ jDetectedMark::jDetectedMark(JNIEnv *env, DetectedMark detectedMark) {
 vector<Point> jDetectedMark::getPoints() {
 	vector<Point> points;
 
-	int arrLength = getArrayLength(this, "points");
+	int arrLength = getArrayLength(this, jPoint::getJClass(env), "points");
 	for (int i = 0; i < arrLength; i++) {
-		points.push_back(jPoint(getObjectArrayElement(this, "points", i)));
+		points.push_back(jPoint(env, getObjectArrayElement(this, jPoint::getJClass(env), "points", i)));
 	}
 
 	return points;
 }
 
 void jDetectedMark::setPoints(vector<Point> points) {
-	int arrLength = points.size();
-	jobjectArray pointsArray = newObjectArray(jPoint.getJClass(), arrLength, jPoint());
-
-	setObjectField(this, "points", pointsArray);
-
+	int arrLength = points.size();    __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "XXX");
+	jobjectArray pointsArray = env->NewObjectArray(arrLength, jPoint::getJClass(env), NULL);
+    __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "XXX");
+    setObjectArray(this, jPoint::getJClass(env), "points", pointsArray);
+    __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "XXX");
 	for (int i = 0; i < arrLength; i++) {
-		jPoint point = jPoint(points[i]);
-		setObjectArrayElement(this, "points", i, point);
+		jPoint point = jPoint(env, points[i]);
+		setObjectArrayElement(this, jPoint::getJClass(env), "points", i, point);
 	}
+
+	env->DeleteLocalRef(pointsArray);
 }
 
 double jDetectedMark::getMatch() {
@@ -59,11 +60,15 @@ void jDetectedMark::setFlags(int flags) {
 	setIntField(this, "flags", flags);
 }
 
-operator DetectedMark() {
+jDetectedMark::operator DetectedMark() {
 	DetectedMark detectedMark;
 	detectedMark.flags = getFlags();
 	detectedMark.points = getPoints();
 	detectedMark.match = getMatch();
 
 	return detectedMark;
+}
+
+jclass jDetectedMark::getJClass(JNIEnv *env) {
+	return env->FindClass(CLASS_NAME.c_str());
 }

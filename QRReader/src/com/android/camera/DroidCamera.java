@@ -15,6 +15,7 @@ package com.android.camera;
 import java.util.List;
 
 import android.graphics.ImageFormat;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PreviewCallback;
@@ -182,6 +183,19 @@ final public class DroidCamera {
         }
         
         return false;
+    }
+    
+    /**
+     * Retrieves the sizes of the camera preview.
+     *
+     * @return Size of the camera preview whether is active.
+     */
+    public Rect previewRect() {
+        if (camPreviewSurface != null && camPreviewSurface.isPreviewing()) {
+            return new Rect(0, 0, camPreviewSurface.getWidth(), camPreviewSurface.getHeight());
+        }
+        
+        return null;
     }
 } 
 

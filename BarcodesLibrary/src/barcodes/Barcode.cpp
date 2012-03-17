@@ -1,10 +1,7 @@
 
 #include "Barcode.h"
 
-using namespace std;
-
 using namespace barcodes;
-
 
 bool Barcode::loadFromFile(string filename) {
 	return false;

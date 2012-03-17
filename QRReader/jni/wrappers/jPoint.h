@@ -1,12 +1,15 @@
-#include <opencv2/core/core.hpp>
+#ifndef JNI_JPOINT_H_
+#define JNI_JPOINT_H_
+
+#include <barlib/types.h>
 
 #include "JNIWrapper.h"
 
-using namespace cv;
+using namespace barcodes;
 
 namespace jni {
 
-class jPoint: protected JNIWrapper {
+class jPoint: public JNIWrapper {
 private:
 	const static string CLASS_NAME;
 
@@ -20,7 +23,10 @@ public:
 	int getX();
 	int getY();
 
+	static jclass getJClass(JNIEnv *env);
 	operator Point();
 };
 
 }
+
+#endif

@@ -3,18 +3,13 @@
 using namespace jni;
 using namespace std;
 
-const string jPoint::CLASS_NAME = "com/qrcode/QrCodes/Point";
+const string jPoint::CLASS_NAME = "com/qrcode/QrCodes$Point";
 
-jPoint::jPoint(JNIEnv *env) {
-	JNIWrapper(env, CLASS_NAME);
-}
+jPoint::jPoint(JNIEnv *env) : JNIWrapper(env, CLASS_NAME) {}
 
-jPoint::jPoint(JNIEnv *env, jobject jObject) {
-	JNIWrapper(env, jObject);
-}
+jPoint::jPoint(JNIEnv *env, jobject jObject) : JNIWrapper(env, jObject) {}
 
-jPoint::jPoint(JNIEnv *env, Point point) {
-	JNIWrapper(env, CLASS_NAME);
+jPoint::jPoint(JNIEnv *env, Point point) : JNIWrapper(env, CLASS_NAME) {
 	setX(point.x);
 	setY(point.y);
 }
@@ -37,4 +32,8 @@ int jPoint::getY() {
 
 jPoint::operator Point() {
 	return Point(getX(), getY());
+}
+
+jclass jPoint::getJClass(JNIEnv *env) {
+	return env->FindClass(CLASS_NAME.c_str());
 }

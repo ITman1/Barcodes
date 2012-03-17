@@ -11,16 +11,16 @@
 #include "../../types.h"
 #include "QrBarcode.h"
 
-using namespace cv;
 using namespace barcodes;
 
 void QrBarcode::detect(Image &image, vector<DetectedMark> &detectedMarks, int flags) {
+	detectedMarks.clear();
+	cout << "================ NEW IMAGE DETECT CALL ================ " << endl;
 	if (image.data != NULL) {
 		vector<DetectedMark> marks;
 		int repairFlags = flags & (FLAG_ADAPT_THRESH_CORRUPT_FILL_REPAIR | FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR);
 
 		flags = flags & ~repairFlags;
-		detectedMarks.clear();
 
 		detectByDistancePriority(image, detectedMarks, flags);
 		if (detectedMarks.size() > 2) return;
@@ -159,10 +159,6 @@ double QrBarcode::matchTemplate(Mat img, Mat imgTemplate) {
 	  /// Show me what you got
 	  rectangle( img_display, minLoc, Point( minLoc.x + imgTemplate.cols , minLoc.y + imgTemplate.rows ), Scalar::all(0), 2, 8, 0 );
 	  rectangle( result, minLoc, Point( minLoc.x + imgTemplate.cols , minLoc.y + imgTemplate.rows ), Scalar::all(0), 2, 8, 0 );
-
-	  imshow( "aa", img_display );
-	  imshow( "ff", result );
-	  waitKey(0);
 
 	  return minVal;
 }
@@ -379,7 +375,7 @@ void QrBarcode::_detect(Mat &image, vector<DetectedMark> &detectedMarks, int fla
 	Mat contourImage = image.clone();
 	Mat qrMark = buildQrMark();
 	detectedMarks.clear();
-	cout << "================ NEW CALL ================ " << endl;
+	cout << "================ NEW DETECT CALL ================ " << endl;
 	findContours(contourImage, contours, CV_RETR_LIST , CV_CHAIN_APPROX_SIMPLE);
 
 	for( unsigned int i = 0; i < contours.size(); i++ ) {
@@ -506,7 +502,7 @@ void QrBarcode::_detect(Mat &image, vector<DetectedMark> &detectedMarks, int fla
 
 	    	cv::compare(cropped, qrMark, diff, cv::CMP_NE);
 	    	match = countNonZero(diff) / (double)(cropped.rows * cropped.cols);
-	    	if (match / (double)(cropped.rows * cropped.cols) > QR_MARK_TAMPLATE_MATCH_TOLERANCE) continue;
+	    	if (match > QR_MARK_TAMPLATE_MATCH_TOLERANCE) continue;
 	    	currMark.flags = FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR;
 	    }
 	    cout << "mark match: " << i << " : " << match << endl;
@@ -585,7 +581,7 @@ int QrBarcode::getBlockSize(Size imageSize, double distanceDivider) {
 
 Mat QrBarcode::binarize(Image &image, int flags, int mean_C) {
 	Mat binarized;
-	imwrite("before_test.jpg", image);
+	//imwrite("before_test.jpg", image);
 
 	if (flags & FLAG_GLOBAL_THRESH) {
 		threshold(image, binarized, GLOBAL_THRESH, 255, CV_THRESH_OTSU);
@@ -605,6 +601,6 @@ Mat QrBarcode::binarize(Image &image, int flags, int mean_C) {
 		}
 	}
 
-	imwrite("after_test_binarized.jpg", binarized);
+	//imwrite("after_test_binarized.jpg", binarized);
 	return binarized;
 }

@@ -11,6 +11,8 @@
 #include "../Barcode.h"
 
 namespace barcodes {
+	using namespace std;
+	using namespace cv;
 
 	class QrBarcode: public Barcode {
 	public:
@@ -54,7 +56,7 @@ namespace barcodes {
 		static const double QR_MARK_CONVEX_CONTOUR_MATCH            =    0.9;
 		static const double QR_MARK_MINIMAL_CORNER_ANGLE            =    35; // stupnu
 		static const double QR_MARK_OPTIMAL_CORNER_ANGLE            =    90; // stupnu
-		static const double QR_MARK_TAMPLATE_MATCH_TOLERANCE        =    0.3;
+		static const double QR_MARK_TAMPLATE_MATCH_TOLERANCE        =    0.2;
 		static const double QR_MARK_CENTER_POINTS_MINIMUM_DISTANCE  =    0.2;
 
 		void _detect(Mat &image, vector<DetectedMark> &detectedMarks, int flags = 0);

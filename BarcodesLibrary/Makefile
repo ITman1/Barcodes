@@ -86,8 +86,8 @@ gen-include:
 	$(call oss_rmdir,$(INCLUDE_DIR))
 	$(call oss_mkdir,$(INCLUDE_DIR)) $(OSS_RUN_QUIET)
 	$(call oss_mkdir,$(INCLUDE_DIR)/$(INCLUDE_LIB_DIR)) $(OSS_RUN_QUIET)
-	$(call oss_cp,$(OPENCV_INSTALL_DIR)\build\include,$(INCLUDE_DIR)) $(OSS_RUN_QUIET)
 	$(call oss_cp,$(SRCDIR),$(INCLUDE_DIR)/$(INCLUDE_LIB_DIR),*.h) $(OSS_RUN_QUIET)
+#$(call oss_cp,$(OPENCV_INSTALL_DIR)\build\include,$(INCLUDE_DIR)) $(OSS_RUN_QUIET)
 
 # Generates the file with the list of source files
 gen-srclist:

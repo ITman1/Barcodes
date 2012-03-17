@@ -5,36 +5,38 @@
 #include <barlib/barcodes/qr/QrBarcode.h>
 
 #include "wrappers/jDetectedMark.h"
+#include "wrappers/jImage.h"
 
 using namespace std;
 using namespace jni;
 using namespace barcodes;
 
+// TODO: DELETE
+#include <android/log.h>
+#define DEBUG_TAG "JNI_QRBarcodesLibrary.cpp"
+
 extern "C" {
 	JNIEXPORT jobjectArray JNICALL Java_com_qrcode_QrCodes_detectQrCode(JNIEnv *env, jobject obj, jobject image, jint request, jint flags) {
-		jboolean isCopy;
 		QrBarcode barcode;
 		vector<DetectedMark> detectedMarks;
-		jbyte* passedImgData = env->GetByteArrayElements(image, &isCopy);
-		jsize  passedImgLength = env->GetArrayLength(image);
+		Image img = jImage(env, image);
 
-		Image passedImg(passedImgLength, CV_16U, (void *)passedImgData);
-		Image localImg;
+		__android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "Image color-format: [%d]", img.getColorFormat());
+		__android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "Image elem-size: [%d]", CV_ELEM_SIZE(img.type()) * CV_ELEM_SIZE1(img.type()));
+	    __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "Image size: [%d : %d]", img.cols, img.rows);
+		if (img.convertColorFormat(IMAGE_COLOR_GRAYSCALE)) {
 
-		cvtColor(passedImg, localImg, CV_YCrCb2RGB);
-		cvtColor(localImg, localImg, CV_RGB2GRAY);
+			barcode.detect(img, detectedMarks, QrBarcode::FLAG_DISTANCE_MEDIUM);
+			int arrLength = detectedMarks.size();
 
-		barcode.detect(image, detectedMarks);
+			jobjectArray detectedMarksArr = env->NewObjectArray(arrLength, jDetectedMark::getJClass(env), NULL);
 
-		int arrLength = detectedMarks.size();
-		jobjectArray detectedMarksArr = newObjectArray(jDetectedMark.getJClass(), arrLength, jDetectedMark());
-		for (int i = 0; i < arrLength; i++) {
-			jDetectedMark detectedMark = jDetectedMark(detectedMarks[i]);
-			env->SetObjectArrayElement(detectedMark.getJObject(), i, detectedMark);
-		}
+			for (int i = 0; i < arrLength; i++) {
+				jDetectedMark detectedMark = jDetectedMark(env, detectedMarks[i]);
+				env->SetObjectArrayElement(detectedMarksArr, i, detectedMark);
+			}
 
-		if (isCopy == JNI_TRUE) {
-			env->ReleaseArrayElements(image, passedImgData);
+			return detectedMarksArr;
 		}
 	}
 };

@@ -39,6 +39,11 @@ final public class QrCodes {
     };
     
     public static class Size {
+        public Size() {}
+        public Size(int width, int height) {
+            this.width = width;
+            this.height = height;
+        }
         public int width        = -1;
         public int height       = -1;
     }
@@ -55,9 +60,10 @@ final public class QrCodes {
     };
     
     public static class Image {
+        public boolean compressed;
         public Size size;
         public byte[] data;
-        public int imageFormat;
+        public int colorFormat;
     };
 
     /**

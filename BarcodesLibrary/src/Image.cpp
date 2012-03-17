@@ -5,25 +5,24 @@
  *      Author: Scotty
  */
 
-#include <opencv2/highgui/highgui.hpp>
-
 #include "Image.h"
 
-using namespace cv;
 using namespace barcodes;
 
 Image Image::fromFileRGB(string filename) {
 	Mat mat = imread(filename, CV_LOAD_IMAGE_COLOR);
-	return Image(mat);
+	return Image(mat, IMAGE_COLOR_RGB);
 }
 
 Image Image::fromFileGrayscale(string filename) {
 	Mat mat = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
-	return Image(mat);
+	return Image(mat, IMAGE_COLOR_GRAYSCALE);
 }
 
 bool Image::convertColorFormat(int newColorFormat) {
 	Mat destImage;
+
+	if (getColorFormat() == newColorFormat) return true;
 
 	switch (colorFormat) {
 	case IMAGE_COLOR_RGB:
@@ -31,8 +30,8 @@ bool Image::convertColorFormat(int newColorFormat) {
 		case IMAGE_COLOR_GRAYSCALE:
 			cvtColor(*this, destImage, CV_RGB2GRAY);
 			break;
-		case IMAGE_COLOR_YCBCR:
-			cvtColor(*this, destImage, CV_RGB2YCrCb);
+		case IMAGE_COLOR_YUV420sp:
+			//cvtColor(*this, destImage, );
 			break;
 		}
 		break;
@@ -41,19 +40,19 @@ bool Image::convertColorFormat(int newColorFormat) {
 		case IMAGE_COLOR_RGB:
 			cvtColor(*this, destImage, CV_GRAY2RGB);
 			break;
-		case IMAGE_COLOR_YCBCR:
-			cvtColor(*this, destImage, CV_GRAY2RGB);
-			cvtColor(destImage, destImage, CV_RGB2YCrCb);
+		case IMAGE_COLOR_YUV420sp:
+			//cvtColor(*this, destImage, CV_GRAY2RGB);
 			break;
 		}
 		break;
-	case IMAGE_COLOR_YCBCR:
+	case IMAGE_COLOR_YUV420sp:
 		switch (newColorFormat) {
 		case IMAGE_COLOR_RGB:
-			cvtColor(*this, destImage, CV_YCrCb2RGB);
+			cvtColor(*this, destImage, CV_YUV420sp2RGB, 3);
 			break;
 		case IMAGE_COLOR_GRAYSCALE:
-			cvtColor(*this, destImage, CV_YCrCb2RGB);
+			cvtColor(*this, destImage, CV_YUV420sp2RGB, 3);
+			cvtColor(*this, destImage, CV_YUV420sp2RGB);
 			cvtColor(destImage, destImage, CV_RGB2GRAY);
 			break;
 		}
@@ -61,7 +60,7 @@ bool Image::convertColorFormat(int newColorFormat) {
 	}
 
 	if (destImage.data != NULL) {
-		*this = destImage;
+		*this = Image(destImage, newColorFormat);
 		return true;
 	} else {
 		return false;

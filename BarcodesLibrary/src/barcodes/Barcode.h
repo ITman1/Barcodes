@@ -5,9 +5,9 @@
 
 #include "../Image.h"
 
-using namespace std;
-
 namespace barcodes {
+	using namespace std;
+	using namespace cv;
 
 	struct DetectedMark {
 	public:

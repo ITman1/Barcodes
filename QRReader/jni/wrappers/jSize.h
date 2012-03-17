@@ -1,12 +1,15 @@
-#include <opencv2/core/core.hpp>
+#ifndef JNI_JSIZE_H_
+#define JNI_JSIZE_H_
+
+#include <barlib/types.h>
 
 #include "JNIWrapper.h"
 
-using namespace cv;
+using namespace barcodes;
 
 namespace jni {
 
-class jSize: protected JNIWrapper {
+class jSize: public JNIWrapper {
 private:
 	const static string CLASS_NAME;
 
@@ -20,7 +23,10 @@ public:
 	int getWidth();
 	int getHeight();
 
+	static jclass getJClass(JNIEnv *env);
 	operator Size();
 };
 
 }
+
+#endif
