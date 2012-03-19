@@ -5,20 +5,22 @@
  *      Author: Scotty
  */
 
-#include <iostream>
+
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "../../types.h"
 #include "QrBarcode.h"
 
+static const string DEBUG_TAG = "QrBarcode.cpp";
+
 using namespace barcodes;
 
 void QrBarcode::detect(Image &image, vector<DetectedMark> &detectedMarks, int flags) {
 	detectedMarks.clear();
-	cout << "================ NEW IMAGE DETECT CALL ================ " << endl;
+	DEBUG_PRINT(DEBUG_TAG, "================ NEW IMAGE DETECT CALL ================");
 	if (image.data != NULL) {
 		vector<DetectedMark> marks;
-		int repairFlags = flags & (FLAG_ADAPT_THRESH_CORRUPT_FILL_REPAIR | FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR);
+		int repairFlags = flags & REPAIR_FLAGS;
 
 		flags = flags & ~repairFlags;
 
@@ -42,9 +44,11 @@ void QrBarcode::detect(Image &image, vector<DetectedMark> &detectedMarks, int fl
 }
 
 void QrBarcode::detectByDistancePriority(Image &image, vector<DetectedMark> &detectedMarks, int flags) {
+DEBUG_PRINT(DEBUG_TAG, "detectByDistancePriority(image,detectedMarks,%d)", flags);
+
 	vector<DetectedMark> marks;
 	Mat binarized;
-	int distanceFlags = flags & (FLAG_DISTANCE_FAR | FLAG_DISTANCE_MEDIUM | FLAG_DISTANCE_NEAR);
+	int distanceFlags = flags & DISTANCE_FLAGS;
 	flags = flags & ~distanceFlags;
 
 	// Default decoding
@@ -82,23 +86,34 @@ void QrBarcode::detectByDistancePriority(Image &image, vector<DetectedMark> &det
 
 		detectedMarks.insert(detectedMarks.end(), marks.begin(), marks.end());
 		filterMarks(detectedMarks);
+		if (detectedMarks.size() > 2) return;
+	}
+
+	// Far Far distance
+	if (distanceFlags & FLAG_DISTANCE_FAR_FAR) {
+		marks.clear();
+		binarized = binarize(image, flags | FLAG_DISTANCE_FAR_FAR);
+		_detect(binarized, marks, flags);
+
+		detectedMarks.insert(detectedMarks.end(), marks.begin(), marks.end());
+		filterMarks(detectedMarks);
 	}
 }
 
 void QrBarcode::filterMarks(vector<DetectedMark> &detectedMarks, double centerPointsMinDistance) {
+DEBUG_PRINT(DEBUG_TAG, "filterMarks(detectedMarks,centerPointsMinDistance)");
+
 	vector<DetectedMark>::iterator iter, iter2;
 
 	for (iter = detectedMarks.begin(); iter != detectedMarks.end(); iter++) {
 		RotatedRect refMarkBox = minAreaRect(Mat(iter->points));
 		for (iter2 = detectedMarks.begin(); iter2 != detectedMarks.end(); ) {
 			RotatedRect markBox = minAreaRect(Mat(iter2->points));
-			Point centerDiff = Point(
-				fabs(refMarkBox.center.x - markBox.center.x),
-				fabs(refMarkBox.center.y - markBox.center.y)
-			);
+			Vector2D centerDiff(refMarkBox.center, markBox.center);
+
 			if ((iter != iter2)
-				&& (centerDiff.x / (double)refMarkBox.boundingRect().width < QR_MARK_CENTER_POINTS_MINIMUM_DISTANCE)
-				&& (centerDiff.y / (double)refMarkBox.boundingRect().height < QR_MARK_CENTER_POINTS_MINIMUM_DISTANCE)
+				&& (fabs(centerDiff.dx) / (double)refMarkBox.boundingRect().width < QR_MARK_CENTER_POINTS_MINIMUM_DISTANCE)
+				&& (fabs(centerDiff.dy) / (double)refMarkBox.boundingRect().height < QR_MARK_CENTER_POINTS_MINIMUM_DISTANCE)
 			)  {
 				if (iter2 == iter + 1) {
 					iter2 = detectedMarks.erase(iter2);
@@ -342,32 +357,43 @@ Mat QrBarcode::warpPerspective(Mat &image, vector<Point> &corners) {
 	if (corners.size() > 3) {
 		vector<Point> sortedCorners;
 		convexHull(Mat(corners), sortedCorners);
-		srcPoints[0].x = sortedCorners.at(3).x;
-		srcPoints[0].y = sortedCorners.at(3).y;
-		srcPoints[1].x = sortedCorners.at(0).x;
-		srcPoints[1].y = sortedCorners.at(0).y;
-		srcPoints[2].x = sortedCorners.at(2).x;
-		srcPoints[2].y = sortedCorners.at(2).y;
-		srcPoints[3].x = sortedCorners.at(1).x;
-		srcPoints[3].y = sortedCorners.at(1).y;
-		dstPoints[0].x = 0;
-		dstPoints[0].y = 0;
-		dstPoints[1].x = image.cols;
-		dstPoints[1].y = 0;
-		dstPoints[2].x = 0;
-		dstPoints[2].y = image.rows;
-		dstPoints[3].x = image.cols;
-		dstPoints[3].y = image.rows;
+		if (sortedCorners.size() > 3) {
+			srcPoints[0].x = sortedCorners.at(3).x;
+			srcPoints[0].y = sortedCorners.at(3).y;
+			srcPoints[1].x = sortedCorners.at(0).x;
+			srcPoints[1].y = sortedCorners.at(0).y;
+			srcPoints[2].x = sortedCorners.at(2).x;
+			srcPoints[2].y = sortedCorners.at(2).y;
+			srcPoints[3].x = sortedCorners.at(1).x;
+			srcPoints[3].y = sortedCorners.at(1).y;
+			dstPoints[0].x = 0;
+			dstPoints[0].y = 0;
+			dstPoints[1].x = image.cols;
+			dstPoints[1].y = 0;
+			dstPoints[2].x = 0;
+			dstPoints[2].y = image.rows;
+			dstPoints[3].x = image.cols;
+			dstPoints[3].y = image.rows;
 
-		transformation = cv::getPerspectiveTransform(srcPoints, dstPoints);
+			transformation = cv::getPerspectiveTransform(srcPoints, dstPoints);
 
-		cv::warpPerspective(image, dstImage, transformation, Size(image.cols, image.rows));
+			cv::warpPerspective(image, dstImage, transformation, Size(image.cols, image.rows));
+			return dstImage;
+		}
 	}
 
+	dstImage.release();
 	return dstImage;
 }
 
+double QrBarcode::exactMatch(Mat &mat, Mat &tmpl, Mat &diff) {
+    cv::compare(mat, tmpl, diff, cv::CMP_NE);
+    return countNonZero(diff) / (double)(mat.rows * mat.cols);
+}
+
 void QrBarcode::_detect(Mat &image, vector<DetectedMark> &detectedMarks, int flags) {
+DEBUG_PRINT(DEBUG_TAG, "_detect(image,detectedMarks,%d)", flags);
+
 	vector<vector<Point> > drawVec;
 	Mat cropped, diff;
 	vector<vector<Point> > contours;
@@ -375,7 +401,18 @@ void QrBarcode::_detect(Mat &image, vector<DetectedMark> &detectedMarks, int fla
 	Mat contourImage = image.clone();
 	Mat qrMark = buildQrMark();
 	detectedMarks.clear();
-	cout << "================ NEW DETECT CALL ================ " << endl;
+
+	double matchTolerance = QR_MARK_TAMPLATE_MATCH_TOLERANCE_NORMAL;
+	int markMinSize = QR_MARK_MINIMAL_SIZE_NORMAL;
+	if (flags & FLAG_QR_MARK_MATCH_TOLERANCE_HIGH) {
+		matchTolerance = QR_MARK_TAMPLATE_MATCH_TOLERANCE_HIGH;
+		markMinSize = QR_MARK_MINIMAL_SIZE_SMALL;
+	} else if (flags & FLAG_QR_MARK_MATCH_TOLERANCE_LOW) {
+		matchTolerance = QR_MARK_TAMPLATE_MATCH_TOLERANCE_LOW;
+		markMinSize = QR_MARK_MINIMAL_SIZE_LARGE;
+	}
+
+	DEBUG_PRINT(DEBUG_TAG, "================ NEW DETECT CALL ================ ");
 	findContours(contourImage, contours, CV_RETR_LIST , CV_CHAIN_APPROX_SIMPLE);
 
 	for( unsigned int i = 0; i < contours.size(); i++ ) {
@@ -393,19 +430,11 @@ void QrBarcode::_detect(Mat &image, vector<DetectedMark> &detectedMarks, int fla
 
 		if ((boxSize.width / (double)boxSize.height > QR_MARK_BOUNDING_RECT_MAX_ACCEPTED_SCALE)
 			|| (boxSize.height / (double)boxSize.width > QR_MARK_BOUNDING_RECT_MAX_ACCEPTED_SCALE)
-			|| (boxSize.width < QR_MARK_MINIMAL_SIZE) ||(boxSize.height < QR_MARK_MINIMAL_SIZE)
+			|| (boxSize.width < markMinSize) ||(boxSize.height < markMinSize)
 			|| (image.cols /(double) boxSize.width < QR_MARK_MAXIMAL_SIZE_RATIO)
 			|| (image.rows /(double) boxSize.height < QR_MARK_MAXIMAL_SIZE_RATIO))
 			continue;
 
-		/*Point2f hullMinBoxPoints[4]; box.points( hullMinBoxPoints);
-		vector<Point> refShape;
-		refShape.push_back(hullMinBoxPoints[0]);	refShape.push_back(hullMinBoxPoints[1]);
-		refShape.push_back(hullMinBoxPoints[2]);	refShape.push_back(hullMinBoxPoints[3]);
-		double match = matchShapes(Mat(hull), Mat(refShape), CV_CONTOURS_MATCH_I1, 0);
-	    cout << "shape match:" << i << " : " << match << endl;
-		if (match > QR_MARK_SHAPE_MATCH_ACCEPTED_RESULT) continue;*/
-		double match;
 		// Initialization histogram arduments
 		MatND hist;
 		int channels[] = {0};
@@ -423,12 +452,10 @@ void QrBarcode::_detect(Mat &image, vector<DetectedMark> &detectedMarks, int fla
         float fill_density = hist.at<float>(0);
         float bg_density = hist.at<float>(1);
 
-		if (bg_density < 1) continue;
-        double bgFillRatio = fill_density / bg_density;
-	    cout << "hist match:" << i << " : " << bgFillRatio << endl;
-        if (fabs(bgFillRatio - QR_MARK_BG_FILL_RATIO) > QR_MARK_BG_FILL_RATIO_TOLERANCE) continue;
-
-
+		if (fill_density < 1) continue;
+        double bgFillRatio = (fill_density + bg_density) / (double)bg_density;
+        DEBUG_PRINT(DEBUG_TAG, "hist match: %d : %.4f", i, bgFillRatio);
+        if ((bgFillRatio > QR_MARK_BG_FILL_RATIO_MAX) || (bgFillRatio < QR_MARK_BG_FILL_RATIO_MIN)) continue;
 
 		// Converting the approx to the hull
 		vector<Point> hull;
@@ -438,60 +465,28 @@ void QrBarcode::_detect(Mat &image, vector<DetectedMark> &detectedMarks, int fla
 	    drawContours(hullMask, drawVec, -1, Scalar(255), CV_FILLED, 8, noArray(), INT_MAX, Point(-boxRect.x, -boxRect.y));
 	    int contourFill = cv::countNonZero(contourMask);
 	    int hullFill = cv::countNonZero(hullMask);
-	    cout << "cont/hull compare:" << i << " : " << contourFill << ":" << hullFill << ":" << boxRectSize.width * boxRectSize.height << endl;
-	    //imshow("contourMask", contourMask); imshow("hullmask", hullMask);waitKey(0);
+        DEBUG_PRINT(DEBUG_TAG, "cont/hull compare: %d : %d : %d : %d", i, contourFill, hullFill, boxRectSize.width * boxRectSize.height);
 	    if (contourFill / (double) hullFill < QR_MARK_CONVEX_CONTOUR_MATCH) continue;
 
-		int pointSize = (boxSize.width > boxSize.height)? boxSize.width / 7 : boxSize.height / 7;
+		int pointSize = (boxSize.width > boxSize.height)? ceil(boxSize.width / (double)7) * 2 : ceil(boxSize.height / (double)7) * 2;
 		vector<Point> corners;
 		findCorners(hull, 4, pointSize, corners);
-	    cout << "corners found:" << corners.size() << endl;
+        DEBUG_PRINT(DEBUG_TAG, "cont/hull compare: %d", corners.size());
 		if (corners.size() != 4) continue;
 
 		vector<Point> offsetCorners = corners;
 		offsetContour(offsetCorners, Point(-boxRect.x, -boxRect.y));
 		cropped = warpPerspective(cropped, offsetCorners);
-
-		/*cvtColor(cropped, cropped, CV_GRAY2RGB);
-		drawContours( cropped, drawVec, -1, CV_RGB(0,0,255), 4, 8, vector<Vec4i>(), 0, Point(- boxRect.x, - boxRect.y) );
-		for( int j = 0; j < hull.size(); j++ )
-			line( cropped, Point(hull[j].x - boxRect.x, hull[j].y - boxRect.y), Point(hull[j].x - boxRect.x, hull[j].y - boxRect.y), CV_RGB(255, 0, 0), 4, 8, 0);
-		for( int j = 0; j < corners.size(); j++ )
-			line( cropped, offsetCorners[j],offsetCorners[j], CV_RGB(255, 255, 0), 4, 8, 0);
-		imwrite("out/" + toStr(i)  + ".jpg", cropped);continue;*/
-
-
-        /*
-        //imshow("before-mask", cropped);
-        bitwise_not(contourMask, contourMask);
-        cropped.setTo(Scalar(255), contourMask);
-
-        //imshow("after-mask", cropped);
-		Mat rotMat = getRotationMatrix2D(Point(boxCenter.x - boxRect.x, boxCenter.y - boxRect.y), box.angle, 1.0);
-		Mat rotated;
-		Size rotatedBoxSize = Size(50,50);
-		/*if (box.angle < -45.)
-		    swap(rotatedBoxSize.width, rotatedBoxSize.height);
-		imshow("before-rotate", cropped);
-		warpAffine(cropped, rotated, rotMat, rotatedBoxSize, INTER_CUBIC);
-		imshow("after-rotate", rotated);waitKey(0);
-
-		getRectSubPix(rotated, rotatedBoxSize, Point(rotated.cols / 2, rotated.rows / 2), rotated);
-*/
-
-
-
-
+		if (cropped.data == NULL) continue;
 
 		resize(cropped, cropped, Size(QR_MARK_TEMPLATE_SIZE, QR_MARK_TEMPLATE_SIZE));
-        //match = matchTemplate(rotated, qrMark);
-
 	    threshold(cropped, cropped, GLOBAL_THRESH, 255, CV_THRESH_OTSU);
-	    cv::compare(cropped, qrMark, diff, cv::CMP_NE);
-	    match = countNonZero(diff) / (double)(cropped.rows * cropped.cols);
+
+	    double match = exactMatch(cropped, qrMark, diff);
+        DEBUG_PRINT(DEBUG_TAG, "First match result: %.4f", match);
 
 	    currMark.flags = 0;
-	    if (match > QR_MARK_TAMPLATE_MATCH_TOLERANCE) {
+	    if (match > matchTolerance) {
 	    	if (!(flags & FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR)) {
 	    		continue;
 	    	}
@@ -500,15 +495,15 @@ void QrBarcode::_detect(Mat &image, vector<DetectedMark> &detectedMarks, int fla
 	    	floodFill(cropped, Point(cropped.cols - 2, 1), Scalar(0));
 	    	floodFill(cropped, Point(cropped.cols - 2, cropped.rows - 2), Scalar(0));
 
-	    	cv::compare(cropped, qrMark, diff, cv::CMP_NE);
-	    	match = countNonZero(diff) / (double)(cropped.rows * cropped.cols);
-	    	if (match > QR_MARK_TAMPLATE_MATCH_TOLERANCE) continue;
+		    match = exactMatch(cropped, qrMark, diff);
+	    	if (match > matchTolerance) continue;
 	    	currMark.flags = FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR;
 	    }
-	    cout << "mark match: " << i << " : " << match << endl;
+        DEBUG_PRINT(DEBUG_TAG, "mark match: %d : %.4f", i, match);
 
 	    convexHull(corners, corners);
 	    currMark.match = match;
+	    currMark.flags = flags & DISTANCE_FLAGS;
 	    currMark.points = corners;
 	    detectedMarks.push_back(currMark);
 	}
@@ -581,7 +576,7 @@ int QrBarcode::getBlockSize(Size imageSize, double distanceDivider) {
 
 Mat QrBarcode::binarize(Image &image, int flags, int mean_C) {
 	Mat binarized;
-	//imwrite("before_test.jpg", image);
+	DEBUG_WRITE_IMAGE("before_test.jpg", image);
 
 	if (flags & FLAG_GLOBAL_THRESH) {
 		threshold(image, binarized, GLOBAL_THRESH, 255, CV_THRESH_OTSU);
@@ -601,6 +596,6 @@ Mat QrBarcode::binarize(Image &image, int flags, int mean_C) {
 		}
 	}
 
-	//imwrite("after_test_binarized.jpg", binarized);
+	DEBUG_WRITE_IMAGE("after_test_binarized.jpg", binarized);
 	return binarized;
 }

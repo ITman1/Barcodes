@@ -1,6 +1,7 @@
 obj/
 include/
 include /
+_src/
 *.exe
 *.so
 *.dll

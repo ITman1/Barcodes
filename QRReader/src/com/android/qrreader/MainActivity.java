@@ -105,12 +105,12 @@ public class MainActivity extends Activity {
     /** The filename for temporary QR code which will stored inside the
      * internal application directory and then passed its filename to 
      * another activity via Intent. */
-    private static String TMP_QR_FILENAME                   = ".tmp_qr_code.qr";
+    private static final String TMP_QR_FILENAME             = ".tmp_qr_code.qr";
     
     /** The filename for temporary decoded image which will stored inside the
      * internal application directory and then passed its filename to 
      * another activity via Intent. */
-    private static String TMP_QR_IMAGE_FILENAME             = ".tmp_qr_code.jpg";
+    private static final String TMP_QR_IMAGE_FILENAME       = ".tmp_qr_code.jpg";
 
     /** The reference to the layout that contains the camera preview surface. */
     private RelativeLayout     cameraPreviewLayout;
@@ -158,9 +158,9 @@ public class MainActivity extends Activity {
     
     private byte[]             previewDetectionImage;
     
-    DetectedMark[] detectedMarks;
+    private DetectedMark[]     detectedMarks;
     
-    Object detectedMarksLock = new Object();
+    private Object             detectedMarksLock = new Object();
     
     private Handler invalidateHandler = new Handler() {
         public void  handleMessage(Message msg) {
@@ -188,18 +188,31 @@ public class MainActivity extends Activity {
     
     class DetectionThread extends Thread {
         public void run() {
-           Rect previewSize = droidCamera.previewRect();
-            Image image = new Image();
-            image.data = previewDetectionImage;
-            image.colorFormat = 0x03;
-            image.compressed = false;
-            image.size = new QrCodes.Size(previewSize.width(), previewSize.height());
-            
-            synchronized (detectedMarksLock) {
-                detectedMarks = QrCodes.detectQrCode(image, 0, 0);
-            };
-                       
-            invalidateHandler.sendEmptyMessage(0);
+            if (droidCamera != null) {
+                Rect previewSize = droidCamera.previewRect();
+                Image image = new Image();
+                image.data = previewDetectionImage;
+                image.colorFormat = 0x03;
+                image.compressed = false;
+                image.size = new QrCodes.Size(previewSize.width(), previewSize.height());
+                
+                Log.i(MainActivity.TAG, ">>> BEFORE NATIVE");
+                Log.i(MainActivity.TAG, "Free memory: " + Runtime.getRuntime().freeMemory());
+                Log.i(MainActivity.TAG, "Max memory: " + Runtime.getRuntime().maxMemory());
+                Log.i(MainActivity.TAG, "Total memory: " + Runtime.getRuntime().totalMemory());
+                
+                synchronized (detectedMarksLock) {
+                    detectedMarks = QrCodes.detectQrCode(image, 0, 0);
+                };
+                           
+                Log.i(MainActivity.TAG, ">>> AFTER NATIVE");
+                Log.i(MainActivity.TAG, "Free memory: " + Runtime.getRuntime().freeMemory());
+                Log.i(MainActivity.TAG, "Max memory: " + Runtime.getRuntime().maxMemory());
+                Log.i(MainActivity.TAG, "Total memory: " + Runtime.getRuntime().totalMemory());
+                
+                droidCamera.getCamera().addCallbackBuffer(previewDetectionImage);
+                invalidateHandler.sendEmptyMessage(0);
+            }
         }
     };
     
@@ -257,14 +270,16 @@ public class MainActivity extends Activity {
             lastTimeFPS = System.currentTimeMillis();
             
             if (data!= null && !detectionThread.isAlive()) {
-                previewDetectionImage = data.clone();
+                previewDetectionImage = data;
                 detectionThread = new DetectionThread();
                 detectionThread.setPriority(Thread.NORM_PRIORITY + 1); 
                 detectionThread.start();
+            } else {
+                // Returning the data buffer to the processing queue
+                camera.addCallbackBuffer(data);
             }
             
-            // Returning the data buffer to the processing queue
-            camera.addCallbackBuffer(data);
+
         }
     };
     
@@ -566,11 +581,6 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "onDestroy");
-        try {
-            detectionThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         stopDroidCamera();
     }
     
@@ -671,6 +681,13 @@ public class MainActivity extends Activity {
      */
     private void stopDroidCamera() {
         Log.i(TAG, "stopDroidCamera");
+        
+        try {
+            detectionThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
         if (droidCamera != null) {
             droidCamera.release();
             droidCamera = null;

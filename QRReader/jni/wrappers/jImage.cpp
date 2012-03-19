@@ -9,10 +9,6 @@ using namespace std;
 
 const string jImage::CLASS_NAME = "com/qrcode/QrCodes$Image";
 
-// TODO: DELETE
-#include <android/log.h>
-#define DEBUG_TAG "jImage.cpp"
-
 jImage::jImage(JNIEnv *env) : JNIWrapper(env, CLASS_NAME) {}
 
 jImage::jImage(JNIEnv *env, jobject jObject) : JNIWrapper(env, jObject) {}
@@ -44,15 +40,16 @@ void jImage::setData(uchar *data, int length) {
 }
 
 void jImage::getData(ByteArray &data) {
-	jboolean isCopy;
 	jbyteArray dataArr = getByteArray(this, "data");
-	jbyte *data_ptr = env->GetByteArrayElements(dataArr, &isCopy);
 	jsize length = env->GetArrayLength(dataArr);
-	data.resize(length);
-	copy(data_ptr, data_ptr + length, data.begin());
+	jbyte *data_ptr = env->GetByteArrayElements(dataArr, NULL);
 
-	if (isCopy == JNI_TRUE) {
-		env->ReleaseByteArrayElements(dataArr, data_ptr, 0);
+	if (data_ptr != NULL) {
+		data.resize(length);
+		copy(data_ptr, data_ptr + length, data.begin());
+		env->ReleaseByteArrayElements(dataArr, data_ptr, JNI_ABORT);
+	} else {
+		data.clear();
 	}
 
 	env->DeleteLocalRef(dataArr);
@@ -78,16 +75,8 @@ jImage::operator Image() {
 	Size size = getSize();
 
 	if (compressed) {
-		__android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "Image decoding...");
-	    __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "Size: [%d : %d]", size.width, size.height);
-	    __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "Data length: [%d]", data.size());
-	    __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "Color format: [%d]", format);
 		return Image(imdecode(Mat(data), 0), IMAGE_COLOR_GRAYSCALE);
 	} else  {
-		__android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "Image assigning...");
-	    __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "Size: [%d : %d]", size.width, size.height);
-	    __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "Data length: [%d]", data.size());
-	    __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "Color format: [%d]", format);
 		return Image(Image(size.height * 3/2, size.width, (void *)&data[0], format).clone(), format);
 	}
 }

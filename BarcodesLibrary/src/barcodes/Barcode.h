@@ -25,6 +25,7 @@ namespace barcodes {
 		virtual bool loadFromImage(Image &image);
 
 		virtual void detect(Image &image, vector<DetectedMark> &detectedMarks, int flags = 0);
+		virtual void read(Image &image, ByteArray &data, int flags = 0);
 
 		virtual Image *createImage();
 	};

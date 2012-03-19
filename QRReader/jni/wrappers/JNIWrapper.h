@@ -11,7 +11,7 @@ namespace jni {
 
 class JNIWrapper {
 public:
-	JNIWrapper(JNIEnv *env, string className, string signature = "()V", ...) {
+	JNIWrapper(JNIEnv *env, string className, string signature = "()V", ...) : localJObject(true) {
 		this->env = env;
 		this->cls = env->FindClass(className.c_str());
 		jmethodID constructor = getConstructor(this, signature);
@@ -22,10 +22,16 @@ public:
 	    va_end(args);
 	}
 
-	JNIWrapper(JNIEnv *env, jobject jObject) {
+	JNIWrapper(JNIEnv *env, jobject jObject) : localJObject(false) {
 		this->env = env;
 		this->jObject = jObject;
 		this->cls = env->GetObjectClass(jObject);
+	}
+
+	virtual ~JNIWrapper() {
+		if (localJObject) {
+			env->DeleteLocalRef(jObject);
+		}
 	}
 
 	inline JNIEnv* getEnv() {
@@ -166,19 +172,15 @@ public:
 	}
 
 	static inline string getClassSignature(JNIEnv *env, jclass cls) {
-		jboolean isCopy;
-
 		jclass classClass = env->FindClass("java/lang/Class");
 		jmethodID nameMethod = env->GetMethodID(classClass, "getName", "()Ljava/lang/String;");
 
 		jstring jClassName = (jstring)env->CallObjectMethod(cls, nameMethod);
 
-		const char* strClassName = env->GetStringUTFChars(jClassName , &isCopy);
+		const char* strClassName = env->GetStringUTFChars(jClassName , NULL);
 		string className = string(strClassName);
 
-		if (isCopy == JNI_TRUE) {
-			env->ReleaseStringUTFChars(jClassName , strClassName);
-	    }
+		env->ReleaseStringUTFChars(jClassName , strClassName);
 
 		replace(className.begin(), className.end(), '.', '/');
 		return "L" + className + ";";
@@ -188,6 +190,7 @@ protected:
 	JNIEnv *env;
 	jobject jObject;
 	jclass cls;
+	bool localJObject;
 };
 
 }

@@ -10,6 +10,26 @@
 
 #include <opencv2/core/core.hpp>
 #include <vector>
+#include <cstdarg>
+
+#ifdef TARGET_DEBUG
+	#ifdef ANDROID
+		#include <android/log.h>
+		#define DEBUG_TAG "QrBarcode.cpp"
+
+		#define DEBUG_WRITE_IMAGE(filename, image) imwrite(string("sdcard/") + string(filename), image)
+		#define DEBUG_PRINT(tag, format, ...)	__android_log_print(ANDROID_LOG_DEBUG, string(tag).c_str(), string(format).c_str(), ## __VA_ARGS__)
+	#else
+		#include <cstdio>
+
+		#define DEBUG_WRITE_IMAGE(filename, image) imwrite(filename, image)
+		#define DEBUG_PRINT(tag, format, ...) printf((string(tag) + string(": ") + string(format) + string("\n")).c_str(), ## __VA_ARGS__)
+	#endif
+
+#else
+	#define DEBUG_WRITE_IMAGE(filename, image)
+	#define DEBUG_PRINT(tag, text, args...)
+#endif
 
 using namespace std;
 
@@ -17,6 +37,26 @@ namespace barcodes {
 	using namespace cv;
 
 	typedef vector<uchar> ByteArray;
+
+	template<typename T>
+	class Vector2D_ {
+	public:
+		T dx;
+		T dy;
+
+		Vector2D_() : dx(0), dy(0) {}
+
+		Vector2D_(Point_<T> p1, Point_<T> p2) {
+			dx = p1.x - p2.x;
+			dy = p1.y - p2.y;
+		}
+
+		double size() {
+			return sqrt(dx * dx + dy * dy);
+		}
+	};
+
+	typedef Vector2D_<int> Vector2D;
 
 	template <class T>
 	string toStr(const T &value) {

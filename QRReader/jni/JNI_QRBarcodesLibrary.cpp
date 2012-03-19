@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include <jni.h>
+#include <barlib/types.h>
 #include <barlib/barcodes/qr/QrBarcode.h>
 
 #include "wrappers/jDetectedMark.h"
@@ -11,8 +12,6 @@ using namespace std;
 using namespace jni;
 using namespace barcodes;
 
-// TODO: DELETE
-#include <android/log.h>
 #define DEBUG_TAG "JNI_QRBarcodesLibrary.cpp"
 
 extern "C" {
@@ -21,23 +20,26 @@ extern "C" {
 		vector<DetectedMark> detectedMarks;
 		Image img = jImage(env, image);
 
-		__android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "Image color-format: [%d]", img.getColorFormat());
-		__android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "Image elem-size: [%d]", CV_ELEM_SIZE(img.type()) * CV_ELEM_SIZE1(img.type()));
-	    __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "Image size: [%d : %d]", img.cols, img.rows);
+		DEBUG_PRINT(DEBUG_TAG, "Image color-format: [%d]", img.getColorFormat());
+		DEBUG_PRINT(DEBUG_TAG, "Image elem-size: [%d]", CV_ELEM_SIZE(img.type()) * CV_ELEM_SIZE1(img.type()));
+		DEBUG_PRINT(DEBUG_TAG, "Image size: [%d : %d]", img.cols, img.rows);
 		if (img.convertColorFormat(IMAGE_COLOR_GRAYSCALE)) {
-
-			barcode.detect(img, detectedMarks, QrBarcode::FLAG_DISTANCE_MEDIUM);
+			//DEBUG_WRITE_IMAGE("last_image.jpg", img);
+			barcode.detect(img, detectedMarks, QrBarcode::FLAG_DISTANCE_MEDIUM | QrBarcode::FLAG_QR_MARK_MATCH_TOLERANCE_HIGH);
 			int arrLength = detectedMarks.size();
 
 			jobjectArray detectedMarksArr = env->NewObjectArray(arrLength, jDetectedMark::getJClass(env), NULL);
 
 			for (int i = 0; i < arrLength; i++) {
-				jDetectedMark detectedMark = jDetectedMark(env, detectedMarks[i]);
-				env->SetObjectArrayElement(detectedMarksArr, i, detectedMark);
+				jDetectedMark *detectedMark = new jDetectedMark(env, detectedMarks[i]);
+				env->SetObjectArrayElement(detectedMarksArr, i, *detectedMark);
+				delete detectedMark;
 			}
 
 			return detectedMarksArr;
 		}
+
+		return NULL;
 	}
 };
 

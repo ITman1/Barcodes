@@ -5,10 +5,6 @@ using namespace std;
 
 const string jDetectedMark::CLASS_NAME = "com/qrcode/QrCodes$DetectedMark";
 
-// TODO: DELETE
-#include <android/log.h>
-#define DEBUG_TAG "jDetectedMark.cpp"
-
 jDetectedMark::jDetectedMark(JNIEnv *env) : JNIWrapper(env, CLASS_NAME) {}
 
 jDetectedMark::jDetectedMark(JNIEnv *env, jobject jObject) : JNIWrapper(env, jObject) {}
@@ -31,11 +27,11 @@ vector<Point> jDetectedMark::getPoints() {
 }
 
 void jDetectedMark::setPoints(vector<Point> points) {
-	int arrLength = points.size();    __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "XXX");
+	int arrLength = points.size();
 	jobjectArray pointsArray = env->NewObjectArray(arrLength, jPoint::getJClass(env), NULL);
-    __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "XXX");
+
     setObjectArray(this, jPoint::getJClass(env), "points", pointsArray);
-    __android_log_print(ANDROID_LOG_DEBUG, DEBUG_TAG, "XXX");
+
 	for (int i = 0; i < arrLength; i++) {
 		jPoint point = jPoint(env, points[i]);
 		setObjectArrayElement(this, jPoint::getJClass(env), "points", i, point);

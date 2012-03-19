@@ -118,7 +118,7 @@
 	         android:key="Preferences_View_ShowTarget"
 	         android:summary="@string/summary_Preferences_View_ShowTarget"
 	         android:title="@string/title_Preferences_View_ShowTarget" 
-	         android:defaultValue="true" />
+	         android:defaultValue="false" />
 	     
 	     <CheckBoxPreference 
 	         android:key="Preferences_View_ShowDecodedImage"

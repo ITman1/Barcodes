@@ -47,6 +47,9 @@ final public class DroidCamera {
     /** The second buffer for the preview callback. For better FPS. */
     private static byte[]             callbackBuffer_2;
     
+    /** The third buffer for the preview callback. For better FPS. */
+    private static byte[]             callbackBuffer_3;
+    
     /** The instance of the opened camera. */
     private Camera                    camera;
 	
@@ -159,6 +162,7 @@ final public class DroidCamera {
         // Allocating the store buffers
         callbackBuffer = new byte[bufferSize];
         callbackBuffer_2 = new byte[bufferSize];
+        callbackBuffer_3 = new byte[bufferSize];
         
         // Clearing the queue with the preview buffers
         camera.setPreviewCallbackWithBuffer(null);     
@@ -166,6 +170,7 @@ final public class DroidCamera {
         // Adding a new buffers to the queue and setting a new preview callback
         camera.addCallbackBuffer(callbackBuffer);
         camera.addCallbackBuffer(callbackBuffer_2);
+        camera.addCallbackBuffer(callbackBuffer_3);
         camera.setPreviewCallbackWithBuffer(cb);
     }
     
