@@ -37,6 +37,9 @@ namespace barcodes {
 
 		virtual void detect(Image &image, vector<DetectedMark> &detectedMarks, int flags = FLAG_ADAPT_THRESH | FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR | FLAG_ADAPT_THRESH_CORRUPT_FILL_REPAIR |
 				DISTANCE_FLAGS | FLAG_QR_MARK_MATCH_TOLERANCE_NORMAL);
+
+		virtual void read(Image &image, ByteArray &data, int flags = FLAG_ADAPT_THRESH | FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR | FLAG_ADAPT_THRESH_CORRUPT_FILL_REPAIR |
+				DISTANCE_FLAGS | FLAG_QR_MARK_MATCH_TOLERANCE_NORMAL);
 	protected:
 		struct PointNearbyPoints {
 			Point point;
@@ -53,12 +56,18 @@ namespace barcodes {
 		static const double MEAN_BLOCK_SIZE_PER_SIZE_COEFFICIENT    =    0.2166;
 		static const double QR_MARK_SHAPE_MATCH_ACCEPTED_RESULT     =    0.025;
 		static const double QR_MARK_MAXIMAL_SIZE_RATIO              =    2.0;
-		static const double QR_MARK_BOUNDING_RECT_MAX_ACCEPTED_SCALE=    3.5;
+		static const double QR_MARK_BOUNDING_RECT_MAX_ACCEPTED_SCALE=    4;
 		static const double QR_MARK_TEMPLATE_SIZE                   =    35;
 		static const double QR_MARK_CONVEX_CONTOUR_MATCH            =    0.9;
 		static const double QR_MARK_MINIMAL_CORNER_ANGLE            =    35; // stupnu
 		static const double QR_MARK_OPTIMAL_CORNER_ANGLE            =    90; // stupnu
 		static const double QR_MARK_CENTER_POINTS_MINIMUM_DISTANCE  =    0.2;
+
+		static const double SAMPLE_RECT_START_ANGLE_SHIFT           =    10;
+		static const double SAMPLE_RECT_ANGLE_STEP                  =    0.5;
+		static const double SAMPLE_RECT_MAX_ANGLE                   =    20;
+		static const double SAMPLE_RECT_EDGE_DETECT_FILL_RATIO      =    0.05;
+		static const double SAMPLE_RECT_FINAL_STEPS_COUNT           =    10;
 
 		static const double QR_MARK_BG_FILL_RATIO_MAX               =    6.125;    // -8 white points (reference 49 / 16)
 		static const double QR_MARK_BG_FILL_RATIO_MIN               =    2.041666; // +8 white points (reference 49 / 16)
@@ -77,8 +86,14 @@ namespace barcodes {
 		static const int QR_MARK_MINIMAL_SIZE_LARGE                 =    20;
 
 		void _detect(Mat &image, vector<DetectedMark> &detectedMarks, int flags = 0);
+		void _read_V2_40(Image &image, ByteArray &data, vector<DetectedMark> &detectedMarks, int flags = 0);
+		int getNearestPointPosition(vector<Point> &contour, vector<Point> &points, bool preferInside = true);
+		void getPerspectiveCorners_V1_40(Mat &binarized, vector<DetectedMark> &detectedMarks, vector<Point> &corners);
+		bool sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Point2f &rotatePoint, Vector2Df &lineShift, int lineWidth, bool clockWiseSample);
+		double _sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Point2f &rotatePoint, Vector2Df &lineShift, int lineWidth);
 		void detectByDistancePriority(Image &image, vector<DetectedMark> &detectedMarks, int flags);
 		void filterMarks(vector<DetectedMark> &detectedMarks, double centerPointsMinDistance = QR_MARK_CENTER_POINTS_MINIMUM_DISTANCE);
+		void calcBinarizedHistogram(Mat &image, Mat &contourMask, MatND &hist);
 		Mat buildQrMark();
 		double exactMatch(Mat &mat, Mat &tmpl, Mat &diff);
 		double matchTemplate(Mat img, Mat imgTemplate);
