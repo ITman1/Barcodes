@@ -13,8 +13,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/core.hpp>
 
-#include "types.h"
-
 namespace barcodes {
 using namespace std;
 using namespace cv;

@@ -1,3 +1,12 @@
-Image.cpp
+common/Image.cpp
+common/miscellaneous.cpp
 barcodes/Barcode.cpp
+barcodes/Decoder.cpp
+barcodes/Detector.cpp
+barcodes/DetectedMarks.cpp
 barcodes/qr/QrBarcode.cpp
+barcodes/qr/QrDecoder.cpp
+barcodes/qr/QrDetector.cpp
+barcodes/qr/QrBuildHelper.cpp
+barcodes/qr/QrFormatInformation.cpp
+barcodes/qr/QrVersionInformation.cpp
