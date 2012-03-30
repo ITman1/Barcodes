@@ -109,7 +109,8 @@ void GridSampler::sample(BitMatrix &code, BitArray &result, BitMatrix *mask) {
 
 	while (!OUT_OF_BOUND(codeSize, currPoint)) {
 		if ((!mask) || (mask->getBit(currPoint))) {
-			result.pushBit(code.getBit(currPoint));
+			bool bit = code.getBit(currPoint);
+			result.pushBit(bit);
 		}
 
 		GET_OFFSET_DIMENSION(bitsDirection1, offsetDim1);

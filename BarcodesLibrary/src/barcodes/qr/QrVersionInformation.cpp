@@ -70,6 +70,12 @@ const int QrVersionInformation::ALIGNMENT_PATTERNS_LOOKUP_TABLE[QrVersionInforma
 	{ 6, 26, 54, 82, 110, 138, 166},    { 6, 30, 58, 86, 114, 142, 170}
 };
 
+QrVersionInformation::QrVersionInformation(int version) : version(version) {
+	if ((version < VERSION_1::VERSION_NUMBER) || (version > VERSION_40::VERSION_NUMBER)) {
+		version = -1;
+	}
+}
+
 bool QrVersionInformation::operator==(const QrVersionInformation &rhs) const {
   return version == rhs.version;
 }
@@ -105,8 +111,8 @@ void QrVersionInformation::getFormatPosition1(vector<Rect> &formatPositions) {
 	formatPositions.clear();
 	formatPositions.push_back(Rect(Point(8, 0), Size(1, 6)));
 	formatPositions.push_back(Rect(Point(8, 7), Size(1, 2)));
-	formatPositions.push_back(Rect(Point(0, 8), Size(6, 1)));
 	formatPositions.push_back(Rect(Point(7, 8), Size(1, 1)));
+	formatPositions.push_back(Rect(Point(0, 8), Size(6, 1)));
 }
 
 void QrVersionInformation::getFormatPosition2(vector<Rect> &formatPositions) {
@@ -212,8 +218,8 @@ QrVersionInformation QrVersionInformation::fromImage(const Mat &image, const Det
 	Line2D::intersection(Line2D(sortedDetectedMarks[2].points[0], sortedDetectedMarks[2].points[2]),
 			Line2D(sortedDetectedMarks[2].points[1], sortedDetectedMarks[2].points[3]), C_UR);
 	int D = Vector2D(C_UL, C_UR).size();
-	int X = (W_UL + W_UR) / 14;
-	int V = ((D / (double)X) - 10) / (double)4;
+	double X = (W_UL + W_UR) / 14.0;
+	int V = round(((D / (double)X) - 10) / 4.0);
 
 	if (V <= VERSION_6::VERSION_NUMBER) return QrVersionInformation(V);
 

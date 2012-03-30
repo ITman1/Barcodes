@@ -8,6 +8,7 @@
 
 #include "QrDecoder.h"
 #include "QrVersionInformation.h"
+#include "QrFormatInformation.h"
 
 #define DEBUG_TAG "QrDecoder.cpp"
 
@@ -59,9 +60,18 @@ void QrDecoder::_read_V2_40(Image &image, ByteArray &data, DetectedMarks &detect
 	QrVersionInformation versionInformation = QrVersionInformation::fromImage(perspWarped, _detectedMarks);
 	DEBUG_PRINT(DEBUG_TAG, "VERSION: %d", versionInformation.getVersion());
 
-	BitMatrix mask;
-	versionInformation.getDataMask(mask);
-	DEBUG_WRITE_IMAGE("out2/data_mask.bmp", mask);
+	BitMatrix qrBitMatrix;
+	BitMatrix::fromImage(perspWarped, versionInformation.getQrBarcodeSize(), qrBitMatrix);
+
+	Mat _mask(versionInformation.getQrBarcodeSize(), CV_8UC1);
+	for (int i = 0; i < _mask.rows; i++) {
+		for (int j = 0; j < _mask.cols; j++) {
+			_mask.at<uchar>(i, j) = -255 * (qrBitMatrix.at(i, j) - 1);
+		}
+	}
+	DEBUG_WRITE_IMAGE("out2/data_mask.bmp", _mask);
+
+	QrFormatInformation formatInformation = QrFormatInformation::fromBitMatrix(qrBitMatrix, versionInformation);
 }
 
 // Getting the A,B,C,D points, sorted as C,D,A,B for perspective transformation

@@ -77,7 +77,7 @@ void _buildXORDataMask(BitMatrix &mask, Size &size) {
 	CalcFunctor calc;
 	for( int row = 0; row < mask.rows; row++ ) {
 	    for( int col = 0; col < mask.cols; col++ ) {
-	    	mask.at<uchar>(row, col) = calc.calc(row, col);
+	    	mask.setBit(row, col, calc.calc(row, col));
 	    }
 	}
 }
@@ -150,19 +150,27 @@ QrFormatInformation QrFormatInformation::fromBitMatrix(const BitMatrix &code, Qr
 
 	version.getFormatPosition1(formatPositions);
 
-	codeROI = code(formatPositions[0]);	sampler.sample(codeROI, _result);	result.push(_result);
-	codeROI = code(formatPositions[1]);	sampler.sample(codeROI, _result);	result.push(_result);
-	codeROI = code(formatPositions[2]);	sampler.sample(codeROI, _result);	result.push(_result);
-	codeROI = code(formatPositions[3]);	sampler.sample(codeROI, _result);	result.push(_result);
+	codeROI = code(formatPositions[0]);
+	sampler.sample(codeROI, _result);	result.push(_result);
+	codeROI = code(formatPositions[1]);
+	sampler.sample(codeROI, _result);	result.push(_result);
+	codeROI = code(formatPositions[2]);
+	sampler.sample(codeROI, _result);	result.push(_result);
+	codeROI = code(formatPositions[3]);
+	sampler.sample(codeROI, _result);	result.push(_result);
 
 	encodedVersion = result.toULong();
 
 	result.clear();
-	version.getFormatPosition1(formatPositions);
-	codeROI = code(formatPositions[0]);	sampler.sample(codeROI, _result);	result.push(_result);
-	codeROI = code(formatPositions[1]);	sampler.sample(codeROI, _result);	result.push(_result);
+	version.getFormatPosition2(formatPositions);
+	codeROI = code(formatPositions[0]);
+	sampler.sample(codeROI, _result);	result.push(_result);
+	codeROI = code(formatPositions[1]);
+	sampler.sample(codeROI, _result);	result.push(_result);
 
 	encodedVersion = result.toULong();
+
+	return QrFormatInformation(ERROR_CORRECT_LEVEL_H, XOR_DATA_MASK_100);
 }
 
 

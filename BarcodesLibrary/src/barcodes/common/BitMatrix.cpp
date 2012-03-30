@@ -9,14 +9,14 @@
 
 namespace barcodes {
 
-BitMatrix::BitMatrix(bool fill) : Mat(0, 0, CV_8UC1, Scalar(fill)) {}
+BitMatrix::BitMatrix(bool fill) : Mat_<bool>(0, 0, fill) {}
 
-BitMatrix::BitMatrix(int rows, int cols, bool fill) : Mat(rows, cols, CV_8UC1, Scalar(fill)) {}
+BitMatrix::BitMatrix(int rows, int cols, bool fill) : Mat_<bool>(rows, cols, fill) {}
 
-BitMatrix::BitMatrix(Size size, bool fill) : Mat(size, CV_8UC1, Scalar(fill)) { }
+BitMatrix::BitMatrix(Size size, bool fill) : Mat_<bool>(size, fill) { }
 
-BitMatrix::BitMatrix(const BitMatrix& m, const Rect& roi) {
-	Mat(m, roi);
+BitMatrix::BitMatrix(const BitMatrix& m, const Rect& roi) : Mat_<bool>(m, roi) {
+	int i = 0;
 }
 
 BitMatrix BitMatrix::operator() (const Rect& roi) const {
@@ -25,10 +25,10 @@ BitMatrix BitMatrix::operator() (const Rect& roi) const {
 
 void BitMatrix::getRow(int row, BitArray &rowArr) {
 	Mat rowMat = this->row(row);
-	MatIterator_<uchar> rowIter;
+	MatIterator_<bool> rowIter;
 
 	rowArr.clear();
-	for (rowIter = rowMat.begin<uchar>(); rowIter != rowMat.end<uchar>(); rowIter++) {
+	for (rowIter = rowMat.begin<bool>(); rowIter != rowMat.end<bool>(); rowIter++) {
 		rowArr.push_back(*rowIter);
 	}
 }
@@ -39,7 +39,7 @@ void BitMatrix::pushRow(BitArray &rowArr) {
 	resize(rows + 1);
 
 	for (int i = 0; i < cols;i++) {
-		at<uchar>(rows - 1, i) = rowArr.at(i);
+		at(rows - 1, i) = rowArr.at(i);
 	}
 }
 
@@ -62,9 +62,9 @@ void BitMatrix::fillRects(vector<Rect> &rects, bool fill) {
 void BitMatrix::maskAND(BitMatrix &mask) {
 	if (mask.size() != this->size()) return;
 
-	MatIterator_<uchar> iter;
-	MatIterator_<uchar> iter_end = end<uchar>();
-	MatIterator_<uchar> iter2;
+	iterator iter;
+	iterator iter_end = end();
+	iterator iter2;
 
 	for(; iter != iter_end; iter++, iter2++ ) {
 		*iter &= *iter2;
@@ -74,16 +74,16 @@ void BitMatrix::maskAND(BitMatrix &mask) {
 void BitMatrix::maskXOR(BitMatrix &mask) {
 	if (mask.size() != this->size()) return;
 
-	MatIterator_<uchar> iter;
-	MatIterator_<uchar> iter_end = end<uchar>();
-	MatIterator_<uchar> iter2;
+	iterator iter;
+	iterator iter_end = end();
+	iterator iter2;
 
 	for(; iter != iter_end; iter++, iter2++ ) {
 		*iter ^= *iter2;
 	}
 }
 
-void BitMatrix::fromImage(Mat img, Size sampleGridSize, BitMatrix &outMatrix, Rect roi) {
+void BitMatrix::fromImage(Mat img, Size sampleGridSize, BitMatrix &outMatrix, Rect roi, double marginRatio) {
 	Mat _img;
 	if (roi.height != -1) {
 		_img = img(roi);
@@ -95,7 +95,11 @@ void BitMatrix::fromImage(Mat img, Size sampleGridSize, BitMatrix &outMatrix, Re
 	int _cols = sampleGridSize.width;
 	double _rowSize = _img.rows / (double)_rows;
 	double _colSize = _img.cols / (double)_cols;
-	int _pixelsPerModule = (int)_rowSize * (int)_colSize;
+	double _marginColSize = ceil(_colSize * (1 - marginRatio));
+	double _marginRowSize = ceil(_rowSize * (1 - marginRatio));
+	double _marginColOffset = _colSize * (marginRatio / 2.0);
+	double _marginRowOffset = _rowSize * (marginRatio / 2.0);
+	int _pixelsPerModule = (int)_marginColSize * (int)_marginRowSize;
 
 	if (_rows >= 1 && _cols >= 1) {
 		outMatrix = BitMatrix(0, _cols);
@@ -105,7 +109,7 @@ void BitMatrix::fromImage(Mat img, Size sampleGridSize, BitMatrix &outMatrix, Re
 			_rowArr.clear();
 
 			for (int j = 0; j < _cols; j++) {
-				int _blackPixels = cv::countNonZero(_img(Rect(j * _colSize, i * _rowSize, _colSize, _rowSize)));
+				int _blackPixels = cv::countNonZero(_img(Rect(_marginColOffset + j * _colSize, _marginRowOffset + i * _rowSize, _marginColSize, _marginRowSize)));
 				bool _notBit = round(_blackPixels / (double)_pixelsPerModule);
 				_rowArr.pushBit( ! _notBit );
 			}

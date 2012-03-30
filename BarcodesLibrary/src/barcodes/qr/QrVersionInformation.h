@@ -66,7 +66,7 @@ public:
 	const static Rect INVALID_POSITION;
 	const static Size INVALID_VERSION_SIZE;
 
-	QrVersionInformation(int version) : version(version) {}
+	QrVersionInformation(int version);
 	virtual ~QrVersionInformation() {}
 
 	int getVersion();
