@@ -41,10 +41,14 @@ public:
 		push_back(bit);
 	}
 
+	inline void push(BitArray &arr) {
+		insert(end(), arr.begin(), arr.end());
+	}
+
 	inline uint64_t toULong() {
 		uint64_t ret = 0;
 
-		for (int i = 0; (i < 64) && (i < size()); i++) {
+		for (uint32_t i = 0; (i < 64) && (i < size()); i++) {
 			ret += ((uint64_t)getBit(i)) << i;
 		}
 

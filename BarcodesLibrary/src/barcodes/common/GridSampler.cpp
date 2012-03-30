@@ -108,7 +108,7 @@ void GridSampler::sample(BitMatrix &code, BitArray &result, BitMatrix *mask) {
 	if (sampleDirection1 == TOP) currPoint -= Point(0, gridSize.height);
 
 	while (!OUT_OF_BOUND(codeSize, currPoint)) {
-		if ((!mask) || (!mask->getBit(currPoint))) {
+		if ((!mask) || (mask->getBit(currPoint))) {
 			result.pushBit(code.getBit(currPoint));
 		}
 

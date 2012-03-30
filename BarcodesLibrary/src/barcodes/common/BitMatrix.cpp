@@ -9,11 +9,19 @@
 
 namespace barcodes {
 
-BitMatrix::BitMatrix() : Mat(0, 0, CV_8UC1, Scalar(false)) {}
+BitMatrix::BitMatrix(bool fill) : Mat(0, 0, CV_8UC1, Scalar(fill)) {}
 
-BitMatrix::BitMatrix(int rows, int cols) : Mat(rows, cols, CV_8UC1, Scalar(false)) {}
+BitMatrix::BitMatrix(int rows, int cols, bool fill) : Mat(rows, cols, CV_8UC1, Scalar(fill)) {}
 
-BitMatrix::BitMatrix(Size size) : Mat(size, CV_8UC1, Scalar(false)) { }
+BitMatrix::BitMatrix(Size size, bool fill) : Mat(size, CV_8UC1, Scalar(fill)) { }
+
+BitMatrix::BitMatrix(const BitMatrix& m, const Rect& roi) {
+	Mat(m, roi);
+}
+
+BitMatrix BitMatrix::operator() (const Rect& roi) const {
+	return BitMatrix(*this, roi);
+}
 
 void BitMatrix::getRow(int row, BitArray &rowArr) {
 	Mat rowMat = this->row(row);
@@ -39,11 +47,39 @@ void BitMatrix::clear() {
 	release();
 }
 
-void BitMatrix::fillRects(vector<Rect> &rects) {
+Size BitMatrix::size() {
+	return Size(cols, rows);
+}
+
+void BitMatrix::fillRects(vector<Rect> &rects, bool fill) {
 	vector<Rect>::iterator iter;
 
 	for (iter = rects.begin(); iter != rects.end(); iter++) {
-		rectangle(*this, *iter, Scalar(true), CV_FILLED);
+		rectangle(*this, *iter, Scalar(fill), CV_FILLED);
+	}
+}
+
+void BitMatrix::maskAND(BitMatrix &mask) {
+	if (mask.size() != this->size()) return;
+
+	MatIterator_<uchar> iter;
+	MatIterator_<uchar> iter_end = end<uchar>();
+	MatIterator_<uchar> iter2;
+
+	for(; iter != iter_end; iter++, iter2++ ) {
+		*iter &= *iter2;
+	}
+}
+
+void BitMatrix::maskXOR(BitMatrix &mask) {
+	if (mask.size() != this->size()) return;
+
+	MatIterator_<uchar> iter;
+	MatIterator_<uchar> iter_end = end<uchar>();
+	MatIterator_<uchar> iter2;
+
+	for(; iter != iter_end; iter++, iter2++ ) {
+		*iter ^= *iter2;
 	}
 }
 

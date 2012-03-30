@@ -15,10 +15,13 @@ namespace barcodes {
 using namespace cv;
 class BitMatrix: public Mat {
 public:
-	BitMatrix();
-	BitMatrix(int rows, int cols);
-	BitMatrix(Size size);
+	BitMatrix(bool fill = false);
+	BitMatrix(int rows, int cols, bool fill = false);
+	BitMatrix(Size size, bool fill = false);
+	BitMatrix(const BitMatrix& m, const Rect& roi);
 	virtual ~BitMatrix() {}
+
+	BitMatrix operator() (const Rect& roi) const;
 
 	inline bool getBit(int row, int col) {
 		return at<uchar>(row, col);
@@ -32,10 +35,17 @@ public:
 		at<uchar>(row, col) = bit;
 	}
 
+	/*inline bool &at(int row, int col) {
+		return at<uchar>(row, col);
+	}*/
+
 	void getRow(int row, BitArray &rowArr);
 	void pushRow(BitArray &rowArr);
 	void clear();
-	void fillRects(vector<Rect> &rects);
+	Size size();
+	void fillRects(vector<Rect> &rects, bool fill = true);
+	void maskAND(BitMatrix &mask);
+	void maskXOR(BitMatrix &mask);
 
 	static void fromImage(Mat img, Size sampleSize, BitMatrix &outMatrix, Rect roi = Rect(-1, -1, -1, -1));
 };

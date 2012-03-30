@@ -21,27 +21,27 @@ const Size QrVersionInformation::INVALID_VERSION_SIZE(-1, -1);
 const Size QrVersionInformation::VERSION_POSITION1_SIZE(3, 6);
 const Size QrVersionInformation::VERSION_POSITION2_SIZE(6, 3);
 
-pair<int, uint32_t> QrVersionInformation_versions_mapping[] = {
-    std::make_pair(0x07C94,  7),    std::make_pair(0x085BC,  8),
-    std::make_pair(0x09A99,  9),    std::make_pair(0x0A4D3, 10),
-    std::make_pair(0x0BBF6, 11),    std::make_pair(0x0C762, 12),
-    std::make_pair(0x0D847, 13),    std::make_pair(0x0E60D, 14),
-    std::make_pair(0x0F928, 15),    std::make_pair(0x10B78, 16),
-    std::make_pair(0x1145D, 17),    std::make_pair(0x12A17, 18),
-    std::make_pair(0x13532, 19),    std::make_pair(0x149A6, 20),
-    std::make_pair(0x15683, 21),    std::make_pair(0x168C9, 22),
-    std::make_pair(0x177EC, 23),    std::make_pair(0x18EC4, 24),
-    std::make_pair(0x191E1, 25),    std::make_pair(0x1AFAB, 26),
-    std::make_pair(0x1B08E, 27),    std::make_pair(0x1CC1A, 28),
-    std::make_pair(0x1D33F, 29),    std::make_pair(0x1ED75, 30),
-    std::make_pair(0x1F250, 31),    std::make_pair(0x209D5, 32),
-    std::make_pair(0x216F0, 33),    std::make_pair(0x228BA, 34),
-    std::make_pair(0x2379F, 35),    std::make_pair(0x24B0B, 36),
-    std::make_pair(0x2542E, 37),    std::make_pair(0x26A64, 38),
-    std::make_pair(0x27541, 39),    std::make_pair(0x28C69, 40)
+pair<uint32_t, uint32_t> QrVersionInformation_versions_mapping[] = {
+    make_pair(0x07C94,  7),    make_pair(0x085BC,  8),
+    make_pair(0x09A99,  9),    make_pair(0x0A4D3, 10),
+    make_pair(0x0BBF6, 11),    make_pair(0x0C762, 12),
+    make_pair(0x0D847, 13),    make_pair(0x0E60D, 14),
+    make_pair(0x0F928, 15),    make_pair(0x10B78, 16),
+    make_pair(0x1145D, 17),    make_pair(0x12A17, 18),
+    make_pair(0x13532, 19),    make_pair(0x149A6, 20),
+    make_pair(0x15683, 21),    make_pair(0x168C9, 22),
+    make_pair(0x177EC, 23),    make_pair(0x18EC4, 24),
+    make_pair(0x191E1, 25),    make_pair(0x1AFAB, 26),
+    make_pair(0x1B08E, 27),    make_pair(0x1CC1A, 28),
+    make_pair(0x1D33F, 29),    make_pair(0x1ED75, 30),
+    make_pair(0x1F250, 31),    make_pair(0x209D5, 32),
+    make_pair(0x216F0, 33),    make_pair(0x228BA, 34),
+    make_pair(0x2379F, 35),    make_pair(0x24B0B, 36),
+    make_pair(0x2542E, 37),    make_pair(0x26A64, 38),
+    make_pair(0x27541, 39),    make_pair(0x28C69, 40)
 };
 
-const map<int, uint32_t> QrVersionInformation::ENCODED_VERSIONS(
+const map<uint32_t, uint32_t> QrVersionInformation::ENCODED_VERSIONS(
 		QrVersionInformation_versions_mapping,
     QrVersionInformation_versions_mapping + sizeof QrVersionInformation_versions_mapping
     / sizeof QrVersionInformation_versions_mapping[0]);
@@ -176,29 +176,29 @@ void QrVersionInformation::getOtherMaskPositions(vector<Rect> &maskPositions) {
 }
 
 void QrVersionInformation::getDataMask(BitMatrix &mask) {
-	mask = BitMatrix(getQrBarcodeSize());
+	mask = BitMatrix(getQrBarcodeSize(), true);
 
 	vector<Rect> maskRects;
 	maskRects.push_back(getVersionPosition1());
 	maskRects.push_back(getVersionPosition2());
 	maskRects.push_back(getTimerPattern1Position());
 	maskRects.push_back(getTimerPattern2Position());
-	mask.fillRects(maskRects);
+	mask.fillRects(maskRects, false);
 
 	getFormatPosition1(maskRects);
-	mask.fillRects(maskRects);
+	mask.fillRects(maskRects, false);
 
 	getFormatPosition2(maskRects);
-	mask.fillRects(maskRects);
+	mask.fillRects(maskRects, false);
 
 	getFinderPatternPositions(maskRects);
-	mask.fillRects(maskRects);
+	mask.fillRects(maskRects, false);
 
 	getAlignmentPatternPositions(maskRects);
-	mask.fillRects(maskRects);
+	mask.fillRects(maskRects, false);
 
 	getOtherMaskPositions(maskRects);
-	mask.fillRects(maskRects);
+	mask.fillRects(maskRects, false);
 }
 
 QrVersionInformation QrVersionInformation::fromImage(const Mat &image, const DetectedMarks &sortedDetectedMarks) {
@@ -246,7 +246,7 @@ QrVersionInformation QrVersionInformation::fromImage(const Mat &image, const Det
 }
 
 bool QrVersionInformation::correctEncodedVersion(uint32_t &encodedVersion) {
-	map<int, uint32_t>::const_iterator iter;
+	map<uint32_t, uint32_t>::const_iterator iter;
 
 	uint32_t _encodedVersion = 0;
 	int minDiff = 4;
