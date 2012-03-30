@@ -13,11 +13,12 @@
 namespace barcodes {
 
 class Decoder {
-public:
+protected:
 	Decoder() {}
 	virtual ~Decoder() {}
-
-	virtual void decode(Image &image, ByteArray &data, int flags = 0);
+public:
+	virtual void decode(Image &image, ByteArray &data, int flags = 0) const = 0;
+	virtual const Decoder *getDecoder() const = 0;
 };
 
 } /* namespace barcodes */

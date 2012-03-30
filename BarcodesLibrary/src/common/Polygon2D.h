@@ -122,7 +122,7 @@ public:
 		}
 	}
 
-	static void findCorners(vector<Point> &polygonPoints, int cornerCount, int minCornerArea, vector<Point> &cornerPoints, double minCornerAngle, double optimalAngle) {
+	static void findCorners(vector<Point> &polygonPoints, int cornerCount, int minCornerArea, vector<Point> &cornerPoints, double minCornerAngle, double optimalAngle /* TODO choosing by this*/) {
 
 		vector<PointNearbyPoints>::iterator nearbyPointsIter;
 		vector<PointNearbyPoints> pointNearbyPoints;
@@ -168,7 +168,7 @@ public:
 				angle2 = (angle2 > 180)? angle2 - 180 : angle2;
 
 				double angleDiff = fabs(angle1 - angle2);
-				if ( angleDiff > minCornerAngle && angleDiff < 180 - optimalAngle) {
+				if ( angleDiff > minCornerAngle && angleDiff < 180 - minCornerAngle) {
 					Point intersect;
 					bool inter = Line2D::intersection(Line2D(leftInnerPoint, nearbyLeftPoints->front()),
 							Line2D(rightInnerPoint, nearbyRightPoints->back()), intersect);

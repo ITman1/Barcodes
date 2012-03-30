@@ -32,14 +32,15 @@ public:
 	static const int DISTANCE_FLAGS = FLAG_DISTANCE_FAR_FAR | FLAG_DISTANCE_FAR | FLAG_DISTANCE_MEDIUM | FLAG_DISTANCE_NEAR;
 	static const int MATCH_TOLERANCE_FLAGS = FLAG_QR_MARK_MATCH_TOLERANCE_LOW | FLAG_QR_MARK_MATCH_TOLERANCE_NORMAL | FLAG_QR_MARK_MATCH_TOLERANCE_HIGH;
 
-	QrDetector() {}
-	virtual ~QrDetector() {}
-
-	virtual void detect(Image &image, DetectedMarks &detectedMarks, int flags = FLAG_ADAPT_THRESH | FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR | FLAG_ADAPT_THRESH_CORRUPT_FILL_REPAIR |
+	void detect(Image &image, DetectedMarks &detectedMarks, int flags = FLAG_ADAPT_THRESH | FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR | FLAG_ADAPT_THRESH_CORRUPT_FILL_REPAIR |
 			DISTANCE_FLAGS | FLAG_QR_MARK_MATCH_TOLERANCE_NORMAL) const;
+	const Detector *getDecoder() const;
+
+	static const QrDetector *getInstance();
 
 	static Mat binarize(Image &image, int flags, int mean_C = BINARIZE_MEAN_C);
 protected:
+	static const QrDetector DETECTOR_INSTANCE;
 
 	static const int ROW_CUTS                                   =    7;
 	static const int EDGE_DETECT_MEAN_BLOCK_SIZE                =    13;
@@ -57,8 +58,6 @@ protected:
 	static const double QR_MARK_OPTIMAL_CORNER_ANGLE            =    90; // stupnu
 	static const double QR_MARK_CENTER_POINTS_MINIMUM_DISTANCE  =    0.2;
 
-
-
 	static const double QR_MARK_BG_FILL_RATIO_MAX               =    6.125;    // -8 white points (reference 49 / 16)
 	static const double QR_MARK_BG_FILL_RATIO_MIN               =    2.041666; // +8 white points (reference 49 / 16)
 
@@ -74,6 +73,9 @@ protected:
 	static const int QR_MARK_MINIMAL_SIZE_SMALL                 =    10;
 	static const int QR_MARK_MINIMAL_SIZE_NORMAL                =    14;
 	static const int QR_MARK_MINIMAL_SIZE_LARGE                 =    20;
+
+	QrDetector() {}
+	virtual ~QrDetector() {}
 
 	void _detect(Mat &image,DetectedMarks &detectedMarks, int flags = 0) const;
 	void detectByDistancePriority(Image &image,DetectedMarks &detectedMarks, int flags) const;

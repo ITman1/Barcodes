@@ -7,25 +7,34 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "QrDecoder.h"
+#include "QrVersionInformation.h"
 
 #define DEBUG_TAG "QrDecoder.cpp"
 
 namespace barcodes {
 
-const QrDetector QrDecoder::QR_BARCODE_DETECTOR = QrDetector();
+const QrDecoder QrDecoder::DECODER_INSTANCE = QrDecoder();
 
-void QrDecoder::decode(Image &image, ByteArray &data, int flags) {
+void QrDecoder::decode(Image &image, ByteArray &data, int flags) const {
 	DetectedMarks detectedMarks;
 
 	data.clear();
-	QR_BARCODE_DETECTOR.detect(image, detectedMarks, flags);
+	QrDetector::getInstance()->detect(image, detectedMarks, flags);
 
 	if (detectedMarks.size() == 3) {
 		_read_V2_40(image, data, detectedMarks);
 	}
 }
 
-void QrDecoder::_read_V2_40(Image &image, ByteArray &data, DetectedMarks &detectedMarks, int flags) {
+const QrDecoder *QrDecoder::getInstance() {
+	return &DECODER_INSTANCE;
+}
+
+const Decoder *QrDecoder::getDecoder() const {
+	return &DECODER_INSTANCE;
+}
+
+void QrDecoder::_read_V2_40(Image &image, ByteArray &data, DetectedMarks &detectedMarks, int flags) const {
 	vector<Point> corners;
 	DetectedMarks _detectedMarks = detectedMarks;
 	Mat binarized = QrDetector::binarize(image, _detectedMarks[0].flags);
@@ -47,9 +56,15 @@ void QrDecoder::_read_V2_40(Image &image, ByteArray &data, DetectedMarks &detect
 	_detectedMarks.perspectiveTransform(transformation);
 	DEBUG_WRITE_IMAGE("out2/warped.jpg", perspWarped);
 
+	QrVersionInformation versionInformation = QrVersionInformation::fromImage(perspWarped, _detectedMarks);
+	DEBUG_PRINT(DEBUG_TAG, "VERSION: %d", versionInformation.getVersion());
+
+	BitMatrix mask;
+	versionInformation.getDataMask(mask);
+	DEBUG_WRITE_IMAGE("out2/data_mask.bmp", mask);
 }
 
-// Getting the A,B,C,D points
+// Getting the A,B,C,D points, sorted as C,D,A,B for perspective transformation
 // A,B,C are retrieved from the X,Y,Z
 // Y is the point with the maximal inner distance from the polygon (triangle)
 // which is made by the center points of QR marks.
@@ -68,7 +83,7 @@ void QrDecoder::_read_V2_40(Image &image, ByteArray &data, DetectedMarks &detect
 // * *** *
 // * *** *
 // A*****M                 D
-void QrDecoder::getPerspectiveCorners_V1_40(Mat &binarized, DetectedMarks &detectedMarks, vector<Point> &corners) {
+void QrDecoder::getPerspectiveCorners_V1_40(Mat &binarized, DetectedMarks &detectedMarks, vector<Point> &corners) const {
 	corners.clear();
 
 	//============= DETERMINING THE THREE CORNERS (A, B, C) FROM THE DETECTED MARKS
@@ -180,7 +195,7 @@ void QrDecoder::getPerspectiveCorners_V1_40(Mat &binarized, DetectedMarks &detec
 	corners.push_back(detectedMarks[1].points[0]);
 }
 
-bool QrDecoder::sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Point2f &rotatePoint, Vector2Df &lineShift, int lineWidth, bool clockWiseSample) {
+bool QrDecoder::sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Point2f &rotatePoint, Vector2Df &lineShift, int lineWidth, bool clockWiseSample) const {
 	double sampleAngleStep = (clockWiseSample)? SAMPLE_RECT_ANGLE_STEP : SAMPLE_RECT_ANGLE_STEP * -1;
 	double angle = 0;
 
@@ -233,7 +248,7 @@ bool QrDecoder::sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Point2
 	return false;
 }
 
-double QrDecoder::_sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Point2f &rotatePoint, Vector2Df &lineShift, int lineWidth) {
+double QrDecoder::_sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Point2f &rotatePoint, Vector2Df &lineShift, int lineWidth) const {
 	MatND hist;
 
 	// Getting the hull mask and cropping the contour image

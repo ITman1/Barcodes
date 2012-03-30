@@ -14,6 +14,9 @@
 #define DEBUG_TAG "QrDetector.cpp"
 
 namespace barcodes {
+
+const QrDetector QrDetector::DETECTOR_INSTANCE = QrDetector();
+
 void QrDetector::detect(Image &image, DetectedMarks &detectedMarks, int flags) const {
 	detectedMarks.clear();
 	DEBUG_PRINT(DEBUG_TAG, "================ NEW IMAGE DETECT CALL ================");
@@ -42,7 +45,13 @@ void QrDetector::detect(Image &image, DetectedMarks &detectedMarks, int flags) c
 	}
 }
 
+const QrDetector *QrDetector::getInstance() {
+	return &DETECTOR_INSTANCE;
+}
 
+const Detector *QrDetector::getDecoder() const {
+	return &DETECTOR_INSTANCE;
+}
 
 void QrDetector::detectByDistancePriority(Image &image, DetectedMarks &detectedMarks, int flags) const {
 DEBUG_PRINT(DEBUG_TAG, "detectByDistancePriority(image,detectedMarks,%d)", flags);

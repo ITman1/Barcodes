@@ -12,11 +12,11 @@
 
 namespace barcodes {
 void QrBarcode::detect(Image &image, DetectedMarks &detectedMarks, int flags) {
-	QrDetector().detect(image, detectedMarks, flags);
+	QrDetector::getInstance()->detect(image, detectedMarks, flags);
 }
 
 void QrBarcode::decode(Image &image, ByteArray &data, int flags) {
-	QrDecoder().decode(image, data, flags);
+	QrDecoder::getInstance()->decode(image, data, flags);
 }
 
 }

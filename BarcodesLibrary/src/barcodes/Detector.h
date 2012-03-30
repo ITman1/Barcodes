@@ -15,11 +15,13 @@ namespace barcodes {
 using namespace std;
 
 class Detector {
-public:
+protected:
 	Detector() {}
 	virtual ~Detector() {}
 
-	virtual void detect(Image &image, DetectedMarks &detectedMarks, int flags);
+public:
+	virtual void detect(Image &image, DetectedMarks &detectedMarks, int flags) const = 0;
+	virtual const Detector *getDecoder() const = 0;
 };
 
 } /* namespace barcodes */

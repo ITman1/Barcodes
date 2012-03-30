@@ -29,12 +29,20 @@
 		#include <cstdio>
 
 		#define DEBUG_WRITE_IMAGE(filename, image) imwrite(filename, image)
-		#define DEBUG_PRINT(tag, format, ...) printf((string(tag) + string(": ") + string(format) + string("\n")).c_str(), ## __VA_ARGS__)
+		#define DEBUG_PRINT(tag, format, ...) printf((string(tag) + string(": ") + string(format) + string("\n")).c_str(), ## __VA_ARGS__); fflush(stdout);
 	#endif
+
+	#define DEBUG_PRINT_MATRIX(tag, matrix, type) \
+		for( int i = 0; i < matrix.rows; i++ ) { \
+			for( int j = 0; j < matrix.cols; j++ ) { \
+				DEBUG_PRINT(tag, "%d,%d: %d", i, j, matrix.at<type>(i, j)); \
+			} \
+		}
 
 #else
 	#define DEBUG_WRITE_IMAGE(filename, image)
 	#define DEBUG_PRINT(tag, text, args...)
+	#define DEBUG_PRINT_MATRIX(tag, matrix, type)
 #endif
 
 using namespace std;

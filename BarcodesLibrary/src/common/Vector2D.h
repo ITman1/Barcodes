@@ -22,9 +22,19 @@ public:
 
 	Vector2D_() : dx(0), dy(0) {}
 
+	Vector2D_(Point_<T> vec) {
+		dx = vec.x;
+		dy = vec.y;
+	}
+
 	Vector2D_(Point_<T> p1, Point_<T> p2) {
 		dx = p2.x - p1.x;
 		dy = p2.y - p1.y;
+	}
+
+	Vector2D_(T dx, T dy) {
+		this->dx = dx;
+		this->dy = dy;
 	}
 
 	double size() {
@@ -66,6 +76,14 @@ public:
 		Vector2D_<T> vec;
 		vec.dx = this->dx * multConst;
 		vec.dy = this->dy * multConst;
+
+		return vec;
+	}
+
+	Vector2D_<T> operator* (const Vector2D_<T> &multVec) const {
+		Vector2D_<T> vec;
+		vec.dx = this->dx * multVec.dx;
+		vec.dy = this->dy * multVec.dy;
 
 		return vec;
 	}
