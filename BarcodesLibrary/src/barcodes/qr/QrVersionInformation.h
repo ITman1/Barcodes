@@ -11,6 +11,7 @@
 #include <map>
 #include <opencv2/core/core.hpp>
 
+#include "../common/errcontrol/LookupTable.h"
 #include "../DetectedMarks.h"
 #include "../common/GridSampler.h"
 
@@ -23,17 +24,10 @@ namespace barcodes {
 
 #define _NUMBERS(num,name_space) VERSION_ ## num = num
 #define _VERSIONS(num,name_space) static const QrVersionInformation(num)
-#define _CLASSES(num,name_space) class VERSION_ ## num {\
-public:\
-	static const int VERSION_NUMBER = num;\
-	static const cv::Point VERSION_POSITION1;\
-	static const cv::Point VERSION_POSITION2;\
-}
+#define _CLASSES(num,name_space) static const QrVersionInformation VERSION_ ## num
+
 #define _CLASSES_DEFINE(num,name_space) \
-		const cv::Point name_space ::VERSION_ ## num::VERSION_POSITION1 = \
-		(num <= 6)? cv::Point(-1,-1) : cv::Point(0, QR_SIZE(num) - 11); \
-		const cv::Point name_space ::VERSION_ ## num::VERSION_POSITION2 = \
-		(num <= 6)? cv::Point(-1,-1) : cv::Point(QR_SIZE(num) - 11, 0);
+		const QrVersionInformation name_space ::VERSION_ ## num(num)
 
 #define _VERSIONS_MACRO(M,D,N) \
 	M(1,N)D M(2,N)D M(3,N)D M(4,N)D M(5,N)D M(6,N)D M(7,N)D M(8,N)D M(9,N)D M(10,N)D \
@@ -53,13 +47,13 @@ private:
 	int version;
 	const static Size VERSION_POSITION1_SIZE;
 	const static Size VERSION_POSITION2_SIZE;
-	const static map<uint32_t, uint32_t> ENCODED_VERSIONS;
+	const static LookupTable<uint32_t, uint32_t> ENCODED_VERSIONS;
 	const static int ALIGNMENT_PATTERNS_LOOKUP_TABLE_CENTERS = 7;
 	const static int ALIGNMENT_PATTERNS_LOOKUP_TABLE_VERSIONS = 40;
+	const static int ENCODED_VERSION_MAX_CORRECTIONS = 3;
 	const static int ALIGNMENT_PATTERNS_LOOKUP_TABLE[ALIGNMENT_PATTERNS_LOOKUP_TABLE_VERSIONS][ALIGNMENT_PATTERNS_LOOKUP_TABLE_CENTERS];
 
 	static QrVersionInformation decodeVersion(BitMatrix &bitMatrix, GridSampler::FlowDirection bitsDirection);
-	static bool correctEncodedVersion(uint32_t &encodedVersion);
 public:
 	DECLARE_VERSION_CLASSES
 	const static QrVersionInformation INVALID_VERSION;
@@ -69,22 +63,28 @@ public:
 	QrVersionInformation(int version);
 	virtual ~QrVersionInformation() {}
 
-	int getVersion();
-	Rect getVersionPosition1();
-	Rect getVersionPosition2();
-	Rect getTimerPattern1Position();
-	Rect getTimerPattern2Position();
+	int getVersion() const;
+	int getCodewordsCount() const;
+	int getCodewordSize() const;
+	Rect getVersionPosition1() const;
+	Rect getVersionPosition2() const;
+	Rect getTimerPattern1Position() const;
+	Rect getTimerPattern2Position() const;
 
-	void getFormatPosition1(vector<Rect> &formatPositions);
-	void getFormatPosition2(vector<Rect> &formatPositions);
-	void getFinderPatternPositions(vector<Rect> &finderPatterns);
-	void getAlignmentPatternPositions(vector<Rect> &alignmentPatterns);
-	void getOtherMaskPositions(vector<Rect> &maskPositions);
-	void getDataMask(BitMatrix &mask);
+	void getFormatPosition1(vector<Rect> &formatPositions) const;
+	void getFormatPosition2(vector<Rect> &formatPositions) const;
+	void getFinderPatternPositions(vector<Rect> &finderPatterns) const;
+	void getAlignmentPatternPositions(vector<Rect> &alignmentPatterns) const;
+	void getOtherMaskPositions(vector<Rect> &maskPositions) const;
+	void getDataMask(BitMatrix &mask) const;
 
-	Size getQrBarcodeSize();
+	Size getQrBarcodeSize() const;
 	bool operator!=(const QrVersionInformation &rhs) const;
 	bool operator==(const QrVersionInformation &rhs) const;
+	bool operator>(const QrVersionInformation &rhs) const;
+	bool operator<(const QrVersionInformation &rhs) const;
+	bool operator>=(const QrVersionInformation &rhs) const;
+	bool operator<=(const QrVersionInformation &rhs) const;
 
 	static QrVersionInformation fromImage(const Mat &image, const DetectedMarks &sortedDetectedMarks);
 };

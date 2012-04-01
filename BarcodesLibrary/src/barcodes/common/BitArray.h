@@ -10,22 +10,13 @@
 
 #include <opencv2/core/core.hpp>
 
-#include "../../common.h"
-
 namespace barcodes {
 using namespace cv;
 
-class BitArray: public ByteArray {
+class BitArray: public vector<uchar> {
 public:
-	BitArray() {}
-	BitArray(uint64_t value) {
-		uint64_t mask = 1;
-
-		for (int i = 0; i < 64; i++) {
-			pushBit(mask & value);
-			mask <<= 1;
-		}
-	}
+	BitArray();
+	BitArray(uint64_t value);
 
 	virtual ~BitArray() {}
 
@@ -45,16 +36,19 @@ public:
 		insert(end(), arr.begin(), arr.end());
 	}
 
-	inline uint64_t toULong() {
-		uint64_t ret = 0;
+	uint64_t toULong();
+};
 
-		for (uint32_t i = 0; (i < 64) && (i < size()); i++) {
-			ret += ((uint64_t)getBit(i)) << i;
-		}
+} /* namespace barcodes */
 
-		return ret;
-	}
+namespace barcodes {
+
+class _BitArray {
+public:
+	_BitArray();
+	virtual ~_BitArray();
 };
 
 } /* namespace barcodes */
 #endif /* BITARRAY_H_ */
+

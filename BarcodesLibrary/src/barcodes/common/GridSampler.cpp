@@ -53,17 +53,16 @@ inline void INIT_DIMENSION(GridSampler::Direction direction, Size &_gridSize, Po
 }
 
 inline GridSampler::Direction REFLECT_DIRECTION(GridSampler::Direction direction) {
-    uint8_t ret = 0;
-    uint8_t _direction = direction;
-
-    for (int i = 0; i < 4; ++i) {
-        bool bit = _direction & 0x01;
-        ret |= bit;
-        ret <<= 1;
-        _direction >>= 1;
-    }
-
-	return GridSampler::Direction(ret);
+	switch (direction) {
+		case GridSampler::LEFT:
+			return GridSampler::RIGHT;
+		case GridSampler::RIGHT:
+			return GridSampler::LEFT;
+		case GridSampler::TOP:
+			return GridSampler::BOTTOM;
+		default:
+			return GridSampler::TOP;
+	}
 }
 
 Point GridSampler::getStartPosition(Size _gridSize, FlowDirection flowDirection) {
@@ -90,7 +89,7 @@ void GridSampler::sample(BitMatrix &code, BitArray &result, BitMatrix *mask) {
 	Point outerStartPosition = getStartPosition(codeSize, initSampleFlow);
 	if ((outerStartPosition.x == -1) || (outerStartPosition.y == -1)) return;
 
-	Point innerStartPosition = getStartPosition(gridSize, initSampleFlow);
+	Point innerStartPosition = getStartPosition(gridSize, initBitsFlow);
 	if ((innerStartPosition.x == -1) || (innerStartPosition.y == -1)) return;
 
 	Direction  bitsDirection1   = Direction(initBitsFlow & 0x0F);
@@ -98,14 +97,13 @@ void GridSampler::sample(BitMatrix &code, BitArray &result, BitMatrix *mask) {
 	Direction  sampleDirection1 = Direction(initSampleFlow & 0x0F);
 	Direction  sampleDirection2 = Direction((initSampleFlow & 0xF0) >> 4);
 
-
 	Point offsetDim1(0, 0);
 	Point offsetDim2(0, 0);
 	Point gridDim1Pos(0, 0); INIT_DIMENSION(bitsDirection1, gridSize, gridDim1Pos);
 
 	Point currPoint = outerStartPosition + innerStartPosition;
-	if (sampleDirection1 == LEFT) currPoint -= Point(gridSize.width, 0);
-	if (sampleDirection1 == TOP) currPoint -= Point(0, gridSize.height);
+	if (sampleDirection1 == LEFT || sampleDirection2 == LEFT) currPoint -= Point(gridSize.width - 1, 0);
+	if (sampleDirection1 == TOP || sampleDirection2 == TOP) currPoint -= Point(0, gridSize.height - 1);
 
 	while (!OUT_OF_BOUND(codeSize, currPoint)) {
 		if ((!mask) || (mask->getBit(currPoint))) {
@@ -135,18 +133,14 @@ void GridSampler::sample(BitMatrix &code, BitArray &result, BitMatrix *mask) {
 
 		if (OUT_OF_BOUND(codeSize, _currPoint)) {
 			if (sampleMirror) {
-				if (sampleMirror) bitsDirection2 = REFLECT_DIRECTION(bitsDirection2);
-				if (sampleMirror) sampleDirection2 = REFLECT_DIRECTION(sampleDirection2);
-
-				GET_OFFSET_DIMENSION(sampleDirection1, offsetDim1);
-				offset = Vector2D(_currPoint) + Vector2D(offsetDim1) * Vector2D(gridSize.width, gridSize.height);
-				STRIP_2ND_DIMENSION(sampleDirection1, offset);
-			} else {
-				GET_OFFSET_DIMENSION(sampleDirection1, offsetDim1);
-				offset = Vector2D(_currPoint) + Vector2D(offsetDim1) * Vector2D(gridSize.width, gridSize.height);
-				INIT_DIMENSION(sampleDirection2, codeSize, offset);
-				offset -= currPoint;
+				bitsDirection2 = REFLECT_DIRECTION(bitsDirection2);
+				sampleDirection1 = REFLECT_DIRECTION(sampleDirection1);
 			}
+
+			GET_OFFSET_DIMENSION(sampleDirection2, offsetDim1);
+			offset = Vector2D(_currPoint) + Vector2D(offsetDim1) * Vector2D(gridSize.width, gridSize.height);
+			INIT_DIMENSION(sampleDirection1, codeSize, offset);
+			offset -= currPoint;
 		}
 
 		currPoint += offset;

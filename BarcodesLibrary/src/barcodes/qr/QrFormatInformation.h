@@ -10,6 +10,7 @@
 
 #include <opencv2/core/core.hpp>
 
+#include "../common/errcontrol/LookupTable.h"
 #include "../DetectedMarks.h"
 #include "../common/GridSampler.h"
 #include "QrVersionInformation.h"
@@ -37,17 +38,31 @@ public:
 		XOR_DATA_MASK_111 = 0x7
 	} XORDataMask;
 
+	const static QrFormatInformation INVALID_FORMAT;
+
 	QrFormatInformation(ErrorCorrectionLevel errorCorrectionLevel, XORDataMask xorDataMask) :
-		errorCorrectionLevel(errorCorrectionLevel), xorDataMask(xorDataMask) {}
+		errorCorrectionLevel(errorCorrectionLevel), xorDataMask(xorDataMask), isInvalid(false) {}
 	virtual ~QrFormatInformation() {}
 
 	void buildXORDataMask(BitMatrix &mask, QrVersionInformation version);
 
+	bool operator!=(const QrFormatInformation &rhs) const;
+	bool operator==(const QrFormatInformation &rhs) const;
+	XORDataMask getXORDataMask() const;
+	ErrorCorrectionLevel getErrorCorrectionLevel() const;
+
 	static QrFormatInformation fromBitMatrix(const BitMatrix &code, QrVersionInformation version);
 private:
-	const static map<uint32_t, uint32_t> ENCODED_FORMATS;
+	const static LookupTable<uint32_t, uint32_t> ENCODED_FORMATS;
+	const static int ENCODED_FORMAT_MAX_CORRECTIONS = 3;
 	ErrorCorrectionLevel errorCorrectionLevel;
 	XORDataMask xorDataMask;
+	bool isInvalid;
+
+	QrFormatInformation(bool isInvalid) : errorCorrectionLevel(ERROR_CORRECT_LEVEL_L),
+		xorDataMask(XOR_DATA_MASK_000), isInvalid(isInvalid) {}
+
+	static QrFormatInformation decodeFormat(const BitMatrix &code, vector<Rect> &formatPositions);
 };
 
 } /* namespace barcodes */

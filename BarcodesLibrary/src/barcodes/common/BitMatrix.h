@@ -15,6 +15,8 @@ namespace barcodes {
 using namespace cv;
 class BitMatrix: public Mat_<bool> {
 public:
+	typedef Mat_<bool> Base;
+
 	BitMatrix(bool fill = false);
 	BitMatrix(int rows, int cols, bool fill = false);
 	BitMatrix(Size size, bool fill = false);
@@ -41,6 +43,7 @@ public:
 
 	void getRow(int row, BitArray &rowArr);
 	void pushRow(BitArray &rowArr);
+	void removeCol(int col);
 	void clear();
 	Size size();
 	void fillRects(vector<Rect> &rects, bool fill = true);

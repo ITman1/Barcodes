@@ -5,6 +5,8 @@
  *      Author: Scotty
  */
 
+#include <opencv2/imgproc/imgproc.hpp>
+
 #include "BitMatrix.h"
 
 namespace barcodes {
@@ -62,9 +64,9 @@ void BitMatrix::fillRects(vector<Rect> &rects, bool fill) {
 void BitMatrix::maskAND(BitMatrix &mask) {
 	if (mask.size() != this->size()) return;
 
-	iterator iter;
+	iterator iter = begin();
 	iterator iter_end = end();
-	iterator iter2;
+	iterator iter2 = mask.begin();
 
 	for(; iter != iter_end; iter++, iter2++ ) {
 		*iter &= *iter2;
@@ -74,12 +76,43 @@ void BitMatrix::maskAND(BitMatrix &mask) {
 void BitMatrix::maskXOR(BitMatrix &mask) {
 	if (mask.size() != this->size()) return;
 
-	iterator iter;
+	iterator iter = begin();
 	iterator iter_end = end();
-	iterator iter2;
+	iterator iter2 = mask.begin();
 
 	for(; iter != iter_end; iter++, iter2++ ) {
 		*iter ^= *iter2;
+	}
+}
+
+void BitMatrix::removeCol(int col) {
+	Base _cloned = this->clone();
+	if (cols > 1) {
+		for (int row = 0; row < rows; row++) {
+			bool *remElem = &_cloned[row][col];
+			bool *currElem = &_cloned[row][cols - 1];
+
+			bool swap;
+			bool prevElem = *currElem;
+			while (remElem != currElem) {
+				--currElem;
+				swap = prevElem;
+				prevElem = *currElem;
+				*currElem = swap;
+			}
+		}
+	}
+
+	Base _stripped = _cloned(Rect(0, 0, cols - 1, rows));
+
+	create(_stripped.rows, _stripped.cols);
+
+	iterator iter = begin();
+	iterator iter_end = end();
+	iterator iter2 = _stripped.begin();
+
+	for(; iter != iter_end; iter++, iter2++ ) {
+		*iter = *iter2;
 	}
 }
 

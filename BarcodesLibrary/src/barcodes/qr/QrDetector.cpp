@@ -7,7 +7,9 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include "../../common.h"
+#include "../../debug.h"
+#include "../../common/Polygon2D.h"
+#include "../../common/miscellaneous.h"
 #include "QrDetector.h"
 #include "QrBuildHelper.h"
 

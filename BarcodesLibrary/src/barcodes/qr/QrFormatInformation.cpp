@@ -5,7 +5,10 @@
  *      Author: Scotty
  */
 
+#include "../../debug.h"
 #include "QrFormatInformation.h"
+
+#define DEBUG_TAG "QrFormatInformation.cpp"
 
 namespace barcodes {
 
@@ -82,6 +85,8 @@ void _buildXORDataMask(BitMatrix &mask, Size &size) {
 	}
 }
 
+const QrFormatInformation QrFormatInformation::INVALID_FORMAT(true);
+
 pair<uint32_t, uint32_t> QrFormatInformation_formats_mapping[] = {
 	make_pair(0x5412, 0x00),	make_pair(0x5125, 0x01),
 	make_pair(0x5E7C, 0x02),	make_pair(0x5B4B, 0x03),
@@ -101,10 +106,26 @@ pair<uint32_t, uint32_t> QrFormatInformation_formats_mapping[] = {
 	make_pair(0x2EDA, 0x1E),	make_pair(0x2BED, 0x1F),
 };
 
-const map<uint32_t, uint32_t> QrFormatInformation::ENCODED_FORMATS(
+const LookupTable<uint32_t, uint32_t> QrFormatInformation::ENCODED_FORMATS(
 		QrFormatInformation_formats_mapping,
 		QrFormatInformation_formats_mapping + sizeof QrFormatInformation_formats_mapping
     / sizeof QrFormatInformation_formats_mapping[0]);
+
+bool QrFormatInformation::operator==(const QrFormatInformation &rhs) const {
+  return xorDataMask == rhs.xorDataMask && errorCorrectionLevel == rhs.errorCorrectionLevel && isInvalid == isInvalid;
+}
+
+bool QrFormatInformation::operator!=(const QrFormatInformation &rhs) const {
+  return !(*this == rhs);
+}
+
+QrFormatInformation::XORDataMask QrFormatInformation::getXORDataMask() const {
+	return xorDataMask;
+}
+
+QrFormatInformation::ErrorCorrectionLevel QrFormatInformation::getErrorCorrectionLevel() const {
+	return errorCorrectionLevel;
+}
 
 void QrFormatInformation::buildXORDataMask(BitMatrix &mask, QrVersionInformation version) {
 	Size size = version.getQrBarcodeSize();
@@ -143,34 +164,44 @@ void QrFormatInformation::buildXORDataMask(BitMatrix &mask, QrVersionInformation
 
 QrFormatInformation QrFormatInformation::fromBitMatrix(const BitMatrix &code, QrVersionInformation version) {
 	vector<Rect> formatPositions;
-	GridSampler sampler(Size(1, 1), GridSampler::BOTTOM_LEFT, GridSampler::BOTTOM_LEFT, false, false);
-	BitArray _result, result;
-	uint32_t encodedVersion;
-	BitMatrix codeROI;
+	QrFormatInformation formatInformation(false);
 
 	version.getFormatPosition1(formatPositions);
+	formatInformation = decodeFormat(code, formatPositions);
 
-	codeROI = code(formatPositions[0]);
-	sampler.sample(codeROI, _result);	result.push(_result);
-	codeROI = code(formatPositions[1]);
-	sampler.sample(codeROI, _result);	result.push(_result);
-	codeROI = code(formatPositions[2]);
-	sampler.sample(codeROI, _result);	result.push(_result);
-	codeROI = code(formatPositions[3]);
-	sampler.sample(codeROI, _result);	result.push(_result);
+	if (formatInformation != INVALID_FORMAT) return formatInformation;
 
-	encodedVersion = result.toULong();
-
-	result.clear();
 	version.getFormatPosition2(formatPositions);
-	codeROI = code(formatPositions[0]);
-	sampler.sample(codeROI, _result);	result.push(_result);
-	codeROI = code(formatPositions[1]);
-	sampler.sample(codeROI, _result);	result.push(_result);
+	formatInformation = decodeFormat(code, formatPositions);
 
-	encodedVersion = result.toULong();
+	return formatInformation;
+}
 
-	return QrFormatInformation(ERROR_CORRECT_LEVEL_H, XOR_DATA_MASK_100);
+QrFormatInformation QrFormatInformation::decodeFormat(const BitMatrix &code, vector<Rect> &formatPositions) {
+	DEBUG_PRINT(DEBUG_TAG, "decodeFormat()");
+	GridSampler sampler(Size(1, 1), GridSampler::LEFT_BOTTOM, GridSampler::BOTTOM_LEFT, false, false);
+	BitArray _result, result;
+	uint32_t encodedFormat;
+	BitMatrix codeROI;
+
+	for (vector<Rect>::iterator formatIter = formatPositions.begin(); formatIter != formatPositions.end(); formatIter++) {
+		codeROI = code(*formatIter);
+		sampler.sample(codeROI, _result);	result.push(_result);
+	}
+	encodedFormat = result.toULong();
+
+    if ((ENCODED_FORMATS.find(encodedFormat) != ENCODED_FORMATS.end()) ||
+    		(ENCODED_FORMATS.correctEncoded(encodedFormat, ENCODED_FORMAT_MAX_CORRECTIONS))) {
+		DEBUG_PRINT(DEBUG_TAG, "Format decode success!");
+		uint32_t format = ENCODED_FORMATS.at(encodedFormat);
+		ErrorCorrectionLevel errCorrection = ErrorCorrectionLevel((format & 0x18) >> 3);
+		XORDataMask xorMask = XORDataMask(format & 0x07);
+    	return QrFormatInformation(errCorrection, xorMask);
+    } else { // string for this capability is not defined
+		DEBUG_PRINT(DEBUG_TAG, "Format decode failed!");
+        return INVALID_FORMAT;
+    }
+
 }
 
 

@@ -9,6 +9,12 @@
 #include "QrDecoder.h"
 #include "QrVersionInformation.h"
 #include "QrFormatInformation.h"
+#include "../../common/miscellaneous.h"
+#include "../../common/Line2D.h"
+#include "../../common/Polygon2D.h"
+#include "../../debug.h"
+#include "bitdecoder/QrBitDecoder.h"
+#include "QrCodewordsCharacteristics.h"
 
 #define DEBUG_TAG "QrDecoder.cpp"
 
@@ -16,14 +22,16 @@ namespace barcodes {
 
 const QrDecoder QrDecoder::DECODER_INSTANCE = QrDecoder();
 
-void QrDecoder::decode(Image &image, ByteArray &data, int flags) const {
+const Size QrDecoder::CODEWORD_SAMPLE_SIZE(2, 4);
+
+void QrDecoder::decode(Image &image, vector<DataSegment> &dataSegments, int flags) const {
 	DetectedMarks detectedMarks;
 
-	data.clear();
+	dataSegments.clear();
 	QrDetector::getInstance()->detect(image, detectedMarks, flags);
 
 	if (detectedMarks.size() == 3) {
-		_read_V2_40(image, data, detectedMarks);
+		_read_V2_40(image, dataSegments, detectedMarks);
 	}
 }
 
@@ -35,7 +43,7 @@ const Decoder *QrDecoder::getDecoder() const {
 	return &DECODER_INSTANCE;
 }
 
-void QrDecoder::_read_V2_40(Image &image, ByteArray &data, DetectedMarks &detectedMarks, int flags) const {
+void QrDecoder::_read_V2_40(Image &image, vector<DataSegment> &dataSegments, DetectedMarks &detectedMarks, int flags) const {
 	vector<Point> corners;
 	DetectedMarks _detectedMarks = detectedMarks;
 	Mat binarized = QrDetector::binarize(image, _detectedMarks[0].flags);
@@ -57,21 +65,74 @@ void QrDecoder::_read_V2_40(Image &image, ByteArray &data, DetectedMarks &detect
 	_detectedMarks.perspectiveTransform(transformation);
 	DEBUG_WRITE_IMAGE("out2/warped.jpg", perspWarped);
 
+	// GETTING THE QR CODE VERSION FROM THE IMAGE
+
 	QrVersionInformation versionInformation = QrVersionInformation::fromImage(perspWarped, _detectedMarks);
+
+	if (versionInformation == QrVersionInformation::INVALID_VERSION) {
+		DEBUG_PRINT(DEBUG_TAG, "FAILED TO GET VERSION!");
+		return;
+	}
 	DEBUG_PRINT(DEBUG_TAG, "VERSION: %d", versionInformation.getVersion());
+
+	// TRANSLATING THE IMAGE TO THE BIT MATRIX
 
 	BitMatrix qrBitMatrix;
 	BitMatrix::fromImage(perspWarped, versionInformation.getQrBarcodeSize(), qrBitMatrix);
 
-	Mat _mask(versionInformation.getQrBarcodeSize(), CV_8UC1);
-	for (int i = 0; i < _mask.rows; i++) {
-		for (int j = 0; j < _mask.cols; j++) {
-			_mask.at<uchar>(i, j) = -255 * (qrBitMatrix.at(i, j) - 1);
-		}
+	if (qrBitMatrix.data == NULL) {
+		DEBUG_PRINT(DEBUG_TAG, "FAILED TO GET QR BIT MATRIX!");
+		return;
 	}
-	DEBUG_WRITE_IMAGE("out2/data_mask.bmp", _mask);
+
+	// GETTING THE FORMAT INFORMATION FROM THE BIT MATRIX
 
 	QrFormatInformation formatInformation = QrFormatInformation::fromBitMatrix(qrBitMatrix, versionInformation);
+
+	if (formatInformation == QrFormatInformation::INVALID_FORMAT) {
+		DEBUG_PRINT(DEBUG_TAG, "FAILED TO GET FORMAT INFORMATION!");
+		return;
+	}
+	DEBUG_PRINT(DEBUG_TAG, "XOR DATA MASK: %d | ERROR CORRECTION LEVEL: %d", formatInformation.getXORDataMask(), formatInformation.getErrorCorrectionLevel());
+
+	// BUILDING THE XOR DATA MASK AND MASKING THE QR CODE BIT MATRIX
+
+	BitMatrix xorDataMask;
+	formatInformation.buildXORDataMask(xorDataMask, versionInformation);
+
+	qrBitMatrix.maskXOR(xorDataMask);
+
+	// SAMPLING THE QR CODE AND RETRIEVING BIT ARRAY CONTATINING DATA AND ERROR CORRECTION CODEWORDS
+
+	GridSampler sampler(CODEWORD_SAMPLE_SIZE, GridSampler::LEFT_TOP, GridSampler::TOP_LEFT, false, true);
+	BitMatrix dataMask;
+	BitArray qrDataErrorBits;
+
+	versionInformation.getDataMask(dataMask);
+	qrBitMatrix.removeCol(6);
+	dataMask.removeCol(6);
+	sampler.sample(qrBitMatrix, qrDataErrorBits, &dataMask);
+	DEBUG_PRINT(DEBUG_TAG, "READ DATA/ERROR BITS: %d", qrDataErrorBits.size());
+
+	// DIVIDE BITARRAY INTO CODEWORDS AND RE-ORDER, RETURNS ORDERED BITARRAY
+	QrVersionFormatCharacteristics characteristics;
+	QrCodewordsCharacteristics::getInstance().getCharacteristics(versionInformation, formatInformation, characteristics);
+
+	// PROCEED THE ERROR CORRECTION
+	// - TODO
+
+	// FINALLY DECODE THE DATA
+
+	QrBitDecoder::getInstance().decode(qrDataErrorBits, dataSegments, versionInformation);
+	if (dataSegments.size() == 0) return;
+
+
+	DEBUG_PRINT(DEBUG_TAG, "FIRST DATA SEGMENT length: %d", dataSegments[0].data.size());
+	DEBUG_PRINT(DEBUG_TAG, "FIRST DATA SEGMENT: %s", (dataSegments[0].data.size() > 0)? string((const char *)&dataSegments[0].data[0], dataSegments[0].data.size()).c_str() : NULL);
+	DEBUG_PRINT_BITVECTOR(DEBUG_TAG, qrDataErrorBits);
+	DEBUG_WRITE_BITMATRIX("out2/data_mask.bmp", dataMask);
+	DEBUG_WRITE_BITMATRIX("out2/data_masked.bmp", qrBitMatrix);
+
 }
 
 // Getting the A,B,C,D points, sorted as C,D,A,B for perspective transformation

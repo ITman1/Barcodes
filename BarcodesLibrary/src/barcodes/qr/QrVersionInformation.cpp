@@ -8,7 +8,9 @@
 #include <iostream>
 
 #include "QrVersionInformation.h"
-#include "../../common.h"
+#include "../../debug.h"
+#include "../../common/Vector2D.h"
+#include "../../common/Line2D.h"
 
 #define DEBUG_TAG "QrVersionInformation.cpp"
 
@@ -41,7 +43,7 @@ pair<uint32_t, uint32_t> QrVersionInformation_versions_mapping[] = {
     make_pair(0x27541, 39),    make_pair(0x28C69, 40)
 };
 
-const map<uint32_t, uint32_t> QrVersionInformation::ENCODED_VERSIONS(
+const LookupTable<uint32_t, uint32_t> QrVersionInformation::ENCODED_VERSIONS(
 		QrVersionInformation_versions_mapping,
     QrVersionInformation_versions_mapping + sizeof QrVersionInformation_versions_mapping
     / sizeof QrVersionInformation_versions_mapping[0]);
@@ -71,21 +73,37 @@ const int QrVersionInformation::ALIGNMENT_PATTERNS_LOOKUP_TABLE[QrVersionInforma
 };
 
 QrVersionInformation::QrVersionInformation(int version) : version(version) {
-	if ((version < VERSION_1::VERSION_NUMBER) || (version > VERSION_40::VERSION_NUMBER)) {
+	if ((version < VERSION_1.getVersion()) || (version > VERSION_40.getVersion())) {
 		version = -1;
 	}
 }
 
 bool QrVersionInformation::operator==(const QrVersionInformation &rhs) const {
-  return version == rhs.version;
+	return version == rhs.version;
 }
 
 bool QrVersionInformation::operator!=(const QrVersionInformation &rhs) const {
-  return !(*this == rhs);
+	return version != rhs.version;
 }
 
-Rect QrVersionInformation::getVersionPosition1() {
-	if (version <= VERSION_6::VERSION_NUMBER) {
+bool QrVersionInformation::operator>(const QrVersionInformation &rhs) const {
+	  return version > rhs.version;
+}
+
+bool QrVersionInformation::operator<(const QrVersionInformation &rhs) const {
+	  return version < rhs.version;
+}
+
+bool QrVersionInformation::operator>=(const QrVersionInformation &rhs) const {
+	  return version >= rhs.version;
+}
+
+bool QrVersionInformation::operator<=(const QrVersionInformation &rhs) const {
+	  return version <= rhs.version;
+}
+
+Rect QrVersionInformation::getVersionPosition1() const {
+	if (version <= VERSION_6.getVersion()) {
 		return INVALID_POSITION;
 	} else {
 		Point startPoint(QR_SIZE(version) - 11, 0);
@@ -93,8 +111,8 @@ Rect QrVersionInformation::getVersionPosition1() {
 	}
 }
 
-Rect QrVersionInformation::getVersionPosition2() {
-	if (version <= VERSION_6::VERSION_NUMBER) {
+Rect QrVersionInformation::getVersionPosition2() const {
+	if (version <= VERSION_6.getVersion()) {
 		return INVALID_POSITION;
 	} else {
 		Point startPoint(0, QR_SIZE(version) - 11);
@@ -102,12 +120,12 @@ Rect QrVersionInformation::getVersionPosition2() {
 	}
 }
 
-Size QrVersionInformation::getQrBarcodeSize() {
-	return (version <= VERSION_1::VERSION_NUMBER)?
+Size QrVersionInformation::getQrBarcodeSize() const {
+	return (version <= VERSION_1.getVersion())?
 			INVALID_VERSION_SIZE : Size(QR_SIZE(version), QR_SIZE(version));
 }
 
-void QrVersionInformation::getFormatPosition1(vector<Rect> &formatPositions) {
+void QrVersionInformation::getFormatPosition1(vector<Rect> &formatPositions) const {
 	formatPositions.clear();
 	formatPositions.push_back(Rect(Point(8, 0), Size(1, 6)));
 	formatPositions.push_back(Rect(Point(8, 7), Size(1, 2)));
@@ -115,20 +133,20 @@ void QrVersionInformation::getFormatPosition1(vector<Rect> &formatPositions) {
 	formatPositions.push_back(Rect(Point(0, 8), Size(6, 1)));
 }
 
-void QrVersionInformation::getFormatPosition2(vector<Rect> &formatPositions) {
+void QrVersionInformation::getFormatPosition2(vector<Rect> &formatPositions) const {
 	formatPositions.clear();
 	formatPositions.push_back(Rect(Point(QR_SIZE(version) - 8, 8), Size(8, 1)));
 	formatPositions.push_back(Rect(Point(8, QR_SIZE(version) - 7), Size(1, 7)));
 }
 
-void QrVersionInformation::getFinderPatternPositions(vector<Rect> &finderPatterns) {
+void QrVersionInformation::getFinderPatternPositions(vector<Rect> &finderPatterns) const {
 	finderPatterns.clear();
 	finderPatterns.push_back(Rect(Point(0, 0), Size(7,7)));
 	finderPatterns.push_back(Rect(Point(QR_SIZE(version) - 7, 0), Size(7,7)));
 	finderPatterns.push_back(Rect(Point(0, QR_SIZE(version) - 7), Size(7,7)));
 }
 
-void QrVersionInformation::getAlignmentPatternPositions(vector<Rect> &alignmentPatterns) {
+void QrVersionInformation::getAlignmentPatternPositions(vector<Rect> &alignmentPatterns) const {
 	alignmentPatterns.clear();
 
 	const int *center = ALIGNMENT_PATTERNS_LOOKUP_TABLE[version - 1];
@@ -152,22 +170,22 @@ void QrVersionInformation::getAlignmentPatternPositions(vector<Rect> &alignmentP
 		for (iter2 = centers.begin(); iter2 != centers.end(); iter2++) {
 			centerPoint = Point(*iter1, *iter2);
 			if (centerPoint != filterPoint1 && centerPoint != filterPoint2 && centerPoint != filterPoint3) {
-				alignmentPatterns.push_back(Rect(centerPoint - Point(1, 1), Size(3, 3)));
+				alignmentPatterns.push_back(Rect(centerPoint - Point(2, 2), Size(5, 5)));
 			}
 		}
 	}
 
 }
 
-Rect QrVersionInformation::getTimerPattern1Position() {
+Rect QrVersionInformation::getTimerPattern1Position() const {
 	return Rect(Point(8, 6), Size(QR_SIZE(version) - 16, 1));
 }
 
-Rect QrVersionInformation::getTimerPattern2Position() {
+Rect QrVersionInformation::getTimerPattern2Position() const {
 	return Rect(Point(6, 8), Size(1, QR_SIZE(version) - 16));
 }
 
-void QrVersionInformation::getOtherMaskPositions(vector<Rect> &maskPositions) {
+void QrVersionInformation::getOtherMaskPositions(vector<Rect> &maskPositions) const {
 	maskPositions.clear();
 	maskPositions.push_back(Rect(Point(8, QR_SIZE(version) - 8), Size(1, 1)));
 
@@ -181,7 +199,7 @@ void QrVersionInformation::getOtherMaskPositions(vector<Rect> &maskPositions) {
 	maskPositions.push_back(Rect(Point(7, QR_SIZE(version) - 7), Size(1, 7)));
 }
 
-void QrVersionInformation::getDataMask(BitMatrix &mask) {
+void QrVersionInformation::getDataMask(BitMatrix &mask) const {
 	mask = BitMatrix(getQrBarcodeSize(), true);
 
 	vector<Rect> maskRects;
@@ -221,7 +239,7 @@ QrVersionInformation QrVersionInformation::fromImage(const Mat &image, const Det
 	double X = (W_UL + W_UR) / 14.0;
 	int V = round(((D / (double)X) - 10) / 4.0);
 
-	if (V <= VERSION_6::VERSION_NUMBER) return QrVersionInformation(V);
+	if (V <= VERSION_6.getVersion()) return QrVersionInformation(V);
 
 	BitMatrix versionBitMatrix;
 
@@ -247,34 +265,8 @@ QrVersionInformation QrVersionInformation::fromImage(const Mat &image, const Det
 #ifdef TARGET_DEBUG
 	return INVALID_VERSION;
 #else
-	return (V > VERSION_40::VERSION_NUMBER)? INVALID_VERSION : QrVersionInformation(V);
+	return (V > VERSION_40.getVersion())? INVALID_VERSION : QrVersionInformation(V);
 #endif
-}
-
-bool QrVersionInformation::correctEncodedVersion(uint32_t &encodedVersion) {
-	map<uint32_t, uint32_t>::const_iterator iter;
-
-	uint32_t _encodedVersion = 0;
-	int minDiff = 4;
-	for (iter = ENCODED_VERSIONS.begin(); iter != ENCODED_VERSIONS.end(); iter++) {
-		int diff = 0;
-		for (int i = 0; i < 32; i++) {
-			diff += ((iter->first >> i) & 0x01) ^ ((encodedVersion >> i) & 0x01);
-		}
-		if (diff < minDiff) {
-			minDiff = diff;
-			_encodedVersion = iter->first;
-		}
-	}
-
-	if (minDiff < 4) {
-		encodedVersion = _encodedVersion;
-		DEBUG_PRINT(DEBUG_TAG, "Version correct: %d corrected", minDiff);
-		return true;
-	} else {
-		DEBUG_PRINT(DEBUG_TAG, "Version correct failed!");
-		return false;
-	}
 }
 
 QrVersionInformation QrVersionInformation::decodeVersion(BitMatrix &bitMatrix, GridSampler::FlowDirection bitsDirection) {
@@ -286,16 +278,28 @@ QrVersionInformation QrVersionInformation::decodeVersion(BitMatrix &bitMatrix, G
 	uint32_t encodedVersion = result.toULong();
 
     if ((ENCODED_VERSIONS.find(encodedVersion) != ENCODED_VERSIONS.end()) ||
-    		(correctEncodedVersion(encodedVersion))) {
+    		(ENCODED_VERSIONS.correctEncoded(encodedVersion, ENCODED_VERSION_MAX_CORRECTIONS))) {
+		DEBUG_PRINT(DEBUG_TAG, "Version decode success!");
     	return QrVersionInformation(ENCODED_VERSIONS.at(encodedVersion));
     } else { // string for this capability is not defined
+		DEBUG_PRINT(DEBUG_TAG, "Version decode failed!");
         return INVALID_VERSION;
     }
 
 }
 
-int QrVersionInformation::getVersion() {
+int QrVersionInformation::getVersion() const {
 	return version;
+}
+
+int QrVersionInformation::getCodewordsCount() const {
+	BitMatrix mask;
+	getDataMask(mask);
+	return countNonZero(mask) / getCodewordSize();
+}
+
+int QrVersionInformation::getCodewordSize() const {
+	return 8;
 }
 
 } /* namespace barcodes */
