@@ -11,6 +11,7 @@ namespace barcodes {
 
 void QrDataModeByte::decode(DataBitsStream &bitStream, DataSegment &dataSegment, const QrVersionInformation &versionInformation) {
 	dataSegment.flags = 0;
+	dataSegment.remainderBits = 0;
 	dataSegment.mode = mode;
 	dataSegment.data.clear();
 
@@ -21,18 +22,16 @@ void QrDataModeByte::decode(DataBitsStream &bitStream, DataSegment &dataSegment,
 		characterCountBits = 16;
 	}
 
-	DataBitsStream::TYPE length;
+	uint32_t length;
 	bitStream(characterCountBits) >> length;
 
 	size_t bytes = 0;
-	DataBitsStream::TYPE byte;
+	uint8_t byte;
 	while ((!bitStream.isEnd()) && (bytes < length)) {
 		bytes++;
 		bitStream(8) >> byte;
 		dataSegment.data.push_back(byte);
 	}
-
-	dataSegment.remainderBits = 8 - bitStream.lastReadBits();
 }
 
 } /* namespace barcodes */

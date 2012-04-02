@@ -22,9 +22,9 @@ class QrFormatInformation {
 public:
 	typedef enum error_correction_levels {
 		ERROR_CORRECT_LEVEL_L = 0x1,
-		ERROR_CORRECT_LEVEL_M = 0x2,
+		ERROR_CORRECT_LEVEL_M = 0x0,
 		ERROR_CORRECT_LEVEL_Q = 0x3,
-		ERROR_CORRECT_LEVEL_H = 0x4
+		ERROR_CORRECT_LEVEL_H = 0x2
 	} ErrorCorrectionLevel;
 
 	typedef enum xor_data_masks {

@@ -1,5 +1,5 @@
 /*
- * QrCodewordsCharacteristics.cpp
+ * QrCodewordOrganizer.cpp
  *
  *  Created on: 1.4.2012
  *      Author: Scotty
@@ -7,7 +7,7 @@
 
 #include <cstdarg>
 
-#include "QrCodewordsCharacteristics.h"
+#include "QrCodewordOrganizer.h"
 
 namespace barcodes {
 
@@ -22,7 +22,8 @@ QrVersionFormatCharacteristics::QrVersionFormatCharacteristics(QrVersionFormatCh
 	insertCharacteristics(1, first);
 }
 
-QrVersionFormatCharacteristics::QrVersionFormatCharacteristics(QrVersionFormatCharacteristic first, QrVersionFormatCharacteristic second) {
+QrVersionFormatCharacteristics::QrVersionFormatCharacteristics(QrVersionFormatCharacteristic first,
+		QrVersionFormatCharacteristic second) {
 	insertCharacteristics(2, first, second);
 }
 
@@ -38,13 +39,15 @@ void QrVersionFormatCharacteristics::insertCharacteristics(int count, ...) {
 	va_end(args);
 }
 
-const QrCodewordsCharacteristics QrCodewordsCharacteristics::INSTANCE;
+const QrCodewordOrganizer QrCodewordOrganizer::INSTANCE;
 
-#define _VERSION_FORMAT(num, format) make_pair(make_pair(num, QrFormatInformation::ERROR_CORRECT_LEVEL_ ## format), QrVersionFormatCharacteristics(
+#define _VERSION_FORMAT(num, format) make_pair(make_pair(num, QrFormatInformation::\
+		ERROR_CORRECT_LEVEL_ ## format), QrVersionFormatCharacteristics(
 #define _CH(a,b,c,d,e) QrVersionFormatCharacteristic(a,b,c,d,e)
 #define _CH_END ))
 
-const pair<QrCodewordsCharacteristics::MAP_KEY_TYPE, QrVersionFormatCharacteristics > QrCodewordsCharacteristics::QrCodewordsCharacteristics_mapping[] = {
+const pair<QrCodewordOrganizer::MAP_KEY_TYPE, QrVersionFormatCharacteristics>
+	QrCodewordOrganizer::QrCodewordOrganizer_mapping[] = {
 	_VERSION_FORMAT(1, L)  _CH(3, 1,  26,  19,  2)   _CH_END,
 	_VERSION_FORMAT(1, M)  _CH(2, 1,  26,  16,  4)   _CH_END,
 	_VERSION_FORMAT(1, Q)  _CH(1, 1,  26,  13,  6)   _CH_END,
@@ -246,22 +249,63 @@ const pair<QrCodewordsCharacteristics::MAP_KEY_TYPE, QrVersionFormatCharacterist
 	_VERSION_FORMAT(40, H) _CH(0, 20, 45,  15,  15), _CH(0, 61, 46,  16,  15)  _CH_END
 };
 
-const map<QrCodewordsCharacteristics::MAP_KEY_TYPE, QrVersionFormatCharacteristics , QrCodewordsCharacteristics::cmp_key> QrCodewordsCharacteristics::CODEWORD_CHARACTERISTICS(
-		QrCodewordsCharacteristics_mapping,
-		QrCodewordsCharacteristics_mapping + sizeof QrCodewordsCharacteristics_mapping
-    / sizeof QrCodewordsCharacteristics_mapping[0]);
+const map<QrCodewordOrganizer::MAP_KEY_TYPE, QrVersionFormatCharacteristics,
+	QrCodewordOrganizer::cmp_key> QrCodewordOrganizer::CODEWORD_CHARACTERISTICS(
+		QrCodewordOrganizer_mapping,	QrCodewordOrganizer_mapping +
+		sizeof QrCodewordOrganizer_mapping / sizeof QrCodewordOrganizer_mapping[0]);
 
 
-QrCodewordsCharacteristics QrCodewordsCharacteristics::getInstance() {
+QrCodewordOrganizer QrCodewordOrganizer::getInstance() {
 	return INSTANCE;
 }
 
-void QrCodewordsCharacteristics::getCharacteristics(QrVersionInformation &version, QrFormatInformation &format, QrVersionFormatCharacteristics &characteristics) {
+void QrCodewordOrganizer::getCharacteristics(QrVersionInformation &version,
+		QrFormatInformation &format, QrVersionFormatCharacteristics &characteristics) {
 	characteristics.clear();
 	MAP_KEY_TYPE key(version.getVersion(), format.getErrorCorrectionLevel());
 
 	if (CODEWORD_CHARACTERISTICS.find(key) != CODEWORD_CHARACTERISTICS.end()) {
 		characteristics = CODEWORD_CHARACTERISTICS.at(key);
+	}
+}
+
+void QrCodewordOrganizer::extractDataCodewords(BitArray &code, QrVersionInformation &version, QrFormatInformation &format, BitArray &extractedData) {
+	extractedData.clear();
+
+	int codewordSize = version.getCodewordSize();
+	QrVersionFormatCharacteristics characteristics;
+	getCharacteristics(version, format, characteristics);
+
+	unsigned int errCorrBlocks = 0;
+	for (unsigned int i = 0; i < characteristics.size(); i++) {
+		errCorrBlocks += characteristics[i].errCorrBlocks;
+	}
+
+	unsigned int offset = 0;
+	unsigned int j = 0;
+	unsigned int offsetBlocks = 0;
+	vector<BitArray> blocks(errCorrBlocks);
+	for (unsigned int i = 0; i < characteristics.size(); i++) {
+		unsigned int dataBlockSize = characteristics[i].k;
+
+		if (errCorrBlocks * dataBlockSize * codewordSize > code.size()) {
+			extractedData.clear();
+			return;
+		}
+
+		for (; j < dataBlockSize; j++) {
+			for (unsigned int k = 0; k < errCorrBlocks; k++) {
+				BitArray::iterator codewordIter = code.begin() + (codewordSize * offset);
+				blocks[offsetBlocks + k].insert(blocks[offsetBlocks + k].end(), codewordIter, codewordIter + codewordSize);
+				offset += 1;
+			}
+		}
+		errCorrBlocks -= characteristics[i].errCorrBlocks;
+		offsetBlocks += characteristics[i].errCorrBlocks;
+	}
+
+	for (unsigned int i = 0; i < blocks.size(); i++) {
+		extractedData.insert(extractedData.end(), blocks[i].begin(), blocks[i].end());
 	}
 }
 

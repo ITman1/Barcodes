@@ -9,5 +9,11 @@
 
 namespace barcodes {
 
+void QrDataModeFNC1::decode(DataBitsStream &bitStream, DataSegment &dataSegment, const QrVersionInformation &versionInformation) {
+	dataSegment.flags = 0;
+	dataSegment.remainderBits = 0;
+	dataSegment.mode = mode;
+	dataSegment.data.clear();
+}
 
 } /* namespace barcodes */

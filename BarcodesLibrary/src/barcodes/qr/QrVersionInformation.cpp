@@ -121,7 +121,7 @@ Rect QrVersionInformation::getVersionPosition2() const {
 }
 
 Size QrVersionInformation::getQrBarcodeSize() const {
-	return (version <= VERSION_1.getVersion())?
+	return (version < VERSION_1.getVersion())?
 			INVALID_VERSION_SIZE : Size(QR_SIZE(version), QR_SIZE(version));
 }
 
@@ -150,8 +150,9 @@ void QrVersionInformation::getAlignmentPatternPositions(vector<Rect> &alignmentP
 	alignmentPatterns.clear();
 
 	const int *center = ALIGNMENT_PATTERNS_LOOKUP_TABLE[version - 1];
-	vector<int> centers;
+	if (*center == -1) return;
 
+	vector<int> centers;
 	for (int i = 0; i < ALIGNMENT_PATTERNS_LOOKUP_TABLE_CENTERS; i++) {
 		if (*center != -1) {
 			centers.push_back(*center);

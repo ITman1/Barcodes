@@ -8,12 +8,15 @@
 #ifndef QRDATAMODEECI_H_
 #define QRDATAMODEECI_H_
 
+#include "QrDataMode.h"
+
 namespace barcodes {
 
-class QrDataModeECI {
+class QrDataModeECI: public QrDataMode {
 public:
-	QrDataModeECI() {}
-	virtual ~QrDataModeECI() {}
+	QrDataModeECI(int mode) : QrDataMode(mode) {}
+
+	void decode(DataBitsStream &bitStream, DataSegment &dataSegment, const QrVersionInformation &versionInformation);
 };
 
 } /* namespace barcodes */

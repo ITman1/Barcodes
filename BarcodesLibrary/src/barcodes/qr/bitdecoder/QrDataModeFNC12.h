@@ -1,23 +1,24 @@
 /*
- * QrDataModeKanji.h
+ * QrDataModeFNC12.h
  *
- *  Created on: 1.4.2012
+ *  Created on: 2.4.2012
  *      Author: Scotty
  */
 
-#ifndef QRDATAMODEKANJI_H_
-#define QRDATAMODEKANJI_H_
+#ifndef QRDATAMODEFNC12_H_
+#define QRDATAMODEFNC12_H_
 
 #include "QrDataMode.h"
 
 namespace barcodes {
 
-class QrDataModeKanji: public QrDataMode {
+class QrDataModeFNC1_2: public QrDataMode {
 public:
-	QrDataModeKanji(int mode) : QrDataMode(mode) {}
+	QrDataModeFNC1_2(int mode) : QrDataMode(mode) {}
 
 	void decode(DataBitsStream &bitStream, DataSegment &dataSegment, const QrVersionInformation &versionInformation);
 };
 
+
 } /* namespace barcodes */
-#endif /* QRDATAMODEKANJI_H_ */
+#endif /* QRDATAMODEFNC12_H_ */

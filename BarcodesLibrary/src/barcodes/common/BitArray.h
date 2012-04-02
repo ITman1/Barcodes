@@ -13,7 +13,7 @@
 namespace barcodes {
 using namespace cv;
 
-class BitArray: public vector<uchar> {
+class BitArray: public vector<bool> {
 public:
 	BitArray();
 	BitArray(uint64_t value);

@@ -1,12 +1,12 @@
 /*
- * QrCodewordsCharacteristics.h
+ * QrCodewordOrganizer.h
  *
  *  Created on: 1.4.2012
  *      Author: Scotty
  */
 
-#ifndef QRCODEWORDSCHARACTERISTICS_H_
-#define QRCODEWORDSCHARACTERISTICS_H_
+#ifndef QRCODEWORDORGANIZER_H_
+#define QRCODEWORDORGANIZER_H_
 
 #include <map>
 #include "QrVersionInformation.h"
@@ -38,7 +38,7 @@ public:
 	void insertCharacteristics(int count, ...);
 };
 
-class QrCodewordsCharacteristics {
+class QrCodewordOrganizer {
 private:
 	typedef pair<int, QrFormatInformation::ErrorCorrectionLevel> MAP_KEY_TYPE;
 
@@ -48,17 +48,18 @@ private:
 		}
 	};
 
-	static const pair<MAP_KEY_TYPE, QrVersionFormatCharacteristics > QrCodewordsCharacteristics_mapping[];
-	static const QrCodewordsCharacteristics INSTANCE;
+	static const pair<MAP_KEY_TYPE, QrVersionFormatCharacteristics > QrCodewordOrganizer_mapping[];
+	static const QrCodewordOrganizer INSTANCE;
 	static const map<MAP_KEY_TYPE, QrVersionFormatCharacteristics, cmp_key > CODEWORD_CHARACTERISTICS;
 
-	QrCodewordsCharacteristics() {}
+	QrCodewordOrganizer() {}
 public:
-	virtual ~QrCodewordsCharacteristics() {}
+	virtual ~QrCodewordOrganizer() {}
 
-	static QrCodewordsCharacteristics getInstance();
+	static QrCodewordOrganizer getInstance();
 	void getCharacteristics(QrVersionInformation &version, QrFormatInformation &format, QrVersionFormatCharacteristics &characteristics);
+	void extractDataCodewords(BitArray &code, QrVersionInformation &version, QrFormatInformation &format, BitArray &extractedData);
 };
 
 } /* namespace barcodes */
-#endif /* QRCODEWORDSCHARACTERISTICS_H_ */
+#endif /* QRCODEWORDORGANIZER_H_ */

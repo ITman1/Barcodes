@@ -14,12 +14,14 @@
 
 namespace barcodes {
 
-typedef BitStream<uint32_t> DataBitsStream;
+typedef BitStreamReverseCodeword<uint32_t> DataBitsStream;
 
 class QrDataMode {
 protected:
 	int mode;
 public:
+	const static int INVALID_DATA_MODE = -1;
+
 	QrDataMode(int mode) : mode(mode) {}
 
 	virtual void decode(DataBitsStream &bitStream, DataSegment &dataSegment, const QrVersionInformation &versionInformation) = 0;

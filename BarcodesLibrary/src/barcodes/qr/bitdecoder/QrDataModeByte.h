@@ -13,10 +13,8 @@
 namespace barcodes {
 
 class QrDataModeByte: public QrDataMode {
-private:
-	const static int DATA_MODE = 0x04;
 public:
-	QrDataModeByte() : QrDataMode(DATA_MODE) {}
+	QrDataModeByte(int mode) : QrDataMode(mode) {}
 
 	void decode(DataBitsStream &bitStream, DataSegment &dataSegment, const QrVersionInformation &versionInformation);
 };

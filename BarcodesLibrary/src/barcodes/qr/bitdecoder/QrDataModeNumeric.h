@@ -8,12 +8,15 @@
 #ifndef QRDATAMODENUMERIC_H_
 #define QRDATAMODENUMERIC_H_
 
+#include "QrDataMode.h"
+
 namespace barcodes {
 
-class QrDataModeNumeric {
+class QrDataModeNumeric: public QrDataMode {
 public:
-	QrDataModeNumeric() {}
-	virtual ~QrDataModeNumeric() {}
+	QrDataModeNumeric(int mode) : QrDataMode(mode) {}
+
+	void decode(DataBitsStream &bitStream, DataSegment &dataSegment, const QrVersionInformation &versionInformation);
 };
 
 } /* namespace barcodes */
