@@ -46,7 +46,7 @@
 	#define DEBUG_PRINT_VECTOR(tag, vector) \
 		__DEBUG_ROW_STR.clear(); \
 		for( unsigned int j = 0; j < vector.size(); j++ ) { \
-			row_str += __DEBUG_TO_STR(vector.at(j)) + std::string(" "); \
+			__DEBUG_ROW_STR += __DEBUG_TO_STR(vector.at(j)) + std::string(" "); \
 		} \
 		DEBUG_PRINT(tag, "%s", __DEBUG_ROW_STR.c_str());
 

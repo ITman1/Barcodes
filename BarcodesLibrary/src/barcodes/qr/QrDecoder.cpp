@@ -120,19 +120,24 @@ void QrDecoder::_read_V2_40(Image &image, vector<DataSegment> &dataSegments, Det
 	sampler.sample(qrBitMatrix, qrDataErrorBits, &dataMask);
 	DEBUG_PRINT(DEBUG_TAG, "READ DATA/ERROR BITS: %d", qrDataErrorBits.size());
 	DEBUG_WRITE_BITMATRIX("out2/data_mask.bmp", dataMask);
-
-	// DIVIDE BITARRAY INTO CODEWORDS AND RE-ORDER, RETURNS ORDERED BITARRAY
-	BitArray extractedData;
 	DEBUG_PRINT_BITVECTOR(DEBUG_TAG, qrDataErrorBits);
-	QrCodewordOrganizer::getInstance().extractDataCodewords(qrDataErrorBits, versionInformation, formatInformation, extractedData);
-	DEBUG_PRINT_BITVECTOR(DEBUG_TAG, extractedData);
 
-	// EXTRACT ERROR CODEWORDS AND PROCEED THE ERROR CORRECTION
-	// - TODO
+	// DIVIDES BITARRAY INTO CODEWORDS, RE-ORDERS AND RETURNS ORDERED BLOCKS CONTAINING EC PARITY BITS
+	QrCodewordOrganizer codewordOrganizer(versionInformation, formatInformation);
+	vector<BitArray> blocks;
+	codewordOrganizer.extractBlocks(qrDataErrorBits, blocks);
+	BitArray _codewords;
+	DEBUG_PRINT_BITVECTOR(DEBUG_TAG, (codewordOrganizer.blocksToCodewords(blocks, _codewords), _codewords));
+
+	// PROCEED THE ERROR CORRECTION AND EXTRACT CORECTED CODEWORDS
+	BitArray codewords;
+	codewordOrganizer.correctBlocks(blocks);
+	codewordOrganizer.blocksToCodewords(blocks, codewords);
+	DEBUG_PRINT_BITVECTOR(DEBUG_TAG, codewords);
 
 	// FINALLY DECODE THE DATA
 
-	QrBitDecoder::getInstance().decode(extractedData, dataSegments, versionInformation);
+	QrBitDecoder::getInstance().decode(codewords, dataSegments, versionInformation);
 	DEBUG_PRINT(DEBUG_TAG, "DATA SEGMENT COUNT: %d", dataSegments.size());
 	if (dataSegments.size() == 0) return;
 

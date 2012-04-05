@@ -36,19 +36,24 @@ public:
 		insert(end(), arr.begin(), arr.end());
 	}
 
+	template<typename T>
+	inline void pushNumberReverse(T number, int bits = 8 * sizeof(T)) {
+		for (int i = 0; i < bits; i++, number >>= 1) {
+			pushBit(number & 0x01);
+		}
+	}
+
+	template<typename T>
+	inline void pushNumber(T number, int bits = 8 * sizeof(T)) {
+		for (int i = bits - 1; i >= 0; i--) {
+			pushBit(number & (T)(0x01 << i));
+		}
+	}
+
 	uint64_t toULong();
 };
 
 } /* namespace barcodes */
 
-namespace barcodes {
-
-class _BitArray {
-public:
-	_BitArray();
-	virtual ~_BitArray();
-};
-
-} /* namespace barcodes */
 #endif /* BITARRAY_H_ */
 

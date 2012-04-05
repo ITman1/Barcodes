@@ -4,10 +4,13 @@
  *  Created on: 1.4.2012
  *      Author: Scotty
  */
-
+#include <iostream>
 #include <cstdarg>
 
 #include "QrCodewordOrganizer.h"
+#include "../common/errcontrol/ReedSolomon.h"
+#include "../../debug.h"
+#include "../common/BitStream.h"
 
 namespace barcodes {
 
@@ -38,8 +41,6 @@ void QrVersionFormatCharacteristics::insertCharacteristics(int count, ...) {
 
 	va_end(args);
 }
-
-const QrCodewordOrganizer QrCodewordOrganizer::INSTANCE;
 
 #define _VERSION_FORMAT(num, format) make_pair(make_pair(num, QrFormatInformation::\
 		ERROR_CORRECT_LEVEL_ ## format), QrVersionFormatCharacteristics(
@@ -255,12 +256,14 @@ const map<QrCodewordOrganizer::MAP_KEY_TYPE, QrVersionFormatCharacteristics,
 		sizeof QrCodewordOrganizer_mapping / sizeof QrCodewordOrganizer_mapping[0]);
 
 
-QrCodewordOrganizer QrCodewordOrganizer::getInstance() {
-	return INSTANCE;
+QrCodewordOrganizer::QrCodewordOrganizer(QrVersionInformation &version, QrFormatInformation &format)
+	: version(version), format(format) {
+
+	getCharacteristics(characteristics);
+	codewordSize = version.getCodewordSize();
 }
 
-void QrCodewordOrganizer::getCharacteristics(QrVersionInformation &version,
-		QrFormatInformation &format, QrVersionFormatCharacteristics &characteristics) {
+void QrCodewordOrganizer::getCharacteristics(QrVersionFormatCharacteristics &characteristics) {
 	characteristics.clear();
 	MAP_KEY_TYPE key(version.getVersion(), format.getErrorCorrectionLevel());
 
@@ -269,12 +272,35 @@ void QrCodewordOrganizer::getCharacteristics(QrVersionInformation &version,
 	}
 }
 
-void QrCodewordOrganizer::extractDataCodewords(BitArray &code, QrVersionInformation &version, QrFormatInformation &format, BitArray &extractedData) {
+void QrCodewordOrganizer::extractDataCodewords(BitArray &code, BitArray &extractedData) {
 	extractedData.clear();
 
-	int codewordSize = version.getCodewordSize();
-	QrVersionFormatCharacteristics characteristics;
-	getCharacteristics(version, format, characteristics);
+	vector<BitArray> blocks;
+	extractDataBlocks(code, blocks);
+
+	dataBlocksToDataCodewords(blocks, extractedData);
+}
+
+void QrCodewordOrganizer::extractErrorCorrectionCodewords(BitArray &code, BitArray &ecCodewords) {
+	ecCodewords.clear();
+
+	vector<BitArray> blocks;
+	extractErrorCorrectionBlocks(code, blocks);
+
+	errorCorrectionBlocksToErrorCorrectionCodewords(blocks, ecCodewords);
+}
+
+void QrCodewordOrganizer::extractCodewords(BitArray &code, BitArray &codewords) {
+	BitArray ec;
+
+	extractDataCodewords(code, codewords);
+	extractErrorCorrectionCodewords(code, ec);
+
+	codewords.insert(codewords.end(), ec.begin(), ec.end());
+}
+
+void QrCodewordOrganizer::extractDataBlocks(BitArray &code, vector<BitArray> &blocks) {
+	blocks.clear();
 
 	unsigned int errCorrBlocks = 0;
 	for (unsigned int i = 0; i < characteristics.size(); i++) {
@@ -284,12 +310,12 @@ void QrCodewordOrganizer::extractDataCodewords(BitArray &code, QrVersionInformat
 	unsigned int offset = 0;
 	unsigned int j = 0;
 	unsigned int offsetBlocks = 0;
-	vector<BitArray> blocks(errCorrBlocks);
+	blocks.resize(errCorrBlocks);
 	for (unsigned int i = 0; i < characteristics.size(); i++) {
 		unsigned int dataBlockSize = characteristics[i].k;
 
-		if (errCorrBlocks * dataBlockSize * codewordSize > code.size()) {
-			extractedData.clear();
+		if (offset + errCorrBlocks * dataBlockSize * codewordSize > code.size()) {
+			blocks.clear();
 			return;
 		}
 
@@ -303,9 +329,134 @@ void QrCodewordOrganizer::extractDataCodewords(BitArray &code, QrVersionInformat
 		errCorrBlocks -= characteristics[i].errCorrBlocks;
 		offsetBlocks += characteristics[i].errCorrBlocks;
 	}
+}
 
+void QrCodewordOrganizer::extractErrorCorrectionBlocks(BitArray &code, vector<BitArray> &blocks) {
+	blocks.clear();
+
+	unsigned int offset = 0;
+	unsigned int errCorrBlocks = 0;
+	for (unsigned int i = 0; i < characteristics.size(); i++) {
+		errCorrBlocks += characteristics[i].errCorrBlocks;
+		offset += characteristics[i].errCorrBlocks * characteristics[i].k;
+	}
+
+	unsigned int j = 0;
+	unsigned int offsetBlocks = 0;
+	blocks.resize(errCorrBlocks);
+	for (unsigned int i = 0; i < characteristics.size(); i++) {
+		unsigned int ecSize = characteristics[i].c - characteristics[i].k;
+
+		if (offset + errCorrBlocks * ecSize * codewordSize > code.size()) {
+			blocks.clear();
+			return;
+		}
+
+		for (; j < ecSize; j++) {
+			for (unsigned int k = 0; k < errCorrBlocks; k++) {
+				BitArray::iterator codewordIter = code.begin() + (codewordSize * offset);
+				blocks[offsetBlocks + k].insert(blocks[offsetBlocks + k].end(), codewordIter, codewordIter + codewordSize);
+				offset += 1;
+			}
+		}
+		errCorrBlocks -= characteristics[i].errCorrBlocks;
+		offsetBlocks += characteristics[i].errCorrBlocks;
+	}
+}
+
+void QrCodewordOrganizer::extractBlocks(BitArray &code, vector<BitArray> &blocks) {
+	vector<BitArray> ec_blocks;
+
+	extractDataBlocks(code, blocks);
+	extractErrorCorrectionBlocks(code, ec_blocks);
+
+	vector<BitArray>::iterator iter = blocks.begin();
+	vector<BitArray>::iterator iter2 = ec_blocks.begin();
+
+	for (; iter != blocks.end();iter++, iter2++) {
+		iter->insert(iter->end(), iter2->begin(), iter2->end());
+	}
+}
+
+void QrCodewordOrganizer::dataBlocksToDataCodewords(vector<BitArray> &blocks, BitArray &dataCodewords) {
+	dataCodewords.clear();
 	for (unsigned int i = 0; i < blocks.size(); i++) {
-		extractedData.insert(extractedData.end(), blocks[i].begin(), blocks[i].end());
+		dataCodewords.insert(dataCodewords.end(), blocks[i].begin(), blocks[i].end());
+	}
+}
+
+void QrCodewordOrganizer::errorCorrectionBlocksToErrorCorrectionCodewords(vector<BitArray> &blocks, BitArray &ecCodewords) {
+	ecCodewords.clear();
+	for (unsigned int i = 0; i < blocks.size(); i++) {
+		ecCodewords.insert(ecCodewords.end(), blocks[i].begin(), blocks[i].end());
+	}
+}
+
+void QrCodewordOrganizer::blocksToCodewords(vector<BitArray> &blocks, BitArray &codewords) {
+	codewords.clear();
+
+	int block = 0;
+	BitArray ecCodewords;
+	for (unsigned int i = 0; i < characteristics.size(); i++) {
+		for (int j = 0; j < characteristics[i].errCorrBlocks; j++) {
+			if (codewordSize * characteristics[i].c <= (int)blocks[block].size() ) {
+				codewords.insert(codewords.end(), blocks[block].begin(), blocks[block].begin() + codewordSize * characteristics[i].k);
+				ecCodewords.insert(ecCodewords.end(), blocks[block].begin() + codewordSize * characteristics[i].k, blocks[block].begin() + codewordSize * characteristics[i].c);
+			}
+			block++;
+		}
+	}
+
+	codewords.insert(codewords.end(), ecCodewords.begin(), ecCodewords.end());
+}
+
+bool QrCodewordOrganizer::correctBlocks(vector<BitArray> &blocks) {
+	int block = 0;
+	vector<int> vec;
+	bool res = true;
+	vector<BitArray> _blocks;
+	BitArray bitArray;
+	for (unsigned int i = 0; i < characteristics.size(); i++) {
+		ReedSolomon reedSolomon(characteristics[i].c - characteristics[i].k);
+		for (int j = 0; j < characteristics[i].errCorrBlocks; j++) {
+			if (codewordSize * characteristics[i].c <= (int)blocks[block].size() ) {
+				bitArrayToCodewordArray(blocks[block], vec);
+				DEBUG_PRINT_VECTOR("ff", vec);
+				if (reedSolomon.correct(vec)) {
+					DEBUG_PRINT_VECTOR("ff", vec);
+					codewordArrayToBitArray(vec, bitArray);
+					DEBUG_PRINT_BITVECTOR("df", bitArray);
+					_blocks.push_back(bitArray);
+				} else {
+					res = false;
+					_blocks.push_back(blocks[block]);
+				}
+			}
+			block++;
+		}
+	}
+
+	blocks = _blocks;
+	return res;
+}
+
+void QrCodewordOrganizer::bitArrayToCodewordArray(BitArray &bitArray, vector<int> &vec) {
+	vec.clear();
+	BitStreamReverseCodeword <int> bitsStream(bitArray);
+
+	uchar byte = 0;
+	while (!bitsStream.isEnd()) {
+		bitsStream(codewordSize) >> byte;
+		vec.push_back(byte);
+	}
+}
+
+void QrCodewordOrganizer::codewordArrayToBitArray(vector<int> &vec, BitArray &bitArray) {
+	bitArray.clear();
+
+	vector<int>::iterator iter = vec.begin();
+	for (;iter != vec.end(); iter++) {
+		bitArray.pushNumber((uchar)*iter, 8);
 	}
 }
 

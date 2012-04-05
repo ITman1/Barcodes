@@ -49,16 +49,33 @@ private:
 	};
 
 	static const pair<MAP_KEY_TYPE, QrVersionFormatCharacteristics > QrCodewordOrganizer_mapping[];
-	static const QrCodewordOrganizer INSTANCE;
 	static const map<MAP_KEY_TYPE, QrVersionFormatCharacteristics, cmp_key > CODEWORD_CHARACTERISTICS;
 
-	QrCodewordOrganizer() {}
-public:
-	virtual ~QrCodewordOrganizer() {}
+	QrVersionInformation &version;
+	QrFormatInformation &format;
+	QrVersionFormatCharacteristics characteristics;
+	int codewordSize;
 
-	static QrCodewordOrganizer getInstance();
-	void getCharacteristics(QrVersionInformation &version, QrFormatInformation &format, QrVersionFormatCharacteristics &characteristics);
-	void extractDataCodewords(BitArray &code, QrVersionInformation &version, QrFormatInformation &format, BitArray &extractedData);
+	void bitArrayToCodewordArray(BitArray &bitArray, vector<int> &vec);
+	void codewordArrayToBitArray(vector<int> &vec, BitArray &bitArray);
+public:
+	QrCodewordOrganizer(QrVersionInformation &version, QrFormatInformation &format);
+
+	void getCharacteristics(QrVersionFormatCharacteristics &characteristics);
+
+	void extractDataCodewords(BitArray &code, BitArray &extractedData);
+	void extractErrorCorrectionCodewords(BitArray &code, BitArray &ecCodewords);
+	void extractCodewords(BitArray &code, BitArray &codewords);
+
+	void extractDataBlocks(BitArray &code, vector<BitArray> &blocks);
+	void extractErrorCorrectionBlocks(BitArray &code, vector<BitArray> &blocks);
+	void extractBlocks(BitArray &code, vector<BitArray> &blocks);
+
+	void dataBlocksToDataCodewords(vector<BitArray> &blocks, BitArray &dataCodewords);
+	void errorCorrectionBlocksToErrorCorrectionCodewords(vector<BitArray> &blocks, BitArray &ecCodewords);
+	void blocksToCodewords(vector<BitArray> &blocks, BitArray &codewords);
+
+	bool correctBlocks(vector<BitArray> &blocks);
 };
 
 } /* namespace barcodes */
