@@ -1,7 +1,7 @@
 #ifndef JNI_JDETECTEDMARK_H_
 #define JNI_JDETECTEDMARK_H_
 
-#include <barlib/barcodes/Barcode.h>
+#include <barlib/barcodes/DetectedMarks.h>
 
 #include "JNIWrapper.h"
 #include "jPoint.h"

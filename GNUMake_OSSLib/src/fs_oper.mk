@@ -48,6 +48,7 @@ endif
 # Copies file from one location to the another one
 # @param $1 filepath to the source location
 # @param $2 filepath to the destination location
+# @param $3 file filter
 ifeq ($(OSS_OS_NAME), windows)
     oss_cp = -ROBOCOPY $(subst /,\, "$1" "$2" $(if $(call eq,$(origin 3),undefined),"*","$3")) /E
 else

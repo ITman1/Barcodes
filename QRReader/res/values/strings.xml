@@ -11,6 +11,8 @@
     <string name="QRReaderActivity_StatusText_Capturing">(capturing image)</string>
     <string name="QRReaderActivity_StatusText_Saving">(saving image)</string>
     <string name="QRReaderActivity_StatusText_Processing">(processing image)</string>
+    <string name="QRReaderActivity_PreviewFPS_TextView">Preview FPS:</string>
+    <string name="QRReaderActivity_DetectionFPS_TextView">Detection FPS:</string>
     
     <string name="QRReaderAboutActivity_Title">About application</string>
     <string name="QRReaderAboutActivity_License">License</string>

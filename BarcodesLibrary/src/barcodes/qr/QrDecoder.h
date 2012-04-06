@@ -19,7 +19,7 @@ using namespace cv;
 
 class QrDecoder: public Decoder {
 public:
-	void decode(Image &image, vector<DataSegment> &dataSegments, int flags = QrDetector::FLAG_ADAPT_THRESH |
+	void decode(Image &image, DataSegments &dataSegments, int flags = QrDetector::FLAG_ADAPT_THRESH |
 			QrDetector::FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR | QrDetector::FLAG_ADAPT_THRESH_CORRUPT_FILL_REPAIR |
 			QrDetector::DISTANCE_FLAGS | QrDetector::FLAG_QR_MARK_MATCH_TOLERANCE_NORMAL) const;
 	const Decoder *getDecoder() const;
@@ -41,7 +41,7 @@ protected:
 	QrDecoder() {}
 	virtual ~QrDecoder() {}
 
-	void _read_V2_40(Image &image, vector<DataSegment> &dataSegments, DetectedMarks &detectedMarks, int flags = 0) const;
+	void _read_V1_40(Image &image, DataSegments &dataSegments, DetectedMarks &detectedMarks, int flags = 0) const;
 	void getPerspectiveCorners_V1_40(Mat &binarized, DetectedMarks &detectedMarks, vector<Point> &corners) const;
 	bool sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Point2f &rotatePoint, Vector2Df &lineShift, int lineWidth, bool clockWiseSample) const;
 	double _sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Point2f &rotatePoint, Vector2Df &lineShift, int lineWidth) const;

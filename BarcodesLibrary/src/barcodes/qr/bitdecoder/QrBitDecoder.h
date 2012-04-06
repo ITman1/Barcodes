@@ -14,7 +14,7 @@ namespace barcodes {
 
 class QrBitDecoder {
 private:
-	static const int DATA_MODE_TERMINATOR = 0;
+	static const uint32_t DATA_MODE_TERMINATOR = 0;
 	static const QrBitDecoder BIT_DECODER_INSTANCE;
 	static const map<uint32_t, QrDataMode *> MODE_MAP;
 

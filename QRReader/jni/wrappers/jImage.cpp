@@ -4,6 +4,9 @@
 #include "jSize.h"
 #include "jImage.h"
 
+#include <barlib/debug.h>
+#define DEBUG_TAG "jImage.cpp"
+
 using namespace jni;
 using namespace std;
 
@@ -60,7 +63,8 @@ int jImage::getColorFormat() {
 }
 
 Size jImage::getSize() {
-	return jSize(env, getObjectField(this, jSize::getJClass(env), "size"));
+	jobject size = getObjectField(this, jSize::getJClass(env), "size");
+	return (size != NULL)? jSize(env, size) : Size();
 }
 
 bool jImage::getCompressed() {
@@ -73,9 +77,9 @@ jImage::operator Image() {
 	int format = getColorFormat();
 	int compressed = getCompressed();
 	Size size = getSize();
-
+	DEBUG_PRINT(DEBUG_TAG, "Data length: %d", data.size());
 	if (compressed) {
-		return Image(imdecode(Mat(data), 0), IMAGE_COLOR_GRAYSCALE);
+		return Image::fromByteArrayGrayscale(data);
 	} else  {
 		return Image(Image(size.height * 3/2, size.width, (void *)&data[0], format).clone(), format);
 	}

@@ -27,14 +27,14 @@ const QrDecoder QrDecoder::DECODER_INSTANCE = QrDecoder();
 
 const Size QrDecoder::CODEWORD_SAMPLE_SIZE(2, 4);
 
-void QrDecoder::decode(Image &image, vector<DataSegment> &dataSegments, int flags) const {
+void QrDecoder::decode(Image &image, DataSegments &dataSegments, int flags) const {
 	DetectedMarks detectedMarks;
 
-	dataSegments.clear();
+
 	QrDetector::getInstance()->detect(image, detectedMarks, flags);
 
 	if (detectedMarks.size() == 3) {
-		_read_V2_40(image, dataSegments, detectedMarks);
+		_read_V1_40(image, dataSegments, detectedMarks);
 	}
 }
 
@@ -46,29 +46,44 @@ const Decoder *QrDecoder::getDecoder() const {
 	return &DECODER_INSTANCE;
 }
 
-void QrDecoder::_read_V2_40(Image &image, vector<DataSegment> &dataSegments, DetectedMarks &detectedMarks, int flags) const {
+void QrDecoder::_read_V1_40(Image &image, DataSegments &dataSegments, DetectedMarks &detectedMarks, int flags) const {
+	dataSegments.clear();
+	dataSegments.flags = 0;
+
+	//>>> 1) GETTING THE FOUR CORNERS OF THE QR CODE FROM THE IMAGE
+
 	vector<Point> corners;
 	DetectedMarks _detectedMarks = detectedMarks;
-	Mat binarized = QrDetector::binarize(image, _detectedMarks[0].flags);
+	Mat binarized = QrDetector::binarize(image, _detectedMarks[2].flags);
 	getPerspectiveCorners_V1_40(binarized, _detectedMarks, corners);
 
-	Image img = Image(image.clone(), IMAGE_COLOR_GRAYSCALE);
-	cvtColor(img, img, CV_GRAY2RGB);
+	if (corners.size() < 4) {
+		DEBUG_PRINT(DEBUG_TAG, "FAILED TO GET FOUR CORNERS OF THE QR CODE!");
+		return;
+	}
 
-	line( img, corners[0],corners[0], CV_RGB(255, 0, 0), 2, 8, 0);
-	line( img, corners[1],corners[1], CV_RGB(0, 255, 0), 2, 8, 0);
-	line( img, corners[2],corners[2], CV_RGB(0, 0, 255), 2, 8, 0);
-	line( img, corners[3],corners[3], CV_RGB(255, 255, 0), 2, 8, 0);
-	DEBUG_WRITE_IMAGE("out2/just_test.jpg", img);
+#ifdef TARGET_DEBUG
+	Image img;
+#endif
+	DEBUG_WRITE_IMAGE(
+		(
+				img = Image(image.clone(), IMAGE_COLOR_GRAYSCALE),
+				cvtColor(img, img, CV_GRAY2RGB),
+				line( img, corners[0],corners[0], CV_RGB(255, 0, 0), 5, 8, 0),
+				line( img, corners[1],corners[1], CV_RGB(0, 255, 0), 5, 8, 0),
+				line( img, corners[2],corners[2], CV_RGB(0, 0, 255), 5, 8, 0),
+				line( img, corners[3],corners[3], CV_RGB(255, 255, 0), 5, 8, 0),
+				"perspective_corners.jpg"
+		), img);
 
-	if (corners.size() < 4) return;
+	//>>> 2) PERSPECTIVE TRANSFORMATION OF THE QR CODE
 
 	Mat perspWarped = warpPerspective(binarized, corners, false, Size(QR_CODE_WARP_PERSPECTIVE_SIZE, QR_CODE_WARP_PERSPECTIVE_SIZE));
 	Mat transformation = getPerspectiveTransform(corners, Size(QR_CODE_WARP_PERSPECTIVE_SIZE, QR_CODE_WARP_PERSPECTIVE_SIZE));
 	_detectedMarks.perspectiveTransform(transformation);
-	DEBUG_WRITE_IMAGE("out2/warped.jpg", perspWarped);
+	DEBUG_WRITE_IMAGE("warped.jpg", perspWarped);
 
-	// GETTING THE QR CODE VERSION FROM THE IMAGE
+	//>>> 3) GETTING THE QR CODE VERSION FROM THE IMAGE
 
 	QrVersionInformation versionInformation = QrVersionInformation::fromImage(perspWarped, _detectedMarks);
 
@@ -76,9 +91,9 @@ void QrDecoder::_read_V2_40(Image &image, vector<DataSegment> &dataSegments, Det
 		DEBUG_PRINT(DEBUG_TAG, "FAILED TO GET VERSION!");
 		return;
 	}
-	DEBUG_PRINT(DEBUG_TAG, "VERSION: %d", versionInformation.getVersion());
+	DEBUG_PRINT(DEBUG_TAG, "Processing version: %d", versionInformation.getVersion());
 
-	// TRANSLATING THE IMAGE TO THE BIT MATRIX
+	//>>> 4) TRANSLATING THE IMAGE TO THE BIT MATRIX
 
 	BitMatrix qrBitMatrix;
 	BitMatrix::fromImage(perspWarped, versionInformation.getQrBarcodeSize(), qrBitMatrix);
@@ -87,9 +102,9 @@ void QrDecoder::_read_V2_40(Image &image, vector<DataSegment> &dataSegments, Det
 		DEBUG_PRINT(DEBUG_TAG, "FAILED TO GET QR BIT MATRIX!");
 		return;
 	}
-	DEBUG_WRITE_BITMATRIX("out2/data_unmasked.bmp", qrBitMatrix);
+	DEBUG_WRITE_BITMATRIX("data_unmasked.bmp", qrBitMatrix);
 
-	// GETTING THE FORMAT INFORMATION FROM THE BIT MATRIX
+	//>>> 5) GETTING THE FORMAT INFORMATION FROM THE BIT MATRIX
 
 	QrFormatInformation formatInformation = QrFormatInformation::fromBitMatrix(qrBitMatrix, versionInformation);
 
@@ -99,16 +114,16 @@ void QrDecoder::_read_V2_40(Image &image, vector<DataSegment> &dataSegments, Det
 	}
 	DEBUG_PRINT(DEBUG_TAG, "XOR DATA MASK: %d | ERROR CORRECTION LEVEL: %d", formatInformation.getXORDataMask(), formatInformation.getErrorCorrectionLevel());
 
-	// BUILDING THE XOR DATA MASK AND MASKING THE QR CODE BIT MATRIX
+	//>>> 6) BUILDING THE XOR DATA MASK AND MASKING THE QR CODE BIT MATRIX
 
 	BitMatrix xorDataMask;
 	formatInformation.buildXORDataMask(xorDataMask, versionInformation);
 
 	qrBitMatrix.maskXOR(xorDataMask);
-	DEBUG_WRITE_BITMATRIX("out2/xor_mask.bmp", xorDataMask);
-	DEBUG_WRITE_BITMATRIX("out2/data_masked.bmp", qrBitMatrix);
+	DEBUG_WRITE_BITMATRIX("xor_mask.bmp", xorDataMask);
+	DEBUG_WRITE_BITMATRIX("data_masked.bmp", qrBitMatrix);
 
-	// SAMPLING THE QR CODE AND RETRIEVING BIT ARRAY CONTATINING DATA AND ERROR CORRECTION CODEWORDS
+	//>>> 7) SAMPLING THE QR CODE AND RETRIEVING BIT ARRAY CONTATINING DATA AND ERROR CORRECTION CODEWORDS
 
 	GridSampler sampler(CODEWORD_SAMPLE_SIZE, GridSampler::LEFT_TOP, GridSampler::TOP_LEFT, false, true);
 	BitMatrix dataMask;
@@ -119,27 +134,31 @@ void QrDecoder::_read_V2_40(Image &image, vector<DataSegment> &dataSegments, Det
 	dataMask.removeCol(6);
 	sampler.sample(qrBitMatrix, qrDataErrorBits, &dataMask);
 	DEBUG_PRINT(DEBUG_TAG, "READ DATA/ERROR BITS: %d", qrDataErrorBits.size());
-	DEBUG_WRITE_BITMATRIX("out2/data_mask.bmp", dataMask);
-	DEBUG_PRINT_BITVECTOR(DEBUG_TAG, qrDataErrorBits);
+	DEBUG_WRITE_BITMATRIX("data_mask.bmp", dataMask);
 
-	// DIVIDES BITARRAY INTO CODEWORDS, RE-ORDERS AND RETURNS ORDERED BLOCKS CONTAINING EC PARITY BITS
+	//>>> 8) DIVIDES BITARRAY INTO CODEWORDS, RE-ORDERS AND RETURNS ORDERED BLOCKS CONTAINING EC PARITY BITS
+
 	QrCodewordOrganizer codewordOrganizer(versionInformation, formatInformation);
 	vector<BitArray> blocks;
 	codewordOrganizer.extractBlocks(qrDataErrorBits, blocks);
-	BitArray _codewords;
-	DEBUG_PRINT_BITVECTOR(DEBUG_TAG, (codewordOrganizer.blocksToCodewords(blocks, _codewords), _codewords));
 
-	// PROCEED THE ERROR CORRECTION AND EXTRACT CORECTED CODEWORDS
+	//>>> 9) PROCEEDS THE ERROR CORRECTION AND EXTRACTS CORECTED CODEWORDS
+
 	BitArray codewords;
-	codewordOrganizer.correctBlocks(blocks);
+	if (!codewordOrganizer.correctBlocks(blocks)) {
+		dataSegments.flags |= DataSegments::DATA_SEGMENTS_CORRUPTED;
+		DEBUG_PRINT(DEBUG_TAG, "BLOCKS ARE CORRUPTED!");
+	}
 	codewordOrganizer.blocksToCodewords(blocks, codewords);
-	DEBUG_PRINT_BITVECTOR(DEBUG_TAG, codewords);
 
-	// FINALLY DECODE THE DATA
+	//>>> 10) FINALLY DECODE THE DATA
 
 	QrBitDecoder::getInstance().decode(codewords, dataSegments, versionInformation);
 	DEBUG_PRINT(DEBUG_TAG, "DATA SEGMENT COUNT: %d", dataSegments.size());
-	if (dataSegments.size() == 0) return;
+	if (dataSegments.size() == 0)  {
+		DEBUG_PRINT(DEBUG_TAG, "FAILED TO GET DATA SEGMENTS!");
+		return;
+	}
 
 	DEBUG_PRINT(DEBUG_TAG, "FIRST DATA SEGMENT length: %d", dataSegments[0].data.size());
 	DEBUG_PRINT(DEBUG_TAG, "FIRST DATA SEGMENT mode: %d", dataSegments[0].mode);
@@ -264,7 +283,9 @@ void QrDecoder::getPerspectiveCorners_V1_40(Mat &binarized, DetectedMarks &detec
 	sampleVector2.rotate(SAMPLE_RECT_START_ANGLE_SHIFT * -1);
 	sampleVector2.resize(diagVector.size() / 2);
 
-	sampleQrCodeEdge(binarized, sampleVector2, rotatePoint2, lineShift, sampleLineWidth, false);
+	if (!sampleQrCodeEdge(binarized, sampleVector2, rotatePoint2, lineShift, sampleLineWidth, false)) {
+		return;
+	}
 
 	// Finally finding the 4th corner from the intersection of the lines
 	Point fourthCorner;
@@ -296,7 +317,6 @@ bool QrDecoder::sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Point2
 
         	// Final steps procedure
         	while (finalStep < SAMPLE_RECT_FINAL_STEPS_COUNT) {
-    			DEBUG_PRINT(DEBUG_TAG, "FINAL STEPS");
         		sampleAngleStep = sampleAngleStep * 0.5; // Divide sample step by 2
 
         		sampleVector.rotate(sampleAngleStep * -0.5); // 1/4 forward (to 1/4 position)
@@ -307,7 +327,6 @@ bool QrDecoder::sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Point2
 
         		if (sampleRatioLeft < sampleRatioRight) {
         			wasLeft = true;
-        			DEBUG_PRINT(DEBUG_TAG, "WAS LEFT");
             		sampleVector.rotate(sampleAngleStep * 1.5); // 3/4 back (to begin)
         		} else {
             		sampleVector.rotate(sampleAngleStep * 0.5); // 1/4 back (to center)
@@ -320,13 +339,11 @@ bool QrDecoder::sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Point2
         	return true;
         }
 
-        DEBUG_PRINT(DEBUG_TAG, "Before rotate: %d ; %d", sampleVector.dx, sampleVector.dy);
 		sampleVector.rotate(sampleAngleStep * -1);
-        DEBUG_PRINT(DEBUG_TAG, "After rotate: %d ; %d", sampleVector.dx, sampleVector.dy);
 		angle += sampleAngleStep;
 	}
 
-	DEBUG_PRINT(DEBUG_TAG, "REACHED THE END");
+	DEBUG_PRINT(DEBUG_TAG, "DETECTION OF THE 4. CORNER FAILED!");
 	return false;
 }
 
@@ -340,8 +357,6 @@ double QrDecoder::_sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Poi
 	calcBinarizedHistogram(binarized, sampleMask, hist);
 	float fill_density = hist.at<float>(0);
     float bg_density = hist.at<float>(1);
-
-    DEBUG_PRINT(DEBUG_TAG, "BG: %.4f || FILL: %.4f", bg_density, fill_density);
 
     return fill_density / (double)(fill_density + bg_density);
 }

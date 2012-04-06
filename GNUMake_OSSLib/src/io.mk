@@ -24,9 +24,9 @@ endif
 # Prints text on stdout
 # @param $1 text to be printed
 ifeq ($(OSS_OS_NAME), windows)
-    oss_echo = ECHO
+    oss_echo = ECHO $1
 else
-    oss_echo = echo
+    oss_echo = echo $1
 endif
 
 endif

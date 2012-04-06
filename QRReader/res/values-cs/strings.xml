@@ -11,6 +11,8 @@
     <string name="QRReaderActivity_StatusText_Capturing">(zachytávání obrazu)</string>
     <string name="QRReaderActivity_StatusText_Saving">(ukládání obrazu)</string>
     <string name="QRReaderActivity_StatusText_Processing">(zpracovávání obrazu)</string>
+    <string name="QRReaderActivity_PreviewFPS_TextView">FPS náhledu:</string>
+    <string name="QRReaderActivity_DetectionFPS_TextView">FPS detekce:</string>
     
     <string name="QRReaderAboutActivity_Title">O aplikaci</string>
     <string name="QRReaderAboutActivity_License">License</string>

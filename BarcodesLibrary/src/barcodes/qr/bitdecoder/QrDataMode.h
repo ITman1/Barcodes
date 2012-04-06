@@ -8,7 +8,7 @@
 #ifndef QRDATAMODE_H_
 #define QRDATAMODE_H_
 
-#include "../../DataSegment.h"
+#include "../../DataSegments.h"
 #include "../QrVersionInformation.h"
 #include "../../common/BitStream.h"
 

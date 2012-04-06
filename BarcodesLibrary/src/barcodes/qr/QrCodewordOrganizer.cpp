@@ -9,7 +9,6 @@
 
 #include "QrCodewordOrganizer.h"
 #include "../common/errcontrol/ReedSolomon.h"
-#include "../../debug.h"
 #include "../common/BitStream.h"
 
 namespace barcodes {
@@ -22,12 +21,12 @@ QrVersionFormatCharacteristics::QrVersionFormatCharacteristics(int count, ...) {
 }
 
 QrVersionFormatCharacteristics::QrVersionFormatCharacteristics(QrVersionFormatCharacteristic first) {
-	insertCharacteristics(1, first);
+	insertCharacteristics(1, &first);
 }
 
 QrVersionFormatCharacteristics::QrVersionFormatCharacteristics(QrVersionFormatCharacteristic first,
 		QrVersionFormatCharacteristic second) {
-	insertCharacteristics(2, first, second);
+	insertCharacteristics(2, &first, &second);
 }
 
 void QrVersionFormatCharacteristics::insertCharacteristics(int count, ...) {
@@ -35,8 +34,8 @@ void QrVersionFormatCharacteristics::insertCharacteristics(int count, ...) {
 	va_start(args, count);
 
 	for (int i = 0; i < count; i++) {
-		QrVersionFormatCharacteristic obj = va_arg(args, QrVersionFormatCharacteristic);
-		push_back(obj);
+		QrVersionFormatCharacteristic *obj = va_arg(args, QrVersionFormatCharacteristic *);
+		push_back(*obj);
 	}
 
 	va_end(args);
@@ -421,11 +420,8 @@ bool QrCodewordOrganizer::correctBlocks(vector<BitArray> &blocks) {
 		for (int j = 0; j < characteristics[i].errCorrBlocks; j++) {
 			if (codewordSize * characteristics[i].c <= (int)blocks[block].size() ) {
 				bitArrayToCodewordArray(blocks[block], vec);
-				DEBUG_PRINT_VECTOR("ff", vec);
 				if (reedSolomon.correct(vec)) {
-					DEBUG_PRINT_VECTOR("ff", vec);
 					codewordArrayToBitArray(vec, bitArray);
-					DEBUG_PRINT_BITVECTOR("df", bitArray);
 					_blocks.push_back(bitArray);
 				} else {
 					res = false;

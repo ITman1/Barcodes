@@ -13,17 +13,35 @@
             android:layout_marginRight="10dp"
             android:background="@drawable/read_btn" />
 
-        <TextView
-            android:id="@+id/fps_TextView"
+        <LinearLayout
+            android:id="@+id/linearLayout1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
-            android:text="FPS: ??"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#ff0" />
+            android:padding="0dp"
+            android:orientation="vertical" >
+            
+            <TextView
+	            android:id="@+id/previewfps_TextView"
+	            android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+	            android:text="@string/QRReaderActivity_PreviewFPS_TextView"
+	            android:textAppearance="?android:attr/textAppearanceSmall"
+	            android:textColor="#ff0" />
+
+            <TextView
+	            android:id="@+id/detectionfps_TextView"
+	            android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+	            android:text="@string/QRReaderActivity_DetectionFPS_TextView"
+	            android:textAppearance="?android:attr/textAppearanceSmall"
+	            android:textColor="#ff0" />
+        </LinearLayout>
+        
+
 
         <TextView
             android:id="@+id/debug_TextView"

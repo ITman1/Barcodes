@@ -146,7 +146,6 @@ DEBUG_PRINT(DEBUG_TAG, "_detect(image,detectedMarks,%d)", flags);
 		Size2f boxSize = box.size;
 		Rect boxRect = box.boundingRect();
 		Size2f boxRectSize = boxRect.size();
-		Point boxCenter = box.center;
 
 		if ((boxSize.width / (double)boxSize.height > QR_MARK_BOUNDING_RECT_MAX_ACCEPTED_SCALE)
 			|| (boxSize.height / (double)boxSize.width > QR_MARK_BOUNDING_RECT_MAX_ACCEPTED_SCALE)
@@ -251,7 +250,7 @@ Mat QrDetector::binarize(Image &image, int flags, int mean_C) {
 		}
 	}
 
-	//DEBUG_WRITE_IMAGE("after_test_binarized.jpg", binarized);
+	DEBUG_WRITE_IMAGE(std::string("binarized_") + __DEBUG_TO_STR(flags) + std::string("_") + __DEBUG_TO_STR(mean_C) + std::string(".jpg") , binarized);
 	return binarized;
 }
 } /* namespace barcodes */

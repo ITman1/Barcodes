@@ -9,7 +9,7 @@
 #define DECODER_H_
 
 #include "../common/Image.h"
-#include "DataSegment.h"
+#include "DataSegments.h"
 
 namespace barcodes {
 
@@ -18,7 +18,7 @@ protected:
 	Decoder() {}
 	virtual ~Decoder() {}
 public:
-	virtual void decode(Image &image, vector<DataSegment> &dataSegments, int flags = 0) const = 0;
+	virtual void decode(Image &image, DataSegments &dataSegments, int flags = 0) const = 0;
 	virtual const Decoder *getDecoder() const = 0;
 };
 

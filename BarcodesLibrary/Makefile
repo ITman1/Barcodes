@@ -91,3 +91,4 @@ gen-include:
 
 # Generates the file with the list of source files
 gen-srclist:
+	$(call oss_echo, $(call rwildcard,$(SRCDIR),*.cpp)) > $(SRC_LIST)

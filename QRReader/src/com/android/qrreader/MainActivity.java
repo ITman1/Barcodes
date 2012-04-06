@@ -63,6 +63,7 @@ import com.android.qrreader.R;
 import com.android.views.DrawingCanvas;
 import com.android.views.DrawingCanvas.Line;
 import com.qrcode.QrCodes;
+import com.qrcode.QrCodes.DataSegment;
 import com.qrcode.QrCodes.DetectedMark;
 import com.qrcode.QrCodes.Image;
 import com.qrcode.QrCodes.Point;
@@ -95,10 +96,7 @@ public class MainActivity extends Activity {
     
     ///** The default image format in which the images will be stored. */
     //private static final String DEFAULT_IMAGE_FORMAT        = "JPEG";
-    
-    /** The text which displays in the text view that contains the FPS informations. */
-    private static final String FPS_STR                     = "FPS: ";
-    
+       
     /** The default quality of the storing of JPEG images. */
     private static final int DEFAULT_JPEG_QUALITY           = 90;
     
@@ -118,8 +116,11 @@ public class MainActivity extends Activity {
 	/** The reference to the surface where camera preview is displayed. */
 	private CameraPreview      cameraPreview;
 	
-    /** The reference to the text view that contains the FPS information. */
-    private TextView           fps_TextView;
+    /** The reference to the text view that contains the preview FPS information. */
+    private TextView           previewfps_TextView;
+    
+    /** The reference to the text view that contains the detection FPS information. */
+    private TextView           detectionfps_TextView;
     
     /** The reference to the image view that contains the center mark. */
     private ImageView          centerMark;
@@ -144,7 +145,11 @@ public class MainActivity extends Activity {
     
     /** Informs about the time when has been initiated 
      * the preview callback for a last time. */
-    private long               lastTimeFPS                  = System.currentTimeMillis();
+    private long               lastTimePreviewFPS           = System.currentTimeMillis();
+    
+    /** Informs about the time when has been initiated 
+     * the detection native call for a last time. */
+    private long               lastTimeDetectionFPS         = System.currentTimeMillis();
     
     /** Informs about the time when has been snapped 
      * the image for a last time. */
@@ -171,7 +176,7 @@ public class MainActivity extends Activity {
             drawingCanvas.removeLines();
             
             synchronized (detectedMarksLock) {
-                if (detectedMarks != null) {
+                if (detectedMarks != null && !takingPicture) {
                     for (DetectedMark detectedMark : detectedMarks) {
                         Point[] points = detectedMark.points;
                         int length = points.length;
@@ -182,6 +187,14 @@ public class MainActivity extends Activity {
                 }
             };
             
+            // Displaying the FPS
+            Resources res = getResources();
+            String fps_text = res.getString(R.string.QRReaderActivity_DetectionFPS_TextView);
+            detectionfps_TextView.setText(fps_text + " " + String.format("%.2f", (1 / (double)((System.currentTimeMillis()
+                    - lastTimeDetectionFPS) / (double)1000))));
+            lastTimeDetectionFPS = System.currentTimeMillis();
+            
+            // Drawing the detected finder marks
             drawingCanvas.invalidate();
         }
     };
@@ -195,21 +208,11 @@ public class MainActivity extends Activity {
                 image.colorFormat = 0x03;
                 image.compressed = false;
                 image.size = new QrCodes.Size(previewSize.width(), previewSize.height());
-                
-                Log.i(MainActivity.TAG, ">>> BEFORE NATIVE");
-                Log.i(MainActivity.TAG, "Free memory: " + Runtime.getRuntime().freeMemory());
-                Log.i(MainActivity.TAG, "Max memory: " + Runtime.getRuntime().maxMemory());
-                Log.i(MainActivity.TAG, "Total memory: " + Runtime.getRuntime().totalMemory());
-                
+                               
                 synchronized (detectedMarksLock) {
                     detectedMarks = QrCodes.detectQrCode(image, 0, 0);
                 };
-                           
-                Log.i(MainActivity.TAG, ">>> AFTER NATIVE");
-                Log.i(MainActivity.TAG, "Free memory: " + Runtime.getRuntime().freeMemory());
-                Log.i(MainActivity.TAG, "Max memory: " + Runtime.getRuntime().maxMemory());
-                Log.i(MainActivity.TAG, "Total memory: " + Runtime.getRuntime().totalMemory());
-                
+                                          
                 droidCamera.getCamera().addCallbackBuffer(previewDetectionImage);
                 invalidateHandler.sendEmptyMessage(0);
             }
@@ -229,6 +232,8 @@ public class MainActivity extends Activity {
         	    // which displays the progress of the image processing
         	    read_btn.setEnabled(false);
         	    takingPicture = true;
+                drawingCanvas.removeLines();
+                drawingCanvas.invalidate();
         	    status_LinearLayout.setVisibility(LinearLayout.VISIBLE);
                 statusText_TextView.setText(R.string.QRReaderActivity_StatusText_Capturing);
                 
@@ -265,11 +270,13 @@ public class MainActivity extends Activity {
             Log.i(MainActivity.TAG, "PreviewCallback::onPreviewFrame");
             
             // Displaying the FPS
-            fps_TextView.setText(FPS_STR + (long)(1 / (double)((System.currentTimeMillis()
-                    - lastTimeFPS) / (double)1000)));
-            lastTimeFPS = System.currentTimeMillis();
+            Resources res = getResources();
+            String fps_text = res.getString(R.string.QRReaderActivity_PreviewFPS_TextView);
+            previewfps_TextView.setText(fps_text + " " + (long)(1 / (double)((System.currentTimeMillis()
+                    - lastTimePreviewFPS) / (double)1000)));
+            lastTimePreviewFPS = System.currentTimeMillis();
             
-            if (data!= null && !detectionThread.isAlive()) {
+            if (data!= null && !detectionThread.isAlive() && !takingPicture) {
                 previewDetectionImage = data;
                 detectionThread = new DetectionThread();
                 detectionThread.setPriority(Thread.NORM_PRIORITY + 1); 
@@ -303,9 +310,11 @@ public class MainActivity extends Activity {
                 // Calling the decode method via JNI from the Barcode Library
                 statusText_TextView.setText(R.string.QRReaderActivity_StatusText_Processing);
                 Image image = new Image();
-                image.data = data;
+                image.data = data;Log.d(TAG, "Data length: " + data.length);
                 image.compressed = true;
-                QRCodeData = QrCodes.readQrCode(image, QrCodes.Requests.GET_QR_CODE, QrCodes.Flags.ALL_FEATURES);
+                savePicture(data, ".jpg"); // TODO TODO TODO DELETE THIS DELETE
+                DataSegment[] dataSegments = QrCodes.readQrCode(image, QrCodes.Requests.GET_QR_CODE, QrCodes.Flags.ALL_FEATURES);
+                QRCodeData = (dataSegments != null && dataSegments.length > 0)? dataSegments[0].data : null;
                 snapshotData = data;
                 startOpenQrIntent();
             } else {                // There are not any data, ignoring the fact (error)
@@ -392,7 +401,7 @@ public class MainActivity extends Activity {
             // Saving the QR code into the internal storage for loading it from
             // here by the Open QR activity 
             fos = openFileOutput(TMP_QR_FILENAME, Context.MODE_PRIVATE);
-            fos.write(QRCodeData);
+            fos.write((QRCodeData == null)? new byte[0] : QRCodeData);
             fos.close();
             
             // Sending the location of the temporary QR code as a classical 
@@ -536,7 +545,8 @@ public class MainActivity extends Activity {
                 LayoutParams.FILL_PARENT));
        
         // Getting handlers for other controls on the layout
-        fps_TextView = (TextView) findViewById(R.id.fps_TextView);
+        previewfps_TextView = (TextView) findViewById(R.id.previewfps_TextView);
+        detectionfps_TextView = (TextView) findViewById(R.id.detectionfps_TextView);
         centerMark = (ImageView) findViewById(R.id.centerMark);
         read_btn = (ImageButton) findViewById(R.id.read_btn);
         status_LinearLayout = (LinearLayout) findViewById(R.id.status_LinearLayout);
@@ -732,7 +742,10 @@ public class MainActivity extends Activity {
         
         // Visibility of the FPS text view
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        fps_TextView.setVisibility(
+        previewfps_TextView.setVisibility(
+            (prefs.getBoolean("Preferences_View_ShowFPS", true))? TextView.VISIBLE : TextView.INVISIBLE
+        );      
+        detectionfps_TextView.setVisibility(
             (prefs.getBoolean("Preferences_View_ShowFPS", true))? TextView.VISIBLE : TextView.INVISIBLE
         );      
         

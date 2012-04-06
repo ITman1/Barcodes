@@ -1,7 +1,7 @@
 #ifndef JNI_JIMAGE_H_
 #define JNI_JIMAGE_H_
 
-#include <barlib/Image.h>
+#include <barlib/common/Image.h>
 #include <barlib/types.h>
 
 #include "JNIWrapper.h"

@@ -1,12 +1,1 @@
-common/Image.cpp
-common/miscellaneous.cpp
-barcodes/Barcode.cpp
-barcodes/Decoder.cpp
-barcodes/Detector.cpp
-barcodes/DetectedMarks.cpp
-barcodes/qr/QrBarcode.cpp
-barcodes/qr/QrDecoder.cpp
-barcodes/qr/QrDetector.cpp
-barcodes/qr/QrBuildHelper.cpp
-barcodes/qr/QrFormatInformation.cpp
-barcodes/qr/QrVersionInformation.cpp
+  src/barcodes/Barcode.cpp    src/barcodes/common/BitArray.cpp    src/barcodes/common/BitMatrix.cpp      src/barcodes/common/errcontrol/Galois.cpp      src/barcodes/common/errcontrol/ReedSolomon.cpp    src/barcodes/common/errcontrol/RsDecode.cpp     src/barcodes/common/GridSampler.cpp         src/barcodes/DetectedMarks.cpp      src/barcodes/qr/bitdecoder/QrBitDecoder.cpp      src/barcodes/qr/bitdecoder/QrDataModeAlphaNumeric.cpp    src/barcodes/qr/bitdecoder/QrDataModeByte.cpp    src/barcodes/qr/bitdecoder/QrDataModeECI.cpp    src/barcodes/qr/bitdecoder/QrDataModeFNC1.cpp    src/barcodes/qr/bitdecoder/QrDataModeFNC12.cpp    src/barcodes/qr/bitdecoder/QrDataModeKanji.cpp    src/barcodes/qr/bitdecoder/QrDataModeNumeric.cpp    src/barcodes/qr/bitdecoder/QrDataModeStructuredAppend.cpp     src/barcodes/qr/QrBarcode.cpp    src/barcodes/qr/QrBuildHelper.cpp    src/barcodes/qr/QrCodewordOrganizer.cpp    src/barcodes/qr/QrDecoder.cpp    src/barcodes/qr/QrDetector.cpp    src/barcodes/qr/QrFormatInformation.cpp    src/barcodes/qr/QrVersionInformation.cpp      src/common/Image.cpp      src/common/miscellaneous.cpp               

@@ -53,7 +53,7 @@ void DetectedMarks::perspectiveTransform(Mat &transformation) {
 		cv::perspectiveTransform(Mat(points2f), res, transformation);
 
 		iter->points.clear();
-		for (int i = 0; i < points2f.size(); i++) {
+		for (unsigned int i = 0; i < points2f.size(); i++) {
 			iter->points.push_back(res.at<Point2f>(i, 0));
 		}
 	}

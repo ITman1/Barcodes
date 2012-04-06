@@ -15,7 +15,7 @@ void QrBarcode::detect(Image &image, DetectedMarks &detectedMarks, int flags) {
 	QrDetector::getInstance()->detect(image, detectedMarks, flags);
 }
 
-void QrBarcode::decode(Image &image, vector<DataSegment> &dataSegments, int flags) {
+void QrBarcode::decode(Image &image, DataSegments &dataSegments, int flags) {
 	QrDecoder::getInstance()->decode(image, dataSegments, flags);
 }
 

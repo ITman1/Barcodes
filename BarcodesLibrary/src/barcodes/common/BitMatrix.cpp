@@ -17,9 +17,7 @@ BitMatrix::BitMatrix(int rows, int cols, bool fill) : Mat_<bool>(rows, cols, fil
 
 BitMatrix::BitMatrix(Size size, bool fill) : Mat_<bool>(size, fill) { }
 
-BitMatrix::BitMatrix(const BitMatrix& m, const Rect& roi) : Mat_<bool>(m, roi) {
-	int i = 0;
-}
+BitMatrix::BitMatrix(const BitMatrix& m, const Rect& roi) : Mat_<bool>(m, roi) { }
 
 BitMatrix BitMatrix::operator() (const Rect& roi) const {
 	return BitMatrix(*this, roi);
@@ -36,7 +34,7 @@ void BitMatrix::getRow(int row, BitArray &rowArr) {
 }
 
 void BitMatrix::pushRow(BitArray &rowArr) {
-	if (rowArr.size() != cols) return;
+	if ((int)rowArr.size() != cols) return;
 
 	resize(rows + 1);
 

@@ -18,7 +18,7 @@ public:
 	double match;
 	int flags;
 
-	DetectedMark() {}
+	DetectedMark() : match(0), flags(0) {}
 	virtual ~DetectedMark() {}
 };
 
