@@ -1,8 +1,20 @@
-/*
- * QrDecoder.cpp
+///////////////////////////////////////////////////////////////////////////////
+// Project:    Barcodes Library
+// File:       QrDecoder.cpp
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Defines members of QrDecoder class which implements decoder
+//             of the QR codes in the image.
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @file QrDecoder.cpp
  *
- *  Created on: 24.3.2012
- *      Author: Scotty
+ * @brief Defines members of QrDecoder class which implements decoder
+ *        of the QR codes in the image.
+ * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
  */
 
 #include <iostream>
@@ -23,10 +35,23 @@
 
 namespace barcodes {
 
+/**
+ * Instance of the QR decoder.
+ */
 const QrDecoder QrDecoder::DECODER_INSTANCE = QrDecoder();
 
+/**
+ * The size of the sampling grid for retrieving the data from the bit matrix.
+ */
 const Size QrDecoder::CODEWORD_SAMPLE_SIZE(2, 4);
 
+/**
+ * Decodes QR code on the image and returns decoded data segments.
+ *
+ * @param image Image with the QR code.
+ * @param dataSegments Result decoded data segments.
+ * @param flags Flags used for detection and decoding.
+ */
 void QrDecoder::decode(Image &image, DataSegments &dataSegments, int flags) const {
 	DetectedMarks detectedMarks;
 
@@ -38,14 +63,23 @@ void QrDecoder::decode(Image &image, DataSegments &dataSegments, int flags) cons
 	}
 }
 
+/**
+ * Returns instance of the QR decoder.
+ *
+ * @return Instance of the QR decoder.
+ */
 const QrDecoder *QrDecoder::getInstance() {
 	return &DECODER_INSTANCE;
 }
 
-const Decoder *QrDecoder::getDecoder() const {
-	return &DECODER_INSTANCE;
-}
-
+/**
+ * Decodes QR code of the versions 1-40 and returns decoded data segments.
+ *
+ * @param image Image with the QR code.
+ * @param dataSegments Result decoded data segments.
+ * @param detectedMarks The localization marks.
+ * @param flags Flags used for detection and decoding.
+ */
 void QrDecoder::_read_V1_40(Image &image, DataSegments &dataSegments, DetectedMarks &detectedMarks, int flags) const {
 	dataSegments.clear();
 	dataSegments.flags = 0;
@@ -78,8 +112,10 @@ void QrDecoder::_read_V1_40(Image &image, DataSegments &dataSegments, DetectedMa
 
 	//>>> 2) PERSPECTIVE TRANSFORMATION OF THE QR CODE
 
-	Mat perspWarped = warpPerspective(binarized, corners, false, Size(QR_CODE_WARP_PERSPECTIVE_SIZE, QR_CODE_WARP_PERSPECTIVE_SIZE));
-	Mat transformation = getPerspectiveTransform(corners, Size(QR_CODE_WARP_PERSPECTIVE_SIZE, QR_CODE_WARP_PERSPECTIVE_SIZE));
+	int warpPerspectiveSize = (binarized.cols > binarized.rows)? binarized.cols : binarized.rows;
+	Mat perspWarped = warpPerspective(binarized, corners, false, Size(warpPerspectiveSize, warpPerspectiveSize));
+	perspWarped = QrDetector::binarize(perspWarped, QrDetector::FLAG_GLOBAL_THRESH);
+	Mat transformation = getPerspectiveTransform(corners, Size(warpPerspectiveSize, warpPerspectiveSize));
 	_detectedMarks.perspectiveTransform(transformation);
 	DEBUG_WRITE_IMAGE("warped.jpg", perspWarped);
 
@@ -165,25 +201,42 @@ void QrDecoder::_read_V1_40(Image &image, DataSegments &dataSegments, DetectedMa
 	DEBUG_PRINT(DEBUG_TAG, "FIRST DATA SEGMENT: %s", (dataSegments[0].data.size() > 0)? string((const char *)&dataSegments[0].data[0], dataSegments[0].data.size()).c_str() : NULL);
 }
 
-// Getting the A,B,C,D points, sorted as C,D,A,B for perspective transformation
-// A,B,C are retrieved from the X,Y,Z
-// Y is the point with the maximal inner distance from the polygon (triangle)
-// which is made by the center points of QR marks.
-//
-// B******           ******C
-// * *** *           * *** *
-// * *** *-----------* *** *
-// * *** *           * *** *
-// ******Y           Z*****N
-//    |            /
-//    |         /
-//    |       /
-//    |    /
-// ******X
-// * *** *
-// * *** *
-// * *** *
-// A*****M                 D
+/**
+ * Retrieves four corners for perspective transformation and sorts the
+ * detected marks and theirs points as defined bellow.
+ *
+ * \code
+ *  Getting the A,B,C,D points, sorted as C,D,A,B for perspective transformation
+ *
+ *  A,B,C are retrieved from the X,Y,Z
+ *
+ *  X,Y,Z are the points with the minimal inner/outer distance from the polygon (triangle)
+ *  which is made by the center points of QR marks.
+ *
+ *  D point is sampled by two lines which has rotate pivot in the N and M.
+ *  These lines start sampling inside QR code and goes outside and when there is
+ *  a white background they ends. D is calculated as an intersect of these lines.
+ *
+ *  B******           ******C
+ *  * *** *           * *** *
+ *  * *** *-----------* *** *
+ *  * *** *           * *** *
+ *  ******Y           Z*****N
+ *     |            /
+ *     |         /
+ *     |       /
+ *     |    /
+ *  ******X
+ *  * *** *
+ *  * *** *
+ *  * *** *
+ *  A*****M                 D
+ * \endcode
+ *
+ * @param binarized Binarized image with the QR code.
+ * @param detectedMarks Detected marks. These marks are sorted.
+ * @param corners Result corners for perspective transformation.
+ */
 void QrDecoder::getPerspectiveCorners_V1_40(Mat &binarized, DetectedMarks &detectedMarks, vector<Point> &corners) const {
 	corners.clear();
 
@@ -298,6 +351,17 @@ void QrDecoder::getPerspectiveCorners_V1_40(Mat &binarized, DetectedMarks &detec
 	corners.push_back(detectedMarks[1].points[0]);
 }
 
+/**
+ * Proceeds sampling by rectangle.
+ *
+ * @param binarized Binarized image.
+ * @param sampleVector The vector which defines the direction and sizes of the sample rectangle.
+ * @param rotatePoint Point around which should be rotated the sample rectangle.
+ * @param lineShift Offset of the sample rectangle.
+ * @param lineWidth Width of the sample rectangle.
+ * @param clockWiseSample Direction of the sampling.
+ * @return Returns true if maximal sample rotation angle is not exceeded, otherwise false.
+ */
 bool QrDecoder::sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Point2f &rotatePoint, Vector2Df &lineShift, int lineWidth, bool clockWiseSample) const {
 	double sampleAngleStep = (clockWiseSample)? SAMPLE_RECT_ANGLE_STEP : SAMPLE_RECT_ANGLE_STEP * -1;
 	double angle = 0;
@@ -347,6 +411,16 @@ bool QrDecoder::sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Point2
 	return false;
 }
 
+/**
+ * Proceeds one sample and returns background fill ratio.
+ *
+ * @param binarized Binarized image.
+ * @param sampleVector The vector which defines the direction and sizes of the sample rectangle.
+ * @param rotatePoint Point around which should be rotated the sample rectangle.
+ * @param lineShift Offset of the sample rectangle.
+ * @param lineWidth Width of the sample rectangle.
+ * @return Fill ratio of the background.
+ */
 double QrDecoder::_sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Point2f &rotatePoint, Vector2Df &lineShift, int lineWidth) const {
 	MatND hist;
 

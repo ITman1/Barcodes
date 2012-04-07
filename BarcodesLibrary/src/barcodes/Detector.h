@@ -1,8 +1,20 @@
-/*
- * Detector.h
+///////////////////////////////////////////////////////////////////////////////
+// Project:    Barcodes Library
+// File:       Detector.h
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Defines Detector class that only specifies the interface for
+//             creation of all detector classes.
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @file Detector.h
  *
- *  Created on: 24.3.2012
- *      Author: Scotty
+ * @brief Defines Detector class that only specifies the interface for
+ *        creation of all detector classes.
+ * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
  */
 
 #ifndef DETECTOR_H_
@@ -14,14 +26,26 @@
 namespace barcodes {
 using namespace std;
 
+/**
+ * Abstract base class for creation of the classes which serves for detection
+ * of barcodes in the image.
+ */
 class Detector {
 protected:
 	Detector() {}
 	virtual ~Detector() {}
 
 public:
+
+	/**
+	 * Detects barcode and returns localization marks/points.
+	 *
+	 * @param image Image with the barcode.
+	 * @param detectedMarks Recognized localization marks/points.
+	 * @param flags Flags which might be used for detection process.
+	 */
 	virtual void detect(Image &image, DetectedMarks &detectedMarks, int flags) const = 0;
-	virtual const Detector *getDecoder() const = 0;
+
 };
 
 } /* namespace barcodes */

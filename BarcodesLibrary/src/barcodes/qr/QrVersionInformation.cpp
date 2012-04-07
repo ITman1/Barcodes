@@ -1,8 +1,20 @@
-/*
- * QrVersionInformation.cpp
+///////////////////////////////////////////////////////////////////////////////
+// Project:    Barcodes Library
+// File:       QrVersionInformation.cpp
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Defines members of the QrVersionInformation class which provides
+//             informations about QR code of some specific version.
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @file QrVersionInformation.cpp
  *
- *  Created on: 25.3.2012
- *      Author: Scotty
+ * @brief Defines members of the QrVersionInformation class which provides
+ *        informations about QR code of some specific version.
+ * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
  */
 
 #include <iostream>
@@ -17,12 +29,35 @@
 namespace barcodes {
 
 DEFINE_VERSION_CLASSES(QrVersionInformation);
+
+/**
+ * Constant which is used for returning invalid versions.
+ */
 const QrVersionInformation QrVersionInformation::INVALID_VERSION(-1);
+
+/**
+ * Constant which is used for returning invalid positions.
+ */
 const Rect QrVersionInformation::INVALID_POSITION(0, 0, 0, 0);
+
+/**
+ * Constant which is used for returning invalid sizes.
+ */
 const Size QrVersionInformation::INVALID_VERSION_SIZE(-1, -1);
+
+/**
+ * Size of the first information about version in the QR code.
+ */
 const Size QrVersionInformation::VERSION_POSITION1_SIZE(3, 6);
+
+/**
+ * Size of the second information about version in the QR code.
+ */
 const Size QrVersionInformation::VERSION_POSITION2_SIZE(6, 3);
 
+/**
+ * Helper array for the creation of the lookup table.
+ */
 pair<uint32_t, uint32_t> QrVersionInformation_versions_mapping[] = {
     make_pair(0x07C94,  7),    make_pair(0x085BC,  8),
     make_pair(0x09A99,  9),    make_pair(0x0A4D3, 10),
@@ -43,11 +78,17 @@ pair<uint32_t, uint32_t> QrVersionInformation_versions_mapping[] = {
     make_pair(0x27541, 39),    make_pair(0x28C69, 40)
 };
 
+/**
+ * Lookup table which maps encoded version information to proper version.
+ */
 const LookupTable<uint32_t, uint32_t> QrVersionInformation::ENCODED_VERSIONS(
 		QrVersionInformation_versions_mapping,
     QrVersionInformation_versions_mapping + sizeof QrVersionInformation_versions_mapping
     / sizeof QrVersionInformation_versions_mapping[0]);
 
+/**
+ * Maps version number to coordinates of the centers of alignment marks.
+ */
 const int QrVersionInformation::ALIGNMENT_PATTERNS_LOOKUP_TABLE[QrVersionInformation::
     ALIGNMENT_PATTERNS_LOOKUP_TABLE_VERSIONS][QrVersionInformation::ALIGNMENT_PATTERNS_LOOKUP_TABLE_CENTERS] = {
 	{-1, -1, -1, -1,  -1,  -1,  -1},	{ 6, 18, -1, -1,  -1,  -1,  -1},
@@ -72,6 +113,11 @@ const int QrVersionInformation::ALIGNMENT_PATTERNS_LOOKUP_TABLE[QrVersionInforma
 	{ 6, 26, 54, 82, 110, 138, 166},    { 6, 30, 58, 86, 114, 142, 170}
 };
 
+/**
+ * Constructs version information for specified version.
+ *
+ * @param version Version of the QR code.
+ */
 QrVersionInformation::QrVersionInformation(int version) : version(version) {
 	if ((version < VERSION_1.getVersion()) || (version > VERSION_40.getVersion())) {
 		version = -1;
@@ -102,6 +148,11 @@ bool QrVersionInformation::operator<=(const QrVersionInformation &rhs) const {
 	  return version <= rhs.version;
 }
 
+/**
+ * Returns position of the first version information inside bit matrix.
+ *
+ * @return Position of the first version information inside bit matrix.
+ */
 Rect QrVersionInformation::getVersionPosition1() const {
 	if (version <= VERSION_6.getVersion()) {
 		return INVALID_POSITION;
@@ -111,6 +162,11 @@ Rect QrVersionInformation::getVersionPosition1() const {
 	}
 }
 
+/**
+ * Returns position of the second version information inside bit matrix.
+ *
+ * @return Position of the second version information inside bit matrix.
+ */
 Rect QrVersionInformation::getVersionPosition2() const {
 	if (version <= VERSION_6.getVersion()) {
 		return INVALID_POSITION;
@@ -120,11 +176,21 @@ Rect QrVersionInformation::getVersionPosition2() const {
 	}
 }
 
+/**
+ * Returns the size of the bit matrix demanded for QR code of this version.
+ *
+ * @return Size of the bit matrix demanded for QR code of this version.
+ */
 Size QrVersionInformation::getQrBarcodeSize() const {
 	return (version < VERSION_1.getVersion())?
 			INVALID_VERSION_SIZE : Size(QR_SIZE(version), QR_SIZE(version));
 }
 
+/**
+ * Returns positions of the first format information inside bit matrix.
+ *
+ * @param formatPositions Positions of the first format information inside bit matrix.
+ */
 void QrVersionInformation::getFormatPosition1(vector<Rect> &formatPositions) const {
 	formatPositions.clear();
 	formatPositions.push_back(Rect(Point(8, 0), Size(1, 6)));
@@ -133,12 +199,22 @@ void QrVersionInformation::getFormatPosition1(vector<Rect> &formatPositions) con
 	formatPositions.push_back(Rect(Point(0, 8), Size(6, 1)));
 }
 
+/**
+ * Returns positions of the second format information inside bit matrix.
+ *
+ * @param formatPositions Positions of the second format information inside bit matrix.
+ */
 void QrVersionInformation::getFormatPosition2(vector<Rect> &formatPositions) const {
 	formatPositions.clear();
 	formatPositions.push_back(Rect(Point(QR_SIZE(version) - 8, 8), Size(8, 1)));
 	formatPositions.push_back(Rect(Point(8, QR_SIZE(version) - 7), Size(1, 7)));
 }
 
+/**
+ * Returns positions of the finder patterns inside bit matrix.
+ *
+ * @param finderPatterns Positions of the finder patterns inside bit matrix.
+ */
 void QrVersionInformation::getFinderPatternPositions(vector<Rect> &finderPatterns) const {
 	finderPatterns.clear();
 	finderPatterns.push_back(Rect(Point(0, 0), Size(7,7)));
@@ -146,6 +222,11 @@ void QrVersionInformation::getFinderPatternPositions(vector<Rect> &finderPattern
 	finderPatterns.push_back(Rect(Point(0, QR_SIZE(version) - 7), Size(7,7)));
 }
 
+/**
+ * Returns positions of the alignment patterns inside bit matrix.
+ *
+ * @param alignmentPatterns Positions of the alignment patterns inside bit matrix.
+ */
 void QrVersionInformation::getAlignmentPatternPositions(vector<Rect> &alignmentPatterns) const {
 	alignmentPatterns.clear();
 
@@ -178,14 +259,29 @@ void QrVersionInformation::getAlignmentPatternPositions(vector<Rect> &alignmentP
 
 }
 
+/**
+ * Returns position of the first timer pattern inside bit matrix.
+ *
+ * @return Position of the first timer pattern inside bit matrix.
+ */
 Rect QrVersionInformation::getTimerPattern1Position() const {
 	return Rect(Point(8, 6), Size(QR_SIZE(version) - 16, 1));
 }
 
+/**
+ * Returns position of the second timer pattern inside bit matrix.
+ *
+ * @return Position of the second timer pattern inside bit matrix.
+ */
 Rect QrVersionInformation::getTimerPattern2Position() const {
 	return Rect(Point(6, 8), Size(1, QR_SIZE(version) - 16));
 }
 
+/**
+ * Returns positions of the other modules which should be masked or filled somehow.
+ *
+ * @param maskPositions Positions of the other modules which should be masked or filled somehow.
+ */
 void QrVersionInformation::getOtherMaskPositions(vector<Rect> &maskPositions) const {
 	maskPositions.clear();
 	maskPositions.push_back(Rect(Point(8, QR_SIZE(version) - 8), Size(1, 1)));
@@ -200,6 +296,12 @@ void QrVersionInformation::getOtherMaskPositions(vector<Rect> &maskPositions) co
 	maskPositions.push_back(Rect(Point(7, QR_SIZE(version) - 7), Size(1, 7)));
 }
 
+/**
+ * Returns mask which masks all patterns from the bit matrix.
+ * It is used for reading the data from QR code.
+ *
+ * @param mask Result mask for masking the QR code and revealing the data.
+ */
 void QrVersionInformation::getDataMask(BitMatrix &mask) const {
 	mask = BitMatrix(getQrBarcodeSize(), true);
 
@@ -226,7 +328,18 @@ void QrVersionInformation::getDataMask(BitMatrix &mask) const {
 	mask.fillRects(maskRects, false);
 }
 
+/**
+ * Decodes version from the image and returns decoded version.
+ *
+ * @param image Image which contains QR code.
+ * @param sortedDetectedMarks Localization marks of the QR code, points are sorted as defined in the QrDecoder class.
+ * @return Decoded information version on success, else INVALID_VERSION.
+ */
 QrVersionInformation QrVersionInformation::fromImage(const Mat &image, const DetectedMarks &sortedDetectedMarks) {
+
+	// See steps 1-7 in 11 Reference decode algorithm for QR Code 2005 (ISO 18004:2006)
+	// and for sample direction 6.10 Version information (ISO 18004:2006)
+
 	double W_UL = (Vector2D(sortedDetectedMarks[1].points[0], sortedDetectedMarks[1].points[1]).size() +
 			Vector2D(sortedDetectedMarks[1].points[2], sortedDetectedMarks[1].points[3]).size()) / 2;
 	double W_UR = (Vector2D(sortedDetectedMarks[2].points[3], sortedDetectedMarks[2].points[0]).size() +
@@ -270,35 +383,59 @@ QrVersionInformation QrVersionInformation::fromImage(const Mat &image, const Det
 #endif
 }
 
+/**
+ * Decodes version from the bit matrix and returns decoded version.
+ *
+ * @param bitMatrix Bit matrix of the QR code.
+ * @param bitsDirection Direction of the sampling of version information.
+ * @return Decoded information version on success, else INVALID_VERSION.
+ */
 QrVersionInformation QrVersionInformation::decodeVersion(BitMatrix &bitMatrix, GridSampler::FlowDirection bitsDirection) {
 	DEBUG_PRINT(DEBUG_TAG, "decodeVersion()");
 	GridSampler sampler(Size(bitMatrix.cols, bitMatrix.rows), bitsDirection, bitsDirection, false, false);
 	BitArray result;
 
+	// Sampling the bit matrix
 	sampler.sample(bitMatrix, result);
 	uint32_t encodedVersion = result.toULong();
 
+	// Looking at the version in the look up table and repairing the version if possible
     if ((ENCODED_VERSIONS.find(encodedVersion) != ENCODED_VERSIONS.end()) ||
     		(ENCODED_VERSIONS.correctEncoded(encodedVersion, ENCODED_VERSION_MAX_CORRECTIONS))) {
 		DEBUG_PRINT(DEBUG_TAG, "Version decode success!");
     	return QrVersionInformation(ENCODED_VERSIONS.at(encodedVersion));
-    } else { // string for this capability is not defined
+    } else {
 		DEBUG_PRINT(DEBUG_TAG, "Version decode failed!");
         return INVALID_VERSION;
     }
 
 }
 
+/**
+ * Returns version of the QR code.
+ *
+ * @return Version of the QR code.
+ */
 int QrVersionInformation::getVersion() const {
 	return version;
 }
 
+/**
+ * Returns count of the codewords which are present inside QR code for this version.
+ *
+ * @return Count of the codewords which are present inside QR code for this version.
+ */
 int QrVersionInformation::getCodewordsCount() const {
 	BitMatrix mask;
 	getDataMask(mask);
 	return countNonZero(mask) / getCodewordSize();
 }
 
+/**
+ * Returns size (number of bits) of codeword of this version.
+ *
+ * @return Size (number of bits) of codeword of this version.
+ */
 int QrVersionInformation::getCodewordSize() const {
 	return 8;
 }

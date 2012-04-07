@@ -1,8 +1,20 @@
-/*
- * DetectedMark.cpp
+///////////////////////////////////////////////////////////////////////////////
+// Project:    Barcodes Library
+// File:       DetectedMarks.cpp
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Implements member methods of DetectedMarks class which is returned
+//             by detect methods and contains detected localization marks.
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @file DetectedMarks.cpp
  *
- *  Created on: 24.3.2012
- *      Author: Scotty
+ * @brief Implements member methods of DetectedMarks class which is returned
+ *        by detect methods and contains detected localization marks.
+ * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
  */
 
 #include <opencv2/imgproc/imgproc.hpp>
@@ -11,11 +23,19 @@
 #include "../common/Vector2D.h"
 
 namespace barcodes {
+
+/**
+ * Filters detected marks which too close.
+ *
+ * @param centerPointsMinDistance Minimal possible allowed distance ratio between centers of the marks.
+ *        Minimal distance is calculated as a product of multiplying sizes of bounding rectangle and this ratio.
+ */
 void DetectedMarks::filter(double centerPointsMinDistance) {
 
 	vector<DetectedMark>::iterator iter, iter2;
 
 	for (iter = this->begin(); iter != this->end(); iter++) {
+		// Centers are calculated as a centers of bounding rectangles.
 		RotatedRect refMarkBox = minAreaRect(Mat(iter->points));
 		for (iter2 = this->begin(); iter2 != this->end(); ) {
 			RotatedRect markBox = minAreaRect(Mat(iter2->points));
@@ -24,8 +44,9 @@ void DetectedMarks::filter(double centerPointsMinDistance) {
 			if ((iter != iter2)
 				&& (fabs(centerDiff.dx) / (double)refMarkBox.boundingRect().width < centerPointsMinDistance)
 				&& (fabs(centerDiff.dy) / (double)refMarkBox.boundingRect().height < centerPointsMinDistance)
-			)  {
+			)  { // This mark is too close, filter it
 				if (iter2 == iter + 1) {
+					// If we are removing the following after the iter, we have to update where iterator points out.
 					iter2 = this->erase(iter2);
 					iter = this->begin();
 				} else {
@@ -38,6 +59,11 @@ void DetectedMarks::filter(double centerPointsMinDistance) {
 	}
 }
 
+/**
+ * Perspective transform of the marks.
+ *
+ * @param transformation Transformation matrix.
+ */
 void DetectedMarks::perspectiveTransform(Mat &transformation) {
 	vector<DetectedMark>::iterator iter;
 	Mat res;

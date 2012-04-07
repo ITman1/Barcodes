@@ -1,8 +1,20 @@
-/*
- * BuildHelper.cpp
+///////////////////////////////////////////////////////////////////////////////
+// Project:    Barcodes Library
+// File:       QrBuildHelper.cpp
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Defines members of QrBuildHelper class which groups helper
+//             static methods for building the parts of the QR code.
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @file QrBuildHelper.cpp
  *
- *  Created on: 24.3.2012
- *      Author: Scotty
+ * @brief Defines members of QrBuildHelper class which groups helper
+ *        static methods for building the parts of the QR code.
+ * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
  */
 
 #include <opencv2/imgproc/imgproc.hpp>
@@ -10,6 +22,12 @@
 
 namespace barcodes {
 
+/**
+ * Builds the finder pattern with the specified size.
+ *
+ * @param size Size of the finder mark.
+ * @return Image with the build finder mark.
+ */
 Mat QrBuildHelper::buildQrMark(int size) {
 	int dotSize = size / 7;
 	Mat mark = Mat::zeros(Size(size, size), CV_8UC1);

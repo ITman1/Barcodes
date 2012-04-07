@@ -1,8 +1,20 @@
-/*
- * QrDetector.cpp
+///////////////////////////////////////////////////////////////////////////////
+// Project:    Barcodes Library
+// File:       QrDetector.cpp
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Defines members of QrDetector class that implements detection
+//             of the QR codes in the image.
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @file QrDetector.cpp
  *
- *  Created on: 24.3.2012
- *      Author: Scotty
+ * @brief Defines members of QrDetector class that implements detection
+ *        of the QR codes in the image.
+ * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
  */
 
 #include <opencv2/imgproc/imgproc.hpp>
@@ -17,8 +29,18 @@
 
 namespace barcodes {
 
+/**
+ * Instance of the QR detector.
+ */
 const QrDetector QrDetector::DETECTOR_INSTANCE = QrDetector();
 
+/**
+ * Detects QR code and returns localization marks.
+ *
+ * @param image Image with the QR code.
+ * @param detectedMarks Recognized localization marks.
+ * @param flags Detection flags.
+ */
 void QrDetector::detect(Image &image, DetectedMarks &detectedMarks, int flags) const {
 	detectedMarks.clear();
 	DEBUG_PRINT(DEBUG_TAG, "================ NEW IMAGE DETECT CALL ================");
@@ -28,9 +50,11 @@ void QrDetector::detect(Image &image, DetectedMarks &detectedMarks, int flags) c
 
 		flags = flags & ~repairFlags;
 
+		// Detection without any repairs
 		detectByDistancePriority(image, detectedMarks, flags);
 		if (detectedMarks.size() > 2) return;
 
+		// Detection with corrupt fill repair
 		if (repairFlags & FLAG_ADAPT_THRESH_CORRUPT_FILL_REPAIR) {
 			detectByDistancePriority(image, marks, flags | FLAG_ADAPT_THRESH_CORRUPT_FILL_REPAIR);
 			detectedMarks.insert(detectedMarks.end(), marks.begin(), marks.end());
@@ -38,6 +62,7 @@ void QrDetector::detect(Image &image, DetectedMarks &detectedMarks, int flags) c
 			if (detectedMarks.size() > 2) return;
 		}
 
+		// Detection with flood fill repair
 		if (repairFlags & FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR) {
 			detectByDistancePriority(image, marks, flags | FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR);
 			detectedMarks.insert(detectedMarks.end(), marks.begin(), marks.end());
@@ -47,14 +72,22 @@ void QrDetector::detect(Image &image, DetectedMarks &detectedMarks, int flags) c
 	}
 }
 
+/**
+ * Returns instance of the QR detector.
+ *
+ * @return Instance of the QR detector.
+ */
 const QrDetector *QrDetector::getInstance() {
 	return &DETECTOR_INSTANCE;
 }
 
-const Detector *QrDetector::getDecoder() const {
-	return &DETECTOR_INSTANCE;
-}
-
+/**
+ * Detects QR code and returns localization marks.
+ *
+ * @param image Image with the QR code.
+ * @param detectedMarks Recognized localization marks.
+ * @param flags Match tolerance/Distance flags.
+ */
 void QrDetector::detectByDistancePriority(Image &image, DetectedMarks &detectedMarks, int flags) const {
 DEBUG_PRINT(DEBUG_TAG, "detectByDistancePriority(image,detectedMarks,%d)", flags);
 
@@ -112,7 +145,13 @@ DEBUG_PRINT(DEBUG_TAG, "detectByDistancePriority(image,detectedMarks,%d)", flags
 	}
 }
 
-
+/**
+ * Detects QR code and returns localization marks.
+ *
+ * @param image Image with the QR code.
+ * @param detectedMarks Recognized localization marks.
+ * @param flags Match tolerance flags.
+ */
 void QrDetector::_detect(Mat &image, DetectedMarks &detectedMarks, int flags) const {
 DEBUG_PRINT(DEBUG_TAG, "_detect(image,detectedMarks,%d)", flags);
 
@@ -124,6 +163,7 @@ DEBUG_PRINT(DEBUG_TAG, "_detect(image,detectedMarks,%d)", flags);
 	Mat qrMark = QrBuildHelper::buildQrMark(QR_MARK_TEMPLATE_SIZE);
 	detectedMarks.clear();
 
+	// Retrieving the match tolerance and minimal size for finder pattern
 	double matchTolerance = QR_MARK_TAMPLATE_MATCH_TOLERANCE_NORMAL;
 	int markMinSize = QR_MARK_MINIMAL_SIZE_NORMAL;
 	if (flags & FLAG_QR_MARK_MATCH_TOLERANCE_HIGH) {
@@ -147,6 +187,8 @@ DEBUG_PRINT(DEBUG_TAG, "_detect(image,detectedMarks,%d)", flags);
 		Rect boxRect = box.boundingRect();
 		Size2f boxRectSize = boxRect.size();
 
+		//>>> 1) FILTER BY CONTOUR SIZES
+
 		if ((boxSize.width / (double)boxSize.height > QR_MARK_BOUNDING_RECT_MAX_ACCEPTED_SCALE)
 			|| (boxSize.height / (double)boxSize.width > QR_MARK_BOUNDING_RECT_MAX_ACCEPTED_SCALE)
 			|| (boxSize.width < markMinSize) ||(boxSize.height < markMinSize)
@@ -156,11 +198,13 @@ DEBUG_PRINT(DEBUG_TAG, "_detect(image,detectedMarks,%d)", flags);
 
 		MatND hist;
 
-		// Getting the hull mask and cropping the contour image
+		// Getting the contour mask and cropping the image
 		Mat contourMask = Mat::zeros(boxRect.size(), CV_8UC1);
 		drawVec.push_back(contours[i]);
 	    drawContours(contourMask, contours, i, Scalar(255), CV_FILLED, 8, noArray(), INT_MAX, Point(-boxRect.x, -boxRect.y));
 		getRectSubPix(image, boxRect.size(), box.center, cropped);
+
+		//>>> 2) FILTER BY HISTOGRAM MATCH
 
 		calcBinarizedHistogram(cropped, contourMask, hist);
         float fill_density = hist.at<float>(0);
@@ -171,9 +215,12 @@ DEBUG_PRINT(DEBUG_TAG, "_detect(image,detectedMarks,%d)", flags);
         DEBUG_PRINT(DEBUG_TAG, "hist match: %d : %.4f", i, bgFillRatio);
         if ((bgFillRatio > QR_MARK_BG_FILL_RATIO_MAX) || (bgFillRatio < QR_MARK_BG_FILL_RATIO_MIN)) continue;
 
-		// Converting the approx to the hull
+		// Converting the contour to the hull
 		vector<Point> hull;
 		convexHull(Mat(contours[i]), hull);
+
+		//>>> 3) FILTER BY CONTOUR / HULL MATCH
+
 		Mat hullMask = Mat::zeros(boxRect.size(), CV_8UC1);
 		drawVec.clear(); drawVec.push_back(hull);
 	    drawContours(hullMask, drawVec, -1, Scalar(255), CV_FILLED, 8, noArray(), INT_MAX, Point(-boxRect.x, -boxRect.y));
@@ -182,11 +229,15 @@ DEBUG_PRINT(DEBUG_TAG, "_detect(image,detectedMarks,%d)", flags);
         DEBUG_PRINT(DEBUG_TAG, "cont/hull compare: %d : %d : %d : %d", i, contourFill, hullFill, boxRectSize.width * boxRectSize.height);
 	    if (contourFill / (double) hullFill < QR_MARK_CONVEX_CONTOUR_MATCH) continue;
 
+		//>>> 4) FILTER BY CORNER NUMBER
+
 		int pointSize = ceil((boxSize.width + boxSize.height) / 7.0); // divide 7 (as points), then 2 (as the width/height ratio) and multiply * 2 (gives better result in smaller images)
 		vector<Point> corners;
 		Polygon2D::findCorners(hull, 4, pointSize, corners, QR_MARK_MINIMAL_CORNER_ANGLE, QR_MARK_OPTIMAL_CORNER_ANGLE);
         DEBUG_PRINT(DEBUG_TAG, "corners: %d", corners.size());
 		if (corners.size() != 4) continue;
+
+		//>>> 5) PERSPECTIVE TRANSFORMATION OF THE CONTOUR AND RESIZING FOR TEMPLATE COMPARING
 
 		vector<Point> offsetCorners = corners;
 		Polygon2D::offset(offsetCorners, Point(-boxRect.x, -boxRect.y));
@@ -196,11 +247,15 @@ DEBUG_PRINT(DEBUG_TAG, "_detect(image,detectedMarks,%d)", flags);
 		resize(cropped, cropped, Size(QR_MARK_TEMPLATE_SIZE, QR_MARK_TEMPLATE_SIZE));
 	    threshold(cropped, cropped, GLOBAL_THRESH, 255, CV_THRESH_OTSU);
 
+		//>>> 6) TEMPLATE COMAPARING OF THE FINDER PATTERN
+
 	    double match = exactMatch(cropped, qrMark, diff);
         DEBUG_PRINT(DEBUG_TAG, "First match result: %.4f", match);
 
 	    currMark.flags = 0;
 	    if (match > matchTolerance) {
+
+	    	// Trying to repair if possible
 	    	if (!(flags & FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR)) {
 	    		continue;
 	    	}
@@ -213,6 +268,9 @@ DEBUG_PRINT(DEBUG_TAG, "_detect(image,detectedMarks,%d)", flags);
 	    	if (match > matchTolerance) continue;
 	    	currMark.flags = FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR;
 	    }
+
+		//>>> 7) STORING THE RESULT
+
         DEBUG_PRINT(DEBUG_TAG, "mark match: %d : %.4f", i, match);
 
 	    convexHull(corners, corners);
@@ -223,13 +281,28 @@ DEBUG_PRINT(DEBUG_TAG, "_detect(image,detectedMarks,%d)", flags);
 	}
 }
 
+/**
+ * Calculates size of the block for adaptive threshold for specified distance divider.
+ *
+ * @param imageSize Size of the image.
+ * @param distanceDivider Divider of the calculated reference size.
+ * @return Size of the block for adaptive threshold.
+ */
 int QrDetector::getBlockSize(Size imageSize, double distanceDivider) {
 	int max = (imageSize.width > imageSize.height)? imageSize.width : imageSize.height;
 	int ret = max * MEAN_BLOCK_SIZE_PER_SIZE_COEFFICIENT / distanceDivider;
 	return (ret < 3)? 3 : ret + (ret + 1) % 2;
 }
 
-Mat QrDetector::binarize(Image &image, int flags, int mean_C) {
+/**
+ * Binarize image to 0 and 255 values.
+ *
+ * @param image Input image.
+ * @param flags Flags for specifying the distance of the QR code and type of threshold.
+ * @param mean_C Constant for adaptive threshold which offsets threshold value.
+ * @return Binarized image.
+ */
+Mat QrDetector::binarize(Mat &image, int flags, int mean_C) {
 	Mat binarized;
 
 	if (flags & FLAG_GLOBAL_THRESH) {

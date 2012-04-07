@@ -1,9 +1,22 @@
-/*
- * QrCodewordOrganizer.cpp
+///////////////////////////////////////////////////////////////////////////////
+// Project:    Barcodes Library
+// File:       QrCodewordOrganizer.cpp
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Defines members of QrCodewordOrganizer class that implements
+//             extracting methods of the data/error correction blocks/codewords.
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @file QrCodewordOrganizer.cpp
  *
- *  Created on: 1.4.2012
- *      Author: Scotty
+ * @brief DDefines members of QrCodewordOrganizer class that implements
+ *        extracting methods of the data/error correction blocks/codewords.
+ * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
  */
+
 #include <iostream>
 #include <cstdarg>
 
@@ -13,6 +26,11 @@
 
 namespace barcodes {
 
+/**
+ * Constructs characteristics for specified number of records.
+ *
+ * @param count Number of characteristics records.
+ */
 QrVersionFormatCharacteristics::QrVersionFormatCharacteristics(int count, ...) {
 	va_list args;
 	va_start(args, count);
@@ -20,15 +38,31 @@ QrVersionFormatCharacteristics::QrVersionFormatCharacteristics(int count, ...) {
 	va_end(args);
 }
 
+/**
+ * Constructs characteristics only with one record.
+ *
+ * @param first Record of the characteristics.
+ */
 QrVersionFormatCharacteristics::QrVersionFormatCharacteristics(QrVersionFormatCharacteristic first) {
 	insertCharacteristics(1, &first);
 }
 
+/**
+ * Constructs characteristics only with two records.
+ *
+ * @param first First record of the characteristics.
+ * @param second Second record of the characteristics.
+ */
 QrVersionFormatCharacteristics::QrVersionFormatCharacteristics(QrVersionFormatCharacteristic first,
 		QrVersionFormatCharacteristic second) {
 	insertCharacteristics(2, &first, &second);
 }
 
+/**
+ * Inserts characteristics into vector.
+ *
+ * @param count Number of characteristics records.
+ */
 void QrVersionFormatCharacteristics::insertCharacteristics(int count, ...) {
 	va_list args;
 	va_start(args, count);
@@ -46,6 +80,9 @@ void QrVersionFormatCharacteristics::insertCharacteristics(int count, ...) {
 #define _CH(a,b,c,d,e) QrVersionFormatCharacteristic(a,b,c,d,e)
 #define _CH_END ))
 
+/**
+ * Helper array for the characteristics map table.
+ */
 const pair<QrCodewordOrganizer::MAP_KEY_TYPE, QrVersionFormatCharacteristics>
 	QrCodewordOrganizer::QrCodewordOrganizer_mapping[] = {
 	_VERSION_FORMAT(1, L)  _CH(3, 1,  26,  19,  2)   _CH_END,
@@ -249,19 +286,33 @@ const pair<QrCodewordOrganizer::MAP_KEY_TYPE, QrVersionFormatCharacteristics>
 	_VERSION_FORMAT(40, H) _CH(0, 20, 45,  15,  15), _CH(0, 61, 46,  16,  15)  _CH_END
 };
 
+/**
+ * Map array which maps the characteristics for specified version and format of the QR code.
+ */
 const map<QrCodewordOrganizer::MAP_KEY_TYPE, QrVersionFormatCharacteristics,
 	QrCodewordOrganizer::cmp_key> QrCodewordOrganizer::CODEWORD_CHARACTERISTICS(
 		QrCodewordOrganizer_mapping,	QrCodewordOrganizer_mapping +
 		sizeof QrCodewordOrganizer_mapping / sizeof QrCodewordOrganizer_mapping[0]);
 
 
-QrCodewordOrganizer::QrCodewordOrganizer(QrVersionInformation &version, QrFormatInformation &format)
+/**
+ * Constructs characteristics for passed version and format.
+ *
+ * @param version Version of the QR code.
+ * @param format Format of the QR code.
+ */
+QrCodewordOrganizer::QrCodewordOrganizer(QrVersionInformation version, QrFormatInformation format)
 	: version(version), format(format) {
 
 	getCharacteristics(characteristics);
 	codewordSize = version.getCodewordSize();
 }
 
+/**
+ * Returns characteristics for this version and format of the QR code.
+ *
+ * @param characteristics Characteristics for this format and version of the QR code.
+ */
 void QrCodewordOrganizer::getCharacteristics(QrVersionFormatCharacteristics &characteristics) {
 	characteristics.clear();
 	MAP_KEY_TYPE key(version.getVersion(), format.getErrorCorrectionLevel());
@@ -271,6 +322,12 @@ void QrCodewordOrganizer::getCharacteristics(QrVersionFormatCharacteristics &cha
 	}
 }
 
+/**
+ * Extracts data codewords from the code.
+ *
+ * @param code Bit array of the decoded code from which should be extracted data codewords.
+ * @param extractedData Extracted data codewords.
+ */
 void QrCodewordOrganizer::extractDataCodewords(BitArray &code, BitArray &extractedData) {
 	extractedData.clear();
 
@@ -280,6 +337,12 @@ void QrCodewordOrganizer::extractDataCodewords(BitArray &code, BitArray &extract
 	dataBlocksToDataCodewords(blocks, extractedData);
 }
 
+/**
+ * Extracts error correction codewords from the code.
+ *
+ * @param code Bit array of the decoded code from which should be extracted error correction codewords.
+ * @param ecCodewords Extracted error correction codewords.
+ */
 void QrCodewordOrganizer::extractErrorCorrectionCodewords(BitArray &code, BitArray &ecCodewords) {
 	ecCodewords.clear();
 
@@ -289,6 +352,12 @@ void QrCodewordOrganizer::extractErrorCorrectionCodewords(BitArray &code, BitArr
 	errorCorrectionBlocksToErrorCorrectionCodewords(blocks, ecCodewords);
 }
 
+/**
+ * Extracts codewords from the code.
+ *
+ * @param code Bit array of the decoded code from which should be extracted codewords.
+ * @param codewords Extracted codewords.
+ */
 void QrCodewordOrganizer::extractCodewords(BitArray &code, BitArray &codewords) {
 	BitArray ec;
 
@@ -298,6 +367,12 @@ void QrCodewordOrganizer::extractCodewords(BitArray &code, BitArray &codewords) 
 	codewords.insert(codewords.end(), ec.begin(), ec.end());
 }
 
+/**
+ * Extracts data blocks from the code.
+ *
+ * @param code Bit array of the decoded code from which should be extracted data blocks.
+ * @param blocks Extracted data blocks.
+ */
 void QrCodewordOrganizer::extractDataBlocks(BitArray &code, vector<BitArray> &blocks) {
 	blocks.clear();
 
@@ -330,6 +405,12 @@ void QrCodewordOrganizer::extractDataBlocks(BitArray &code, vector<BitArray> &bl
 	}
 }
 
+/**
+ * Extracts error correction blocks from the code.
+ *
+ * @param code Bit array of the decoded code from which should be extracted error correction blocks.
+ * @param blocks Extracted error correction blocks.
+ */
 void QrCodewordOrganizer::extractErrorCorrectionBlocks(BitArray &code, vector<BitArray> &blocks) {
 	blocks.clear();
 
@@ -363,6 +444,12 @@ void QrCodewordOrganizer::extractErrorCorrectionBlocks(BitArray &code, vector<Bi
 	}
 }
 
+/**
+ * Extracts blocks from the code.
+ *
+ * @param code Bit array of the decoded code from which should be extracted blocks.
+ * @param blocks Extracted blocks.
+ */
 void QrCodewordOrganizer::extractBlocks(BitArray &code, vector<BitArray> &blocks) {
 	vector<BitArray> ec_blocks;
 
@@ -377,6 +464,12 @@ void QrCodewordOrganizer::extractBlocks(BitArray &code, vector<BitArray> &blocks
 	}
 }
 
+/**
+ * Converts data blocks to data codewords.
+ *
+ * @param blocks Data blocks.
+ * @param dataCodewords Data codewords.
+ */
 void QrCodewordOrganizer::dataBlocksToDataCodewords(vector<BitArray> &blocks, BitArray &dataCodewords) {
 	dataCodewords.clear();
 	for (unsigned int i = 0; i < blocks.size(); i++) {
@@ -384,6 +477,12 @@ void QrCodewordOrganizer::dataBlocksToDataCodewords(vector<BitArray> &blocks, Bi
 	}
 }
 
+/**
+ * Converts error correction blocks to error correction codewords.
+ *
+ * @param blocks Error correction blocks.
+ * @param ecCodewords Error correction codewords.
+ */
 void QrCodewordOrganizer::errorCorrectionBlocksToErrorCorrectionCodewords(vector<BitArray> &blocks, BitArray &ecCodewords) {
 	ecCodewords.clear();
 	for (unsigned int i = 0; i < blocks.size(); i++) {
@@ -391,6 +490,12 @@ void QrCodewordOrganizer::errorCorrectionBlocksToErrorCorrectionCodewords(vector
 	}
 }
 
+/**
+ * Converts blocks to codewords.
+ *
+ * @param blocks Blocks to be converted.
+ * @param codewords Result Codewords.
+ */
 void QrCodewordOrganizer::blocksToCodewords(vector<BitArray> &blocks, BitArray &codewords) {
 	codewords.clear();
 
@@ -409,6 +514,12 @@ void QrCodewordOrganizer::blocksToCodewords(vector<BitArray> &blocks, BitArray &
 	codewords.insert(codewords.end(), ecCodewords.begin(), ecCodewords.end());
 }
 
+/**
+ * Corrects the blocks.
+ *
+ * @param blocks Blocks to be corrected.
+ * @return True if no correction was applied or correction finished with success, otherwise false.
+ */
 bool QrCodewordOrganizer::correctBlocks(vector<BitArray> &blocks) {
 	int block = 0;
 	vector<int> vec;
@@ -436,6 +547,12 @@ bool QrCodewordOrganizer::correctBlocks(vector<BitArray> &blocks) {
 	return res;
 }
 
+/**
+ * Converts bit array to the byte array.
+ *
+ * @param bitArray Bit array to be converted.
+ * @param vec Vector which holds byte array.
+ */
 void QrCodewordOrganizer::bitArrayToCodewordArray(BitArray &bitArray, vector<int> &vec) {
 	vec.clear();
 	BitStreamReverseCodeword <int> bitsStream(bitArray);
@@ -447,6 +564,12 @@ void QrCodewordOrganizer::bitArrayToCodewordArray(BitArray &bitArray, vector<int
 	}
 }
 
+/**
+ * Converts byte array to the vector.
+ *
+ * @param vec Vector that holds byte array.
+ * @param bitArray Output bit array.
+ */
 void QrCodewordOrganizer::codewordArrayToBitArray(vector<int> &vec, BitArray &bitArray) {
 	bitArray.clear();
 

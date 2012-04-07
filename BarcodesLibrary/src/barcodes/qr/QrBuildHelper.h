@@ -1,8 +1,20 @@
-/*
- * BuildHelper.h
+///////////////////////////////////////////////////////////////////////////////
+// Project:    Barcodes Library
+// File:       QrBuildHelper.h
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Defines QrBuildHelper class which groups helper static methods
+//             for building the parts of the QR code.
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @file QrBuildHelper.h
  *
- *  Created on: 24.3.2012
- *      Author: Scotty
+ * @brief Defines QrBuildHelper class which groups helper static methods
+ *        for building the parts of the QR code.
+ * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
  */
 
 #ifndef QRBUILDHELPER_H_
@@ -13,11 +25,17 @@
 namespace barcodes {
 using namespace cv;
 
+/**
+ * Helper class which groups static methods for building the parts of the QR codes.
+ */
 class QrBuildHelper {
 public:
-	QrBuildHelper() {}
-	virtual ~QrBuildHelper() {}
-
+	/**
+	 * Builds the finder pattern with the specified size.
+	 *
+	 * @param size Size of the finder mark.
+	 * @return Image with the build finder mark.
+	 */
 	static Mat buildQrMark(int size);
 };
 

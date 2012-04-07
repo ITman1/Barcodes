@@ -1,8 +1,20 @@
-/*
- * QrFormatInformation.cpp
+///////////////////////////////////////////////////////////////////////////////
+// Project:    Barcodes Library
+// File:       QrFormatInformation.cpp
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Defines members of QrFormatInformation class which provides
+//             informations about QR code of some specific format.
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @file QrFormatInformation.cpp
  *
- *  Created on: 25.3.2012
- *      Author: Scotty
+ * @brief Defines members of QrFormatInformation class which provides
+ *        informations about QR code of some specific format.
+ * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
  */
 
 #include "../../debug.h"
@@ -12,12 +24,25 @@
 
 namespace barcodes {
 
+/**
+ * Abstract class for functors which builds the xor data masks.
+ */
 class XORDataMaskCalcFunctor {
 public:
 	virtual ~XORDataMaskCalcFunctor() {}
-	inline virtual bool calc(int i, int j) = 0;
+	/**
+	 * Calculates the mask for specified indexes.
+	 *
+	 * @param i Row index.
+	 * @param j Column index.
+	 * @return Mask value.
+	 */
+	virtual bool calc(int i, int j) = 0;
 };
 
+/**
+ * Functor for building the 000 data mask.
+ */
 class XORDataMaskCalc000: public XORDataMaskCalcFunctor {
 public:
 	inline bool calc(int i, int j) {
@@ -25,6 +50,9 @@ public:
 	}
 };
 
+/**
+ * Functor for building the 001 data mask.
+ */
 class XORDataMaskCalc001: public XORDataMaskCalcFunctor {
 public:
 	inline bool calc(int i, int j) {
@@ -32,6 +60,9 @@ public:
 	}
 };
 
+/**
+ * Functor for building the 010 data mask.
+ */
 class XORDataMaskCalc010: public XORDataMaskCalcFunctor {
 public:
 	inline bool calc(int i, int j) {
@@ -39,6 +70,9 @@ public:
 	}
 };
 
+/**
+ * Functor for building the 011 data mask.
+ */
 class XORDataMaskCalc011: public XORDataMaskCalcFunctor {
 public:
 	inline bool calc(int i, int j) {
@@ -46,6 +80,9 @@ public:
 	}
 };
 
+/**
+ * Functor for building the 100 data mask.
+ */
 class XORDataMaskCalc100: public XORDataMaskCalcFunctor {
 public:
 	inline bool calc(int i, int j) {
@@ -53,6 +90,9 @@ public:
 	}
 };
 
+/**
+ * Functor for building the 101 data mask.
+ */
 class XORDataMaskCalc101: public XORDataMaskCalcFunctor {
 public:
 	inline bool calc(int i, int j) {
@@ -60,6 +100,9 @@ public:
 	}
 };
 
+/**
+ * Functor for building the 110 data mask.
+ */
 class XORDataMaskCalc110: public XORDataMaskCalcFunctor {
 public:
 	inline bool calc(int i, int j) {
@@ -67,6 +110,9 @@ public:
 	}
 };
 
+/**
+ * Functor for building the 111 data mask.
+ */
 class XORDataMaskCalc111: public XORDataMaskCalcFunctor {
 public:
 	inline bool calc(int i, int j) {
@@ -74,6 +120,12 @@ public:
 	}
 };
 
+/**
+ * Builds XOR data mask where builder functor is passed as a template parameter.
+ *
+ * @param mask The result built mask.
+ * @param version Version for which should be built the mask.
+ */
 template<class CalcFunctor>
 void _buildXORDataMask(BitMatrix &mask, Size &size) {
 	mask = BitMatrix(size);
@@ -85,8 +137,14 @@ void _buildXORDataMask(BitMatrix &mask, Size &size) {
 	}
 }
 
+/**
+ * Constant used for returning of invalid decoded format from the bit matrix.
+ */
 const QrFormatInformation QrFormatInformation::INVALID_FORMAT(true);
 
+/**
+ * Helper array for the creation of the lookup table.
+ */
 pair<uint32_t, uint32_t> QrFormatInformation_formats_mapping[] = {
 	make_pair(0x5412, 0x00),	make_pair(0x5125, 0x01),
 	make_pair(0x5E7C, 0x02),	make_pair(0x5B4B, 0x03),
@@ -106,6 +164,9 @@ pair<uint32_t, uint32_t> QrFormatInformation_formats_mapping[] = {
 	make_pair(0x2EDA, 0x1E),	make_pair(0x2BED, 0x1F),
 };
 
+/**
+ * Lookup table which maps encoded format information to proper decoded.
+ */
 const LookupTable<uint32_t, uint32_t> QrFormatInformation::ENCODED_FORMATS(
 		QrFormatInformation_formats_mapping,
 		QrFormatInformation_formats_mapping + sizeof QrFormatInformation_formats_mapping
@@ -119,14 +180,30 @@ bool QrFormatInformation::operator!=(const QrFormatInformation &rhs) const {
   return !(*this == rhs);
 }
 
+/**
+ * Returns XOR mask for this format information.
+ *
+ * @return XOR mask for this format information.
+ */
 QrFormatInformation::XORDataMask QrFormatInformation::getXORDataMask() const {
 	return xorDataMask;
 }
 
+/**
+ * Returns error correction level for this format information.
+ *
+ * @return Error correction level for this format information.
+ */
 QrFormatInformation::ErrorCorrectionLevel QrFormatInformation::getErrorCorrectionLevel() const {
 	return errorCorrectionLevel;
 }
 
+/**
+ * Builds XOR data mask by which is masked QR code after encoding.
+ *
+ * @param mask The result built mask.
+ * @param version Version for which should be built the mask.
+ */
 void QrFormatInformation::buildXORDataMask(BitMatrix &mask, QrVersionInformation version) {
 	Size size = version.getQrBarcodeSize();
 	BitMatrix dataMask;
@@ -162,7 +239,17 @@ void QrFormatInformation::buildXORDataMask(BitMatrix &mask, QrVersionInformation
 	mask.maskAND(dataMask);
 }
 
+/**
+ * Decodes format information from the bit matrix.
+ *
+ * @param code Bit matrix of the QR code.
+ * @param version Version of the QR code.
+ * @return Decoded format information on success else INVALID_FORMAT.
+ */
 QrFormatInformation QrFormatInformation::fromBitMatrix(const BitMatrix &code, QrVersionInformation version) {
+
+	// See 6.9 Format information (ISO 18004:2006)
+
 	vector<Rect> formatPositions;
 	QrFormatInformation formatInformation(false);
 
@@ -177,6 +264,13 @@ QrFormatInformation QrFormatInformation::fromBitMatrix(const BitMatrix &code, Qr
 	return formatInformation;
 }
 
+/**
+ * Decodes format information from the bit matrix for specified format positions.
+ *
+ * @param code Bit matrix of the QR code.
+ * @param formatPositions Positions of the format information in the bit matrix.
+ * @return Decoded format information on success else INVALID_FORMAT.
+ */
 QrFormatInformation QrFormatInformation::decodeFormat(const BitMatrix &code, vector<Rect> &formatPositions) {
 	DEBUG_PRINT(DEBUG_TAG, "decodeFormat()");
 	GridSampler sampler(Size(1, 1), GridSampler::LEFT_BOTTOM, GridSampler::BOTTOM_LEFT, false, false);
@@ -184,18 +278,23 @@ QrFormatInformation QrFormatInformation::decodeFormat(const BitMatrix &code, vec
 	uint32_t encodedFormat;
 	BitMatrix codeROI;
 
+	// Sampling format information
 	for (vector<Rect>::iterator formatIter = formatPositions.begin(); formatIter != formatPositions.end(); formatIter++) {
 		codeROI = code(*formatIter);
 		sampler.sample(codeROI, _result);	result.push(_result);
 	}
 	encodedFormat = result.toULong();
 
+	// Looking at the version in the look up table and repairing the version if possible
     if ((ENCODED_FORMATS.find(encodedFormat) != ENCODED_FORMATS.end()) ||
     		(ENCODED_FORMATS.correctEncoded(encodedFormat, ENCODED_FORMAT_MAX_CORRECTIONS))) {
 		DEBUG_PRINT(DEBUG_TAG, "Format decode success!");
 		uint32_t format = ENCODED_FORMATS.at(encodedFormat);
+
+		// Decoded format: 3 bits of the data mask and 2 bits of the error correction level
 		ErrorCorrectionLevel errCorrection = ErrorCorrectionLevel((format & 0x18) >> 3);
 		XORDataMask xorMask = XORDataMask(format & 0x07);
+
     	return QrFormatInformation(errCorrection, xorMask);
     } else { // string for this capability is not defined
 		DEBUG_PRINT(DEBUG_TAG, "Format decode failed!");
