@@ -43,7 +43,7 @@ namespace barcodes {
 
 // Generation macro for all versions
 // M - name of macro which generates content
-// D - delimiter by which are generated content separated
+// D - delimiter by which is generated content separated
 // N - some additional information passed into generation macro eg. namespace
 #define _VERSIONS_MACRO(M,D,N) \
 	M(1,N)D M(2,N)D M(3,N)D M(4,N)D M(5,N)D M(6,N)D M(7,N)D M(8,N)D M(9,N)D M(10,N)D \
