@@ -1,17 +1,17 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Project:    Barcodes Library
-// File:       detection.cpp
+// File:       decoding.cpp
 // Date:       March 2012
 // Author:     Radim Loskot
 // E-mail:     xlosko01(at)stud.fit.vutbr.cz
 //
-// Brief:      Runs series of detection process above images.
+// Brief:      Runs series of decoding process above images.
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * @file detection.cpp
+ * @file decoding.cpp
  *
- * @brief Runs series of detection process above images.
+ * @brief Runs series of decoding process above images.
  * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
  */
 
@@ -26,7 +26,7 @@ using namespace barcodes;
 int main() {
     mkdir("out");
     mkdir("out/detection");
-    
+
     DetectedMarks detectedMarks;
     DIR *dir;
     struct dirent *ent;
@@ -35,19 +35,16 @@ int main() {
       while ((ent = readdir (dir)) != NULL) {
           if (*ent->d_name != '.') {
                 Image image = Image::fromFileGrayscale(string("img/detection/") + string(ent->d_name));
+				DataSegments dataSegments;
+				QrBarcode::decode(image, dataSegments);
 
-                QrBarcode::detect(image, detectedMarks);
-
-                std::cout << "Found finder patterns " << string(ent->d_name) << ": " << detectedMarks.size() << endl;
-
-                cvtColor(image, image, CV_GRAY2RGB);
-                vector<vector<Point> > drawVec;
-                for (unsigned int i = 0; i < detectedMarks.size(); i++) {
-                    drawVec.clear(); drawVec.push_back(detectedMarks[i].points);
-                    drawContours(image, drawVec, -1, CV_RGB(0,255,0), 2, 8);
-                }
-
-                imwrite(string("out/detection/") + string(ent->d_name), image);
+				if (dataSegments.size() > 0) {
+					std::cout << "Found data segments " << string(ent->d_name) << ": " << string((const char *)&dataSegments[0].data[0], dataSegments[0].data.size()) << endl;
+					std::cout << "Data segments length " << string(ent->d_name) << ": " << dataSegments.size() << endl;
+					std::cout << "Data segments errors " << string(ent->d_name) << ": " << string((dataSegments.flags != 0)? "YES" : "NO") << endl;
+				} else {
+					std::cout << "No data segments found " << string(ent->d_name) << "!" << endl;
+				}
           }
       }
       closedir (dir);

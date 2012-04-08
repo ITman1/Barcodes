@@ -422,7 +422,28 @@ bool QrDecoder::sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Point2
  * @return Fill ratio of the background.
  */
 double QrDecoder::_sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Point2f &rotatePoint, Vector2Df &lineShift, int lineWidth) const {
-	MatND hist;
+	Mat transMat;
+	Point2f src[3];
+	Point2f dst[3];
+	double sampleSize = sampleVector.size();
+
+	src[0] = rotatePoint;
+	src[1] = lineShift * 2 + rotatePoint;
+	src[2] = sampleVector + rotatePoint;
+
+	dst[0] = Point2f(0, 0);
+	dst[1] = Point2f(0, lineWidth);
+	dst[2] = Point2f(sampleSize, 0);
+
+	transMat = getAffineTransform(src, dst);
+
+	warpAffine(binarized, transformed, transMat, Size(sampleSize, lineWidth));
+
+	int bg_density = cv::countNonZero(transformed);
+
+    return (sampleSize * lineWidth - bg_density) / (double)(sampleSize * lineWidth);
+
+	/*MatND hist;
 
 	// Getting the hull mask and cropping the contour image
 	Mat sampleMask = Mat::zeros(Size(binarized.cols, binarized.rows), CV_8UC1);
@@ -432,7 +453,7 @@ double QrDecoder::_sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Poi
 	float fill_density = hist.at<float>(0);
     float bg_density = hist.at<float>(1);
 
-    return fill_density / (double)(fill_density + bg_density);
+    return fill_density / (double)(fill_density + bg_density);*/
 }
 
 } /* namespace barcodes */

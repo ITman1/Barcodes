@@ -397,7 +397,7 @@ QrVersionInformation QrVersionInformation::decodeVersion(BitMatrix &bitMatrix, G
 
 	// Sampling the bit matrix
 	sampler.sample(bitMatrix, result);
-	uint32_t encodedVersion = result.toULong();
+	uint32_t encodedVersion = result.toNumber<uint32_t>();
 
 	// Looking at the version in the look up table and repairing the version if possible
     if ((ENCODED_VERSIONS.find(encodedVersion) != ENCODED_VERSIONS.end()) ||

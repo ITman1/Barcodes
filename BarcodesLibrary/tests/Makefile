@@ -33,6 +33,9 @@ $(TESTSDIR)/%$(OSS_EXECUTABLE_EXTENSION) : $(SRCDIR)/%.cpp
 # Main entrance rule
 all: clean-builds $(TESTSDIR) $(BARCODES_LIB) $(EXECS)
 
+# Builds executables only
+execs: $(TESTSDIR) $(EXECS)
+
 # Cleans an old compilation of the library
 clean-builds:
 	$(MAKE) clean
@@ -51,6 +54,10 @@ $(TESTSDIR):
 # Debug
 debug:
 	$(MAKE) -B all CXXOPT="-ggdb3 -D debugging"
+
+# Debug executables, do not build library
+debug-execs:
+	$(MAKE) -B execs CXXOPT="-ggdb3 -D debugging"
 
 # Release
 release:

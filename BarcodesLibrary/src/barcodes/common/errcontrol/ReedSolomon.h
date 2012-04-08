@@ -1,8 +1,18 @@
-/*
- * ReedSolomon.h
+///////////////////////////////////////////////////////////////////////////////
+// Project:    Barcodes Library
+// File:       ReedSolomon.h
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Defines class which ensures Reed-Solomon correction.
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @file ReedSolomon.h
  *
- *  Created on: 3.4.2012
- *      Author: Scotty
+ * @brief Defines class which ensures Reed-Solomon correction.
+ * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
  */
 
 #ifndef REEDSOLOMON_H_
@@ -18,11 +28,31 @@ using namespace std;
 
 class ReedSolomon {
 private:
-	int nParity;
-	RsDecode decoder;
+	int nParity;      /**< Number of parity bits */
+	RsDecode decoder; /**< Reed-Solomon Decoder */
 public:
-	ReedSolomon(int nParity) : nParity(nParity), decoder(RsDecode(nParity)) {}
+	/**
+	 * Constructs object for Reed-Solomon error correction.
+	 *
+	 * @param nParity Number of parity bits inside data.
+	 * @param galois Reference to Galois field.
+	 */
+	ReedSolomon(int nParity, const Galois &galois) : nParity(nParity), decoder(RsDecode(nParity, galois)) {}
+
+	/**
+	 * Corrects one block of data.
+	 *
+	 * @param data Data to be corrected.
+	 * @return Returns true on success, else false.
+	 */
 	bool correct(vector<int> &data);
+
+	/**
+	 * Corrects vector of blocks of data.
+	 *
+	 * @param data Vector of blocks to be corrected.
+	 * @return Returns true on success, else false.
+	 */
 	bool correct(vector<vector<int> > &data);
 };
 

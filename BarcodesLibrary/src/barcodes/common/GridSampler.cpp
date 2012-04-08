@@ -1,8 +1,20 @@
-/*
- * GridSampler.cpp
+///////////////////////////////////////////////////////////////////////////////
+// Project:    Barcodes Library
+// File:       GridSampler.cpp
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Defines members of GridSampler class which serves for sampling
+//             the bit matrix and retrieving the bit array.
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @file GridSampler.cpp
  *
- *  Created on: 25.3.2012
- *      Author: Scotty
+ * @brief Defines members of GridSampler class which serves for sampling
+ *        the bit matrix and retrieving the bit array.
+ * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
  */
 
 #include "../../common/Vector2D.h"
@@ -11,11 +23,24 @@
 
 namespace barcodes {
 
+/**
+ * Test if the point out of grid.
+ *
+ * @param _gridSize Size of the grid.
+ * @param point Point to be tested.
+ * @return True point is out of grid, otherwise false.
+ */
 inline bool OUT_OF_BOUND(Size &_gridSize, Point &point) {
 	return (point.x >= _gridSize.width) || (point.y >= _gridSize.height)
 			|| (point.x < 0) || (point.y < 0);
 }
 
+/**
+ * Offsets point about one sampling step.
+ *
+ * @param direction Direction of sampling which determines the dimension which should be offset.
+ * @param point Returned offset point.
+ */
 inline void BIT_OFFSET_DIMENSION(GridSampler::Direction direction, Point &point) {
 	switch (direction) {
 		case GridSampler::LEFT:   point.x -= 1; break;
@@ -25,6 +50,12 @@ inline void BIT_OFFSET_DIMENSION(GridSampler::Direction direction, Point &point)
 	}
 }
 
+/**
+ * Returns offset of one sampling step.
+ *
+ * @param direction Direction of sampling which determines the dimension which should be offset.
+ * @param point Returned offset.
+ */
 inline void GET_OFFSET_DIMENSION(GridSampler::Direction direction, Point &point) {
 	switch (direction) {
 		case GridSampler::LEFT:   point.y = 0; point.x = -1; break;
@@ -34,6 +65,12 @@ inline void GET_OFFSET_DIMENSION(GridSampler::Direction direction, Point &point)
 	}
 }
 
+/**
+ * Strips (set zero) the second dimension of the sampling offset.
+ *
+ * @param direction Direction of sampling which determines the dimension which should be stripped.
+ * @param point Returned position.
+ */
 inline void STRIP_2ND_DIMENSION(GridSampler::Direction direction, Point &point) {
 	switch (direction) {
 		case GridSampler::LEFT:   point.y = 0; break;
@@ -43,6 +80,13 @@ inline void STRIP_2ND_DIMENSION(GridSampler::Direction direction, Point &point) 
 	}
 }
 
+/**
+ * Initializes one dimension from which should be started the sampling.
+ *
+ * @param direction Direction of sampling which determines from which should be started.
+ * @param _gridSize Size of the bit matrix from which position should be returned.
+ * @param point Returned position.
+ */
 inline void INIT_DIMENSION(GridSampler::Direction direction, Size &_gridSize, Point &point) {
 	switch (direction) {
 		case GridSampler::LEFT:   point.x = _gridSize.width - 1; break;
@@ -52,6 +96,12 @@ inline void INIT_DIMENSION(GridSampler::Direction direction, Size &_gridSize, Po
 	}
 }
 
+/**
+ * Returns reflect direction to the passed direction.
+ *
+ * @param direction Direction to be reflected.
+ * @return Reflected direction.
+ */
 inline GridSampler::Direction REFLECT_DIRECTION(GridSampler::Direction direction) {
 	switch (direction) {
 		case GridSampler::LEFT:
@@ -65,6 +115,13 @@ inline GridSampler::Direction REFLECT_DIRECTION(GridSampler::Direction direction
 	}
 }
 
+/**
+ * Returns the position from which should be started to sample.
+ *
+ * @param _gridSize Size of the bit matrix from which position should be returned.
+ * @param flowDirection Flow of the sampling.
+ * @return Point from which should be started.
+ */
 Point GridSampler::getStartPosition(Size _gridSize, FlowDirection flowDirection) {
 	if ((_gridSize.width < 1) || (_gridSize.height < 1)) return Point(-1, -1);
 
@@ -80,7 +137,19 @@ Point GridSampler::getStartPosition(Size _gridSize, FlowDirection flowDirection)
 	return point;
 }
 
-// for now it is neccessary to have the same direction of sampling and bits, 2nd flow dimensions the same
+/**
+ * Samples the bit matrix and returns sampled bit array.
+ *
+ * @param code Bit matrix to be sampled.
+ * @param result Result bit array.
+ * @param mask Mask due which can be omitted some values.
+ *
+ * @note It is necessary to have the same second direction for sampling the bits
+ * and first direction for sample grid. It is caused due to possibility of passing
+ * the mask. Bits inside sample grid are pushed immediately, it is not waited until
+ * whole grid is filled (again due to mask possibility).
+ */
+//
 void GridSampler::sample(BitMatrix &code, BitArray &result, BitMatrix *mask) {
 	result.clear();
 
@@ -114,6 +183,7 @@ void GridSampler::sample(BitMatrix &code, BitArray &result, BitMatrix *mask) {
 		GET_OFFSET_DIMENSION(bitsDirection1, offsetDim1);
 		BIT_OFFSET_DIMENSION(bitsDirection1, gridDim1Pos);
 
+		// Bits reached the end - inside sample grid
 		if (OUT_OF_BOUND(gridSize, gridDim1Pos)) {
 			if (bitsMirror) {
 				bitsDirection1 = REFLECT_DIRECTION(bitsDirection1);
@@ -131,6 +201,7 @@ void GridSampler::sample(BitMatrix &code, BitArray &result, BitMatrix *mask) {
 		Point offset = offsetDim1 + offsetDim2;
 		Point _currPoint = currPoint + offset;
 
+		// Sample grid reached the end
 		if (OUT_OF_BOUND(codeSize, _currPoint)) {
 			if (sampleMirror) {
 				bitsDirection2 = REFLECT_DIRECTION(bitsDirection2);

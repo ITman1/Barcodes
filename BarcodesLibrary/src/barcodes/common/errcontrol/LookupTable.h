@@ -1,8 +1,20 @@
-/*
- * LookupTable.h
+///////////////////////////////////////////////////////////////////////////////
+// Project:    Barcodes Library
+// File:       LookupTable.h
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Defines LookupTable which is simple map extended about correction
+//             methods.
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @file LookupTable.h
  *
- *  Created on: 31.3.2012
- *      Author: Scotty
+ * @brief Defines LookupTable which is simple map extended about correction
+ *        methods.
+ * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
  */
 
 #ifndef LOOKUPTABLE_H_
@@ -15,6 +27,11 @@ namespace barcodes {
 using namespace std;
 using namespace cv;
 
+/**
+ * Class of the lookup table which serves for searching the decoded numbers.
+ * Searching can be done by map method find() or search with the error
+ * correction with correctEncoded().
+ */
 template <class T1, class T2>
 class LookupTable: public map<T1, T2> {
 public:
@@ -22,10 +39,23 @@ public:
 	typedef typename Base::iterator iterator;
 	typedef typename Base::const_iterator const_iterator;
 
+	/**
+	 * Constructs lookup table from the array.
+	 *
+	 * @param first Pointer to the first member pair.
+	 * @param last Pointer to the last member pair.
+	 */
 	LookupTable(pair<T1, T2> *first, pair<T1, T2> *last)
 		: map<T1, T2>(first, last) {}
 	virtual ~LookupTable() {}
 
+	/**
+	 * Corrects the encoded number if it is possible.
+	 *
+	 * @param encoded Encoded number/key to correct.
+	 * @param correctLimit Number of bits which can be corrected.
+	 * @return True on success, false on fail.
+	 */
 	bool correctEncoded(T1 &encoded, int correctLimit) const {
 		const_iterator iter;
 

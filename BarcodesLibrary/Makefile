@@ -73,6 +73,14 @@ tests:
 debug-tests:
 	$(MAKE) debug -C tests
 
+# Makes the test executables, library is not built
+tests-execs:
+	$(MAKE) execs -C tests
+
+# Makes the test executables, library is not built
+debug-tests-execs:
+	$(MAKE) debug-execs -C tests
+
 # Cleans directory for object files
 clean:
 	$(call oss_rmdir,$(OBJDIR))
@@ -91,4 +99,4 @@ gen-include:
 
 # Generates the file with the list of source files
 gen-srclist:
-	$(call oss_echo, $(call rwildcard,$(SRCDIR),*.cpp)) > $(SRC_LIST)
+	$(call oss_echo, $(patsubst $(SRCDIR)/%,%,$(call rwildcard,$(SRCDIR),*.cpp))) > $(SRC_LIST)

@@ -1,8 +1,32 @@
-/*
- * Galois.h
+///////////////////////////////////////////////////////////////////////////////
+// Project:    Barcodes Library
+// File:       Galois.h
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Defines Galois Field GF(2^8). Ported Masayuki Miyazaki solution
+//             written in java into C++.
+///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+// Project:    Reed-Solomon
+// File:       Galois.java
+// Author:     Masayuki Miyazaki
+// URL:        http://sourceforge.jp/projects/reedsolomon/
+//
+// Brief:      Galois Field GF(2^8)
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @file Galois.h
  *
- *  Created on: 5.4.2012
- *      Author: Scotty
+ * @brief Defines Galois Field GF(2^8).
+ *
+ * @author Masayuki Miyazaki
+ * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
+ *
+ * @see http://sourceforge.jp/projects/reedsolomon/
  */
 
 #ifndef BARCODES_GALOIS_H_
@@ -17,18 +41,16 @@ using namespace std;
 typedef vector<int> IntArray;
 
 class Galois {
-private:
-	static const Galois INSTANCE;
+protected:
 	static const int MAX_MSG_LENGTH = 255;
 	IntArray expTbl;
 	IntArray logTbl;
 
-	Galois();
 	void initGaloisTable();
 public:
-	static const int POLYNOMIAL = 0x1d;
+	const int POLYNOMIAL;
 
-	static const Galois& getInstance();
+	Galois(int polynomial);
 
 	int toExp(int a) const;
 	int toLog(int a) const;

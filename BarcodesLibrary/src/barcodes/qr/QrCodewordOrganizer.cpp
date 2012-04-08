@@ -21,7 +21,7 @@
 #include <cstdarg>
 
 #include "QrCodewordOrganizer.h"
-#include "../common/errcontrol/ReedSolomon.h"
+#include "QrReedSolomon.h"
 #include "../common/BitStream.h"
 
 namespace barcodes {
@@ -527,7 +527,7 @@ bool QrCodewordOrganizer::correctBlocks(vector<BitArray> &blocks) {
 	vector<BitArray> _blocks;
 	BitArray bitArray;
 	for (unsigned int i = 0; i < characteristics.size(); i++) {
-		ReedSolomon reedSolomon(characteristics[i].c - characteristics[i].k);
+		QrReedSolomon reedSolomon(characteristics[i].c - characteristics[i].k);
 		for (int j = 0; j < characteristics[i].errCorrBlocks; j++) {
 			if (codewordSize * characteristics[i].c <= (int)blocks[block].size() ) {
 				bitArrayToCodewordArray(blocks[block], vec);

@@ -283,7 +283,7 @@ QrFormatInformation QrFormatInformation::decodeFormat(const BitMatrix &code, vec
 		codeROI = code(*formatIter);
 		sampler.sample(codeROI, _result);	result.push(_result);
 	}
-	encodedFormat = result.toULong();
+	encodedFormat = result.toNumber<uint32_t>();
 
 	// Looking at the version in the look up table and repairing the version if possible
     if ((ENCODED_FORMATS.find(encodedFormat) != ENCODED_FORMATS.end()) ||

@@ -1,8 +1,18 @@
-/*
- * ReedSolomon.cpp
+///////////////////////////////////////////////////////////////////////////////
+// Project:    Barcodes Library
+// File:       ReedSolomon.cpp
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Defines members of class which ensures Reed-Solomon correction.
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @file ReedSolomon.cpp
  *
- *  Created on: 3.4.2012
- *      Author: Scotty
+ * @brief Defines members of class which ensures Reed-Solomon correction.
+ * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
  */
 
 #include <cstdlib>
@@ -11,10 +21,22 @@
 
 namespace barcodes {
 
+/**
+ * Corrects one block of data.
+ *
+ * @param data Data to be corrected.
+ * @return Returns true on success, else false.
+ */
 bool ReedSolomon::correct(vector<int> &data) {
 	return decoder.decode(data) >= 0;
 }
 
+/**
+ * Corrects vector of blocks of data.
+ *
+ * @param data Vector of blocks to be corrected.
+ * @return Returns true on success, else false.
+ */
 bool ReedSolomon::correct(vector<vector<int> > &data) {
 
 	vector<vector<int> >::iterator iter;

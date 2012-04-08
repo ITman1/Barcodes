@@ -1,8 +1,20 @@
-/*
- * GridSampler.cpp
+///////////////////////////////////////////////////////////////////////////////
+// Project:    Barcodes Library
+// File:       BitMatrix.cpp
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Defines members of BitArray class which holds bits inside OpenCV's
+//             matrix and implements some other additional methods above it.
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @file BitMatrix.cpp
  *
- *  Created on: 25.3.2012
- *      Author: Scotty
+ * @brief Defines members of BitArray class which holds bits inside OpenCV's
+ *        matrix and implements some other additional methods above it.
+ * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
  */
 
 #include <opencv2/imgproc/imgproc.hpp>
@@ -11,18 +23,49 @@
 
 namespace barcodes {
 
-BitMatrix::BitMatrix(bool fill) : Mat_<bool>(0, 0, fill) {}
-
+/**
+ * Constructs bit matrix and fills it by specified value.
+ *
+ * @param rows Rows of the matrix.
+ * @param cols Columns of the matrix.
+ * @param fill Value by which should be filled the matrix.
+ */
 BitMatrix::BitMatrix(int rows, int cols, bool fill) : Mat_<bool>(rows, cols, fill) {}
 
+/**
+ * Constructs bit matrix and fills it by specified value.
+ *
+ * @param size Size of the matrix.
+ * @param fill Value by which should be filled the matrix.
+ */
 BitMatrix::BitMatrix(Size size, bool fill) : Mat_<bool>(size, fill) { }
 
+/**
+ * Constructs bit matrix from another with the specified rectangle of interest.
+ *
+ * @param m Matrix from which should be constructed this matrix.
+ * @param roi Rectangle of interest which determines the range
+ *            from which should be constructed this matrix.
+ */
 BitMatrix::BitMatrix(const BitMatrix& m, const Rect& roi) : Mat_<bool>(m, roi) { }
 
+/**
+ * Operator () which acts same way as BitMatrix(const BitMatrix&, const Rect&) constructor.
+ *
+ * @param roi Rectangle of interest which determines the range
+ *            from which should be constructed this matrix.
+ * @return Constructed matrix.
+ */
 BitMatrix BitMatrix::operator() (const Rect& roi) const {
 	return BitMatrix(*this, roi);
 }
 
+/**
+ * Returns row as a bit array.
+ *
+ * @param row Position of the row which should be returned.
+ * @param rowArr Output bit array.
+ */
 void BitMatrix::getRow(int row, BitArray &rowArr) {
 	Mat rowMat = this->row(row);
 	MatIterator_<bool> rowIter;
@@ -33,6 +76,11 @@ void BitMatrix::getRow(int row, BitArray &rowArr) {
 	}
 }
 
+/**
+ * Pushes row at the end of this matrix.
+ *
+ * @param rowArr Bit array which will be added at the end of the bit matrix.
+ */
 void BitMatrix::pushRow(BitArray &rowArr) {
 	if ((int)rowArr.size() != cols) return;
 
@@ -43,14 +91,28 @@ void BitMatrix::pushRow(BitArray &rowArr) {
 	}
 }
 
+/**
+ * Clears bit matrix.
+ */
 void BitMatrix::clear() {
 	release();
 }
 
+/**
+ * Returns size of the bit matrix.
+ *
+ * @return Size of the bit matrix.
+ */
 Size BitMatrix::size() {
 	return Size(cols, rows);
 }
 
+/**
+ * Fills rectangle inside matrix by specified value.
+ *
+ * @param rects Vector of rectangles to be filled.
+ * @param fill Value by which should be rectangles filled.
+ */
 void BitMatrix::fillRects(vector<Rect> &rects, bool fill) {
 	vector<Rect>::iterator iter;
 
@@ -59,6 +121,12 @@ void BitMatrix::fillRects(vector<Rect> &rects, bool fill) {
 	}
 }
 
+/**
+ * Masks whole array by mask bit matrix.
+ * Mask operation is the AND operator.
+ *
+ * @param mask Mask bit matrix by should be masked this bit matrix.
+ */
 void BitMatrix::maskAND(BitMatrix &mask) {
 	if (mask.size() != this->size()) return;
 
@@ -71,6 +139,12 @@ void BitMatrix::maskAND(BitMatrix &mask) {
 	}
 }
 
+/**
+ * Masks whole array by mask bit matrix.
+ * Mask operation is the XOR operator.
+ *
+ * @param mask Mask bit matrix by should be masked this bit matrix.
+ */
 void BitMatrix::maskXOR(BitMatrix &mask) {
 	if (mask.size() != this->size()) return;
 
@@ -83,6 +157,11 @@ void BitMatrix::maskXOR(BitMatrix &mask) {
 	}
 }
 
+/**
+ * Removes column from the specified location.
+ *
+ * @param col Column which should be removed.
+ */
 void BitMatrix::removeCol(int col) {
 	Base _cloned = this->clone();
 	if (cols > 1) {
@@ -114,6 +193,16 @@ void BitMatrix::removeCol(int col) {
 	}
 }
 
+/**
+ * Constructs bit matrix from the image. Values of the bit matrix are sampled
+ * by sampling grid.
+ *
+ * @param img Image from which should be constructed the bit matrix.
+ * @param sampleSize Size of the output bit matrix.
+ * @param outMatrix Output bit matrix.
+ * @param roi Rectangle of interest from which should be sampled.
+ * @param marginRatio Margin of each sampled cell. | (marginRatio/2) ((1-marginRatio) == sampleRatio) (marginRatio/2) |
+ */
 void BitMatrix::fromImage(Mat img, Size sampleGridSize, BitMatrix &outMatrix, Rect roi, double marginRatio) {
 	Mat _img;
 	if (roi.height != -1) {

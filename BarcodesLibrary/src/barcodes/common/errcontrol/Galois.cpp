@@ -1,22 +1,40 @@
-/*
- * Galois.cpp
+///////////////////////////////////////////////////////////////////////////////
+// Project:    Barcodes Library
+// File:       Galois.cpp
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Defines Galois Field GF(2^8). Ported Masayuki Miyazaki solution
+//             written in java into C++.
+///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+// Project:    Reed-Solomon
+// File:       Galois.java
+// Author:     Masayuki Miyazaki
+// URL:        http://sourceforge.jp/projects/reedsolomon/
+//
+// Brief:      Galois Field GF(2^8)
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @file Galois.cpp
  *
- *  Created on: 5.4.2012
- *      Author: Scotty
+ * @brief Defines Galois Field GF(2^8).
+ *
+ * @author Masayuki Miyazaki
+ * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
+ *
+ * @see http://sourceforge.jp/projects/reedsolomon/
  */
 
 #include "Galois.h"
 
 namespace barcodes {
 
-const Galois Galois::INSTANCE;
-
-Galois::Galois() {
+Galois::Galois(int polynomial) : POLYNOMIAL(polynomial) {
 	initGaloisTable();
-}
-
-const Galois& Galois::getInstance() {
-	return INSTANCE;
 }
 
 void Galois::initGaloisTable() {

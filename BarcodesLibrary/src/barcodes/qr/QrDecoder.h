@@ -87,6 +87,11 @@ protected:
 	 */
 	static const Size CODEWORD_SAMPLE_SIZE;
 
+	/**
+	 * Temporary matrix for calculations.
+	 */
+	mutable Mat transformed;
+
 	QrDecoder() {}
 	virtual ~QrDecoder() {}
 
