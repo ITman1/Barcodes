@@ -1,3 +1,22 @@
+///////////////////////////////////////////////////////////////////////////////
+// Project:    QR Reader for Android
+// File:       jImage.cpp
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Defines members of the the wrapper for accessing the members
+//             of the objects of Image class in the Java.
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @file jImage.cpp
+ *
+ * @brief Defines members of the wrapper for accessing the members of the objects
+ *        of Image class in the Java.
+ * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
+ */
+
 #include <cstring>
 #include <algorithm>
 

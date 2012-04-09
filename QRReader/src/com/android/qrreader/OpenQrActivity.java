@@ -164,8 +164,11 @@ public class OpenQrActivity extends Activity {
         
         // Getting QR data from the intent
         byte[] qrCodeData = getQrCodeData();
-        if (qrCodeData == null) {
+        if (qrCodeData == null || qrCodeData.length == 0) {
             resultTitle.setText(R.string.OpenQrActivity_Title_QrNoFound);
+            resultSubTitle.setVisibility(TextView.INVISIBLE);
+            removeButton(RESULT_SAVE_QRCODE_CLICKED);
+            removeButton(RESULT_SAVE_BOTH_BUTTON_CLICKED);
             return;
         } else {
             resultTitle.setText(R.string.OpenQrActivity_Title_QrFound);
@@ -335,6 +338,21 @@ public class OpenQrActivity extends Activity {
         button.setText(textResID);
         button.setOnClickListener(resultButtonOnClick);
         buttonsLayout.addView(button);
+    }
+    
+    /**
+     * Removes one result button by specified ID.
+     *
+     * @param id The ID of the button.
+     */
+    private void removeButton(int id) {
+        for (int i = 0; i < buttonsLayout.getChildCount(); i++) {
+            View v = buttonsLayout.getChildAt(i);
+            
+            if (v instanceof Button && v.getId() == id) {
+                buttonsLayout.removeView(v);
+            }
+        }
     }
         
     /**

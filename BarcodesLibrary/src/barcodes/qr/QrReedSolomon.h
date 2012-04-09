@@ -33,7 +33,7 @@ class GaloisQR:public Galois {
 private:
 	static const GaloisQR INSTANCE;
 public:
-	GaloisQR() : Galois(0x1d) {}
+	GaloisQR() : Galois(0x1d, 0) {}
 
 	static const GaloisQR& getInstance();
 };

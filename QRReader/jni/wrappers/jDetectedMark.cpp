@@ -1,3 +1,22 @@
+///////////////////////////////////////////////////////////////////////////////
+// Project:    QR Reader for Android
+// File:       jDetectedMark.cpp
+// Date:       March 2012
+// Author:     Radim Loskot
+// E-mail:     xlosko01(at)stud.fit.vutbr.cz
+//
+// Brief:      Defines members of the the wrapper for accessing the members
+//             of the objects of DetectedMark class in the Java.
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @file jDetectedMark.cpp
+ *
+ * @brief Defines members of the wrapper for accessing the members of the objects
+ *        of DetectedMark class in the Java.
+ * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
+ */
+
 #include "jDetectedMark.h"
 
 using namespace jni;
@@ -33,8 +52,9 @@ void jDetectedMark::setPoints(vector<Point> points) {
     setObjectArray(this, jPoint::getJClass(env), "points", pointsArray);
 
 	for (int i = 0; i < arrLength; i++) {
-		jPoint point = jPoint(env, points[i]);
-		setObjectArrayElement(this, jPoint::getJClass(env), "points", i, point);
+		jPoint *point = new jPoint(env, points[i]);
+		setObjectArrayElement(this, jPoint::getJClass(env), "points", i, *point);
+		delete point;
 	}
 
 	env->DeleteLocalRef(pointsArray);

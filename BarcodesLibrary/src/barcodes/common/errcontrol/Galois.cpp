@@ -33,18 +33,19 @@
 
 namespace barcodes {
 
-Galois::Galois(int polynomial) : POLYNOMIAL(polynomial) {
+Galois::Galois(int polynomial, int symStart) : symStart(symStart), POLYNOMIAL(polynomial) {
 	initGaloisTable();
 }
 
 void Galois::initGaloisTable() {
 	expTbl.resize(MAX_MSG_LENGTH * 2);
-	logTbl.resize(MAX_MSG_LENGTH);
+	logTbl.resize(MAX_MSG_LENGTH + 1);
 
 	int d = 1;
 	for(int i = 0; i < 255; i++) {
 		expTbl[i] = expTbl[255 + i] = d;
 		logTbl[d] = i;
+
 		d <<= 1;
 		if((d & 0x100) != 0) {
 			d = (d ^ POLYNOMIAL) & 0xff;
@@ -101,10 +102,14 @@ void Galois::mulPoly(IntArray &seki, IntArray &a, IntArray &b) const {
 
 bool Galois::calcSyndrome(IntArray &data, int length, IntArray &syn) const {
 	int hasErr = 0;
-	for (unsigned int i = 0; i < syn.size();  i++) {
+
+	for(unsigned int i = 0, s = symStart; i < syn.size();  i++, s++) {
 		int wk = 0;
 		for(int idx = 0; idx < length; idx++) {
-			 wk = data[idx] ^ ((wk == 0)? 0 : expTbl[logTbl[wk] + i]);
+			if(wk != 0) {
+				wk = expTbl[logTbl[wk] + s];
+			}
+			wk ^= data[idx];
 		}
 		syn[i] = wk;
 		hasErr |= wk;

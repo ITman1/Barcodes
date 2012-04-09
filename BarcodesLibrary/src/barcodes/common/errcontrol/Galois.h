@@ -45,12 +45,13 @@ protected:
 	static const int MAX_MSG_LENGTH = 255;
 	IntArray expTbl;
 	IntArray logTbl;
+	int symStart;
 
 	void initGaloisTable();
 public:
 	const int POLYNOMIAL;
 
-	Galois(int polynomial);
+	Galois(int polynomial, int symStart);
 
 	int toExp(int a) const;
 	int toLog(int a) const;

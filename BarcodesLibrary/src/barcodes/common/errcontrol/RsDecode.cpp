@@ -165,6 +165,7 @@ int RsDecode::decode(IntArray &data, int length, bool noCorrect) {
 
 	IntArray sigma(npar / 2 + 2);
 	IntArray omega(npar / 2 + 1);
+
 	int jisu = calcSigmaMBM(sigma, omega, syn);
 	if(jisu <= 0) {
 		return RS_CORRECT_ERROR;
@@ -178,6 +179,7 @@ int RsDecode::decode(IntArray &data, int length, bool noCorrect) {
 	if(!noCorrect) {
 		doForney(data, length, jisu, pos, sigma, omega);
 	}
+
 	return jisu;
 }
 

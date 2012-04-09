@@ -63,7 +63,7 @@ import com.android.qrreader.R;
 import com.android.views.DrawingCanvas;
 import com.android.views.DrawingCanvas.Line;
 import com.qrcode.QrCodes;
-import com.qrcode.QrCodes.DataSegment;
+import com.qrcode.QrCodes.DataSegments;
 import com.qrcode.QrCodes.DetectedMark;
 import com.qrcode.QrCodes.Image;
 import com.qrcode.QrCodes.Point;
@@ -220,6 +220,23 @@ public class MainActivity extends Activity {
     };
     
     DetectionThread detectionThread = new DetectionThread();
+    
+    class DecodeThread extends Thread {
+        public void run() {
+            if (snapshotData != null) {
+                Image image = new Image();
+                image.data = snapshotData;Log.d(TAG, "Data length: " + snapshotData.length);
+                image.compressed = true;
+                
+                DataSegments dataSegments = QrCodes.readQrCode(image, QrCodes.Requests.GET_QR_CODE, QrCodes.Flags.ALL_FEATURES);
+                QRCodeData = (dataSegments.segments != null && dataSegments.segments.length > 0)? dataSegments.segments[0].data : null;
+                
+                startOpenQrIntent();
+            }
+        }
+    };
+    
+    DecodeThread decodeThread = new DecodeThread();
        
     /** The listener of the click on the read button */
     private OnClickListener read_btn_OnClick = new OnClickListener() {
@@ -306,17 +323,12 @@ public class MainActivity extends Activity {
             }
             lastTimeSnapshot = System.currentTimeMillis();
 
-            if (data != null) {     // There are some data from the camera
+            if (data != null && !decodeThread.isAlive()) {     // There are some data from the camera
+                snapshotData = data;
                 // Calling the decode method via JNI from the Barcode Library
                 statusText_TextView.setText(R.string.QRReaderActivity_StatusText_Processing);
-                Image image = new Image();
-                image.data = data;Log.d(TAG, "Data length: " + data.length);
-                image.compressed = true;
-                savePicture(data, ".jpg"); // TODO TODO TODO DELETE THIS DELETE
-                DataSegment[] dataSegments = QrCodes.readQrCode(image, QrCodes.Requests.GET_QR_CODE, QrCodes.Flags.ALL_FEATURES);
-                QRCodeData = (dataSegments != null && dataSegments.length > 0)? dataSegments[0].data : null;
-                snapshotData = data;
-                startOpenQrIntent();
+                decodeThread = new DecodeThread();
+                decodeThread.start();
             } else {                // There are not any data, ignoring the fact (error)
                 status_LinearLayout.setVisibility(LinearLayout.INVISIBLE);
                 statusText_TextView.setText("");

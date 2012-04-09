@@ -1,24 +1,24 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Project:    QR Reader for Android
-// File:       jDataSegment.h
+// File:       jDataSegments.h
 // Date:       March 2012
 // Author:     Radim Loskot
 // E-mail:     xlosko01(at)stud.fit.vutbr.cz
 //
 // Brief:      Defines the wrapper for accessing the members of the objects
-//             of DataSegment class in the Java.
+//             of DataSegments class in the Java.
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * @file jDataSegment.h
+ * @file jDataSegments.h
  *
  * @brief Defines the wrapper for accessing the members of the objects
- *        of DataSegment class in the Java.
+ *        of DataSegments class in the Java.
  * @author Radim Loskot xlosko01(at)stud.fit.vutbr.cz
  */
 
-#ifndef JNI_JDATASEGMENT_H_
-#define JNI_JDATASEGMENT_H_
+#ifndef JNI_JDATASEGMENTS_H_
+#define JNI_JDATASEGMENTS_H_
 
 #include <barlib/barcodes/DataSegments.h>
 #include <barlib/common.h>
@@ -30,31 +30,25 @@ using namespace barcodes;
 namespace jni {
 
 /**
- * Wraps the Java DataSegment class.
+ * Wraps the Java DataSegments class.
  */
-class jDataSegment: public JNIWrapper {
+class jDataSegments: public JNIWrapper {
 private:
 	const static string CLASS_NAME;
 
 public:
-	jDataSegment(JNIEnv *env);
-	jDataSegment(JNIEnv *env, jobject jObject);
-	jDataSegment(JNIEnv *env, DataSegment &dataSegment);
+	jDataSegments(JNIEnv *env);
+	jDataSegments(JNIEnv *env, jobject jObject);
+	jDataSegments(JNIEnv *env, DataSegments &dataSegments);
 
-	ByteArray getData();
-	void setData(ByteArray &data);
-
-	size_t getRemainderBits();
-	void setRemainderBits(size_t remainderBits);
+	vector<DataSegment> getSegments();
+	void setSegments(vector<DataSegment> &segments);
 
 	int getFlags();
 	void setFlags(int flags);
 
-	int getMode();
-	void setMode(int flags);
-
 	static jclass getJClass(JNIEnv *env);
-	operator DataSegment();
+	operator DataSegments();
 };
 
 }

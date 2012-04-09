@@ -66,6 +66,11 @@ final public class QrCodes {
         public int remainderBits;
     };
     
+    public static class DataSegments {
+        public DataSegment[] segments;
+        public int flags;
+    };
+    
     public static class Image {
         public boolean compressed;
         public Size size;
@@ -99,7 +104,7 @@ final public class QrCodes {
         return QrEncoderManager.getEncoderManager().encodeQrCode(qrCode, encoder);
     }
     
-    public static native DataSegment[] readQrCode(Image image, int request, int flags);
+    public static native DataSegments readQrCode(Image image, int request, int flags);
     public static native DetectedMark[] detectQrCode(Image image, int request, int flags);
     
     static {
