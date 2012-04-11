@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.qrcode.QrDecoderManager;
+import com.qrcode.QrCodes.DataSegments;
 import com.qrcode.decoders.QrDecoder;
 import com.qrcode.qrcodes.MailQrCode;
 import com.qrcode.qrcodes.QrCode;
@@ -94,11 +95,13 @@ final public class BaseQrDecoder extends QrDecoder {
      * {@link com.qrcode.qrcodes.TelephoneQrCode TelephoneQrCode},
      * {@link com.qrcode.qrcodes.SmsQrCode SmsQrCode}.
      * 
-     * @see com.qrcode.decoders.QrDecoder#decode(byte[]) decode(byte[])
+     * @see com.qrcode.decoders.QrDecoder#decode(DataSegments) decode(DataSegments)
      */
     @Override
-    public QrCode decode(byte[] data) {
+    public QrCode decode(DataSegments dataSegments) {
+        byte[] data = dataSegments.toByteArray();
         String schema = QrDecoderManager.getUriScheme(data);
+
         if (schema.equalsIgnoreCase(HTTP_SCHEMA)) {             // HTTP:
             return urlQrCode(data);  
         } else if (schema.equalsIgnoreCase(URLTO_SCHEMA)) {     // URLTO:

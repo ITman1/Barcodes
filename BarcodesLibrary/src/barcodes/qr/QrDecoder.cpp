@@ -55,7 +55,6 @@ const Size QrDecoder::CODEWORD_SAMPLE_SIZE(2, 4);
 void QrDecoder::decode(Image &image, DataSegments &dataSegments, int flags) const {
 	DetectedMarks detectedMarks;
 
-
 	QrDetector::getInstance()->detect(image, detectedMarks, flags);
 
 	if (detectedMarks.size() == 3) {
@@ -363,6 +362,8 @@ void QrDecoder::getPerspectiveCorners_V1_40(Mat &binarized, DetectedMarks &detec
  * @return Returns true if maximal sample rotation angle is not exceeded, otherwise false.
  */
 bool QrDecoder::sampleQrCodeEdge(Mat &binarized, Vector2Df &sampleVector, Point2f &rotatePoint, Vector2Df &lineShift, int lineWidth, bool clockWiseSample) const {
+	DEBUG_PRINT(DEBUG_TAG, "sampleQrCodeEdge()");
+
 	double sampleAngleStep = (clockWiseSample)? SAMPLE_RECT_ANGLE_STEP : SAMPLE_RECT_ANGLE_STEP * -1;
 	double angle = 0;
 

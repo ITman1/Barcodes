@@ -21,6 +21,7 @@ import com.android.qrreader.installation.InstallationManager;
 import com.android.qrreader.installation.InstallationManager.InstallationCallback;
 import com.android.qrreader.installation.InstallationManager.PackageClass;
 import com.qrcode.decoders.QrDecoder;
+import com.qrcode.QrCodes.DataSegments;
 import com.qrcode.QrDecoderManager;
 import com.qrcode.qrcodes.QrCode;
 
@@ -117,9 +118,9 @@ final public class InstallableQrDecoderManager {
      * decoder has been found.
      * 
      */
-    public QrCode decodeQrCode(byte[] data) {
-        QrCode qrCode = qrStaticDecoderManager.decodeQrCode(data);
-        return (qrCode == null)? QrDecoderManager.decodeQrCode(decoders, data) : qrCode;
+    public QrCode decodeQrCode(DataSegments dataSegments) {
+        QrCode qrCode = qrStaticDecoderManager.decodeQrCode(dataSegments);
+        return (qrCode == null)? QrDecoderManager.decodeQrCode(decoders, dataSegments) : qrCode;
     }
     
     /**

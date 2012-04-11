@@ -12,6 +12,11 @@
 
 package com.qrcode;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.qrcode.qrcodes.QrCode;
 
 // TODO - comment this file
@@ -59,16 +64,45 @@ final public class QrCodes {
         public int flags;
     };
     
-    public static class DataSegment {
+    public static class DataSegment implements Serializable  {
+        private static final long serialVersionUID = 1L;
         public byte[] data;
         public int mode;
         public int flags;
         public int remainderBits;
+        
+        public List<Byte> dataToByteList() {
+            List<Byte> byteList = new ArrayList<Byte>();
+            for (byte b : data) {
+                byteList.add(b);
+            }
+
+            return byteList;
+        }
     };
     
-    public static class DataSegments {
+    public static class DataSegments implements Serializable {
+        private static final long serialVersionUID = 1L;
         public DataSegment[] segments;
         public int flags;
+        
+        public byte[] toByteArray() {
+            List<Byte> byteList = new ArrayList<Byte>();
+            
+            for (DataSegment segment : segments) {
+                byteList.addAll(segment.dataToByteList());
+            }
+            
+            byte[] bytes = new byte[byteList.size()];
+            int i = 0;
+            for (Byte b : byteList) {
+                bytes[i] = b;
+                i++;
+            }
+            
+            return bytes;
+
+        }
     };
     
     public static class Image {
@@ -85,10 +119,10 @@ final public class QrCodes {
      * @return The specific QR code object on success or null when no proprietary
      * decoder has been found.
      * 
-     * @see com.qrcode.QrDecoderManager#decodeQrCode(byte[]) decodeQrCode(byte[])
+     * @see com.qrcode.QrDecoderManager#decodeQrCode(DataSegments) decodeQrCode(DataSegments)
      */
-    public static QrCode decodeQrCode(byte[] data) {
-        return QrDecoderManager.getDecoderManager().decodeQrCode(data);
+    public static QrCode decodeQrCode(DataSegments dataSegments) {
+        return QrDecoderManager.getDecoderManager().decodeQrCode(dataSegments);
     }
     
     /**

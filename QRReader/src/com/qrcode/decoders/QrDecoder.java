@@ -14,6 +14,7 @@ package com.qrcode.decoders;
 import java.util.Iterator;
 import java.util.List;
 
+import com.qrcode.QrCodes.DataSegments;
 import com.qrcode.qrcodes.QrCode;
 
 /**
@@ -144,7 +145,7 @@ public abstract class QrDecoder {
      * @param data The serialized QR code.
      * @return The specific QR code.
      */
-    public abstract QrCode decode(byte[] data);
+    public abstract QrCode decode(DataSegments dataSegments);
 }
 
 //End of the file

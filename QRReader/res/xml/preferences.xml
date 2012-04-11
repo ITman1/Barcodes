@@ -38,6 +38,12 @@
     		 ads:maxProgress="100"
 	         ads:defaultProgress="90"
 	         ads:progressText="@string/progessText_Preferences_Images_JpegQuality" />
+         <ListPreference
+             android:key="Preferences_Images_Resolution"
+	         android:summary="@string/summary_Preferences_Images_Resolution"
+	         android:title="@string/title_Preferences_Images_Resolution"
+	         android:entries="@array/entries_Preferences_Images_Resolution"
+	         android:entryValues="@array/entryValues_Preferences_Images_Resolution" />
 		 <com.android.preferences.PromptDialogPreference
 		     android:key="Prefereces_Images_Clear" 
 		     android:title="@string/title_Preferences_Images_Clear"

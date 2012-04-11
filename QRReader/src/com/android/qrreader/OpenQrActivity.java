@@ -12,7 +12,11 @@
 package com.android.qrreader;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
@@ -35,7 +39,7 @@ import android.widget.TextView;
 import com.android.qrreader.R;
 import com.android.qrreader.qrcode.InstallableQrCodeViewManager;
 import com.android.qrreader.qrcode.InstallableQrDecoderManager;
-import com.filesystem.Operations;
+import com.qrcode.QrCodes.DataSegments;
 import com.qrcode.qrcodes.QrCode;
 
 /**
@@ -163,8 +167,8 @@ public class OpenQrActivity extends Activity {
         InstallableQrCodeViewManager viewManager = InstallableQrCodeViewManager.getViewManager(this);
         
         // Getting QR data from the intent
-        byte[] qrCodeData = getQrCodeData();
-        if (qrCodeData == null || qrCodeData.length == 0) {
+        DataSegments dataSegments = getQrCodeSegments();
+        if (dataSegments == null || dataSegments.segments.length == 0) {
             resultTitle.setText(R.string.OpenQrActivity_Title_QrNoFound);
             resultSubTitle.setVisibility(TextView.INVISIBLE);
             removeButton(RESULT_SAVE_QRCODE_CLICKED);
@@ -176,10 +180,10 @@ public class OpenQrActivity extends Activity {
         resultTitle.requestFocusFromTouch();
         
         // Decoding QR code
-        QrCode qrCode = decoderManager.decodeQrCode(qrCodeData);
+        QrCode qrCode = decoderManager.decodeQrCode(dataSegments);
         if (qrCode == null) {
             resultSubTitle.setText(R.string.OpenQrActivity_SubTitle_NoDecoder);
-            displayRAW(qrCodeData);
+            displayRAW(dataSegments.toByteArray());
             return;
         }
         
@@ -187,7 +191,7 @@ public class OpenQrActivity extends Activity {
         View view = viewManager.getViewForQrCode(qrCode);
         if (view == null) {
             resultSubTitle.setText(R.string.OpenQrActivity_SubTitle_NoView);
-            displayRAW(qrCodeData);
+            displayRAW(dataSegments.toByteArray());
             return;
         } else {
             resultSubTitle.setText(viewManager.getTitleForQrCode(qrCode));
@@ -312,16 +316,26 @@ public class OpenQrActivity extends Activity {
      *
      * @return The read bytes of the QR code file.
      */
-    private byte[] getQrCodeData() {
+    private DataSegments getQrCodeSegments() {
         Uri data = getIntent().getData();
         File qrFile = new File(data.getPath());
         
         try {
-            return Operations.readFile(qrFile);
+            FileInputStream fis = new FileInputStream(qrFile);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+
+            DataSegments dataSegments = (DataSegments) ois.readObject();
+            ois.close();
+            
+            return dataSegments;
+        } catch (FileNotFoundException e) {
+        } catch (StreamCorruptedException e) {
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        } catch (ClassNotFoundException e) {
+        } catch (ClassCastException e) {
         }
+        
+        return null;
     }
     
     /**

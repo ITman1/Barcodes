@@ -38,6 +38,8 @@
     <string name="summary_Preferences_Images_Format">Definuje formát obrázku v jakém bude uložen</string>
     <string name="title_Preferences_Images_JpegQuality">JPEG kvalita</string>
     <string name="summary_Preferences_Images_JpegQuality">Definuje kvalitu JPEG formátu v jakém budou ukládány obrázky</string>
+    <string name="title_Preferences_Images_Resolution">Rozlišení</string>
+    <string name="summary_Preferences_Images_Resolution">Definuje rozlišení obrazu, který je použit pro dekódování QR kódu</string>
     <string name="dialogMessage_Preferences_Images_JpegQuality">Prosím nastavte kvalitu JPEG v procentech</string>
     <string name="progessText_Preferences_Images_JpegQuality"> % maximální možné kvality</string>
     <string name="title_Preferences_Images_Clear">Vymazat úložiště</string>

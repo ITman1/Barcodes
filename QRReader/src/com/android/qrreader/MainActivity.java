@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +25,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -159,7 +161,7 @@ public class MainActivity extends Activity {
     private byte[]             snapshotData;
     
     /** The reference to the decoded QR data. */
-    private byte[]             QRCodeData;
+    private DataSegments       dataSegments;
     
     private byte[]             previewDetectionImage;
     
@@ -228,9 +230,7 @@ public class MainActivity extends Activity {
                 image.data = snapshotData;Log.d(TAG, "Data length: " + snapshotData.length);
                 image.compressed = true;
                 
-                DataSegments dataSegments = QrCodes.readQrCode(image, QrCodes.Requests.GET_QR_CODE, QrCodes.Flags.ALL_FEATURES);
-                QRCodeData = (dataSegments.segments != null && dataSegments.segments.length > 0)? dataSegments.segments[0].data : null;
-                
+                dataSegments = QrCodes.readQrCode(image, QrCodes.Requests.GET_QR_CODE, QrCodes.Flags.ALL_FEATURES);               
                 startOpenQrIntent();
             }
         }
@@ -376,7 +376,7 @@ public class MainActivity extends Activity {
                 || ((resultCode & OpenQrActivity.RESULT_SAVE_QRCODE_CLICKED) > 0)
                 || ((resultCode & OpenQrActivity.RESULT_SAVE_BOTH_BUTTON_CLICKED) > 0)) {
                     
-                saveQRCode(QRCodeData);
+                saveQRCode(dataSegments);
         }
 
         // Ends the taking of the picture
@@ -413,8 +413,13 @@ public class MainActivity extends Activity {
             // Saving the QR code into the internal storage for loading it from
             // here by the Open QR activity 
             fos = openFileOutput(TMP_QR_FILENAME, Context.MODE_PRIVATE);
-            fos.write((QRCodeData == null)? new byte[0] : QRCodeData);
-            fos.close();
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+            if (dataSegments != null) {
+                oos.writeObject(dataSegments);
+            }
+
+            oos.close();
             
             // Sending the location of the temporary QR code as a classical 
             //ACTION_VIEW intent for viewing the files
@@ -483,8 +488,8 @@ public class MainActivity extends Activity {
      *
      * @param data The data of the QR code.
      */
-    private void saveQRCode(byte[] data) {
-        if (data != null) {
+    private void saveQRCode(DataSegments segments) {
+        if (segments != null) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             Resources res = getResources();
             
@@ -501,7 +506,11 @@ public class MainActivity extends Activity {
             if (qrFile != null) { 
                 try {
                     FileOutputStream fos = new FileOutputStream(qrFile);
-                    fos.write(data);
+                    ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+                    if (dataSegments != null) {
+                        oos.writeObject(segments);
+                    }
                     fos.close();
                 } catch (FileNotFoundException e) {
                     Log.e(TAG, "File not found: " + e.getMessage());
@@ -537,6 +546,9 @@ public class MainActivity extends Activity {
                 PreferenceManager.KEY_HAS_SET_DEFAULT_VALUES, Context.MODE_PRIVATE);
         if (!prefs.getBoolean(PreferenceManager.KEY_HAS_SET_DEFAULT_VALUES, false)) {
             SettingsActivity.resetSettings(getBaseContext());
+            Editor editor = prefs.edit();
+            editor.putBoolean(PreferenceManager.KEY_HAS_SET_DEFAULT_VALUES, true);
+            editor.commit();
         }
                
         // Setting main window view as camera preview from the layouts
@@ -668,7 +680,6 @@ public class MainActivity extends Activity {
         } else if (prefFormat.equals("RAW")) {
             droidCamera.getCamera().takePicture(null, takePictureCallback, null);
         } */
-        
         cameraPreviewLayout.setVisibility(CameraPreview.INVISIBLE);
         droidCamera.getCamera().takePicture(null, null, takePictureCallback);
     }
@@ -706,6 +717,7 @@ public class MainActivity extends Activity {
         
         try {
             detectionThread.join();
+            decodeThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -782,6 +794,15 @@ public class MainActivity extends Activity {
             camParams.setJpegQuality(
                 prefs.getInt("Preferences_Images_JpegQuality", DEFAULT_JPEG_QUALITY)
             );
+            
+            // Snapshot resolution
+            String size = prefs.getString("Preferences_Images_Resolution", null);
+            int pos = size.indexOf('_');
+            if (size != null && pos != -1 && size.length() > pos + 1) {
+                int width = Integer.parseInt(size.substring(0, pos));
+                int height = Integer.parseInt(size.substring(pos + 1));
+                camParams.setPictureSize(width, height);
+            }
             
             // Finally set the new one parameters
             cam.setParameters(camParams);

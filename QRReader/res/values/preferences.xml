@@ -38,6 +38,8 @@
     <string name="summary_Preferences_Images_Format">Defines the format in which will be images stored</string>
     <string name="title_Preferences_Images_JpegQuality">JPEG quality</string>
     <string name="summary_Preferences_Images_JpegQuality">Defines the quality of the JPEG format in which will be image stored</string>
+    <string name="title_Preferences_Images_Resolution">Image resolution</string>
+    <string name="summary_Preferences_Images_Resolution">Defines the resolution of the captured image used for the decoding of the QR code</string>
     <string name="dialogMessage_Preferences_Images_JpegQuality">Please set the quality of the JPEG in the percents</string>
     <string name="progessText_Preferences_Images_JpegQuality"> % of the maximal possible quality</string>
     <string name="title_Preferences_Images_Clear">Clear storage directory</string>
@@ -87,5 +89,10 @@
 	    <item>on</item>
 		<item>redEye</item>
 		<item>torch</item>
+	</string-array>  
+	
+	<string-array name="entries_Preferences_Images_Resolution">
+	</string-array>
+	<string-array name="entryValues_Preferences_Images_Resolution">
 	</string-array>  
 </resources>

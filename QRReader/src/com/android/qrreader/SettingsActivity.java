@@ -12,6 +12,7 @@
 package com.android.qrreader;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.android.camera.DroidCamera;
@@ -29,6 +30,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
+import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.os.Bundle;
 import android.os.Environment;
@@ -77,6 +79,19 @@ public class SettingsActivity extends PreferenceActivity {
                 Environment.getExternalStorageDirectory().getPath() + 
                 File.separator + res.getString(R.string.app_name) +
                 File.separator + res.getString(R.string.dir_qrcodes));
+        
+        // Sets default image resolution
+        DroidCamera droidCamera = DroidCamera.open();
+        if (droidCamera != null) {
+            List<Camera.Size> sizes = droidCamera.getCamera().getParameters().getSupportedPictureSizes();
+            
+            if (sizes.size() > 0) {
+                editor.putString("Preferences_Images_Resolution", String.format(
+                        "%d_%d", sizes.get(sizes.size() / 2).width, sizes.get(sizes.size() / 2).height)
+                );
+            }
+            droidCamera.release();
+        }
         
         editor.commit();
     }
@@ -192,6 +207,22 @@ public class SettingsActivity extends PreferenceActivity {
             List<String> flashModes = camParams.getSupportedFlashModes();
 
             flashPreference.setEnabled(flashModes != null);
+            
+            // Sets resolution entries
+            ListPreference resolutionsPreference = (ListPreference)findPreference("Preferences_Images_Resolution");
+            
+            List<CharSequence> entries = new ArrayList<CharSequence>();
+            List<CharSequence> entryValues = new ArrayList<CharSequence>();
+            
+            List<Camera.Size> sizes = droidCamera.getCamera().getParameters().getSupportedPictureSizes();
+            
+            for (Camera.Size size : sizes) {
+                entries.add(String.format("%d x %d", size.width, size.height));
+                entryValues.add(String.format("%d_%d", size.width, size.height));
+            }
+            
+            resolutionsPreference.setEntries((CharSequence[])entries.toArray(new CharSequence[entries.size()]));
+            resolutionsPreference.setEntryValues((CharSequence[])entryValues.toArray(new CharSequence[entryValues.size()]));
         }
         
         // Registering the listener of the click for opening the about activity

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.qrcode.QrCodes.DataSegments;
 import com.qrcode.decoders.QrDecoder;
 import com.qrcode.qrcodes.QrCode;
 
@@ -74,8 +75,8 @@ final public class QrDecoderManager {
      * @return The specific QR code object on success or null when no proprietary
      * decoder has been found.
      */
-    public QrCode decodeQrCode(byte[] data) {
-        return decodeQrCode(decoders, data);
+    public QrCode decodeQrCode(DataSegments segments) {
+        return decodeQrCode(decoders, segments);
     }
     
     /**
@@ -155,12 +156,12 @@ final public class QrDecoderManager {
      * @return The specific QR code object on success or null when no proprietary
      * decoder has been found.
      */
-    public static QrCode decodeQrCode(ArrayList<QrDecoder> decoders, byte[] data) {
+    public static QrCode decodeQrCode(ArrayList<QrDecoder> decoders, DataSegments segments) {
         ArrayList<QrDecoder> passedDecoders = new ArrayList<QrDecoder>();
         String scheme;
         QrCode qrCode;
         
-        if (data == null || (scheme = getUriScheme(data)) == null && decoders.isEmpty()) {
+        if (segments == null || (scheme = getUriScheme(segments.toByteArray())) == null && decoders.isEmpty()) {
             return null;
         }
         
@@ -172,7 +173,7 @@ final public class QrDecoderManager {
         // Iterating through possible decoders and trying to decode
         for (QrDecoder decoder : passedDecoders) {
             //try {
-                qrCode = decoder.decode(data);
+                qrCode = decoder.decode(segments);
             /*} catch (LexicalError e) {
                 qrCode = null;
             } catch (SyntaxError e) {
