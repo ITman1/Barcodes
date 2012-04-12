@@ -1,0 +1,35 @@
+================================================================================
+                          QR READER FOR ANDROID
+================================================================================
+
+QR Reader for Android is an appplication for the Android platform. This 
+application serves for the detection of the QR codes in the real-time camera 
+preview and decoding of the QR codes on demand.
+
+Minimum API for running the application: 9
+Note: This application uses JNI and natively built Barcodes Library.
+
+--------------------------------------------------------------------------------
+                          BUILDING THE APPLICATION
+
+REQUIREMENTS:
+
+1) Have an installed Android SDK.
+2) Have an installed Android NDK and defined directory with ndk-build script 
+   in the PATH.
+3) Have generated file with the source files of the Barcodes Library inside
+   library project directory (src_list.TXT). That can be done by invoking
+   the GNU Make tool inside the project directory of the Barcodes Library:
+       make gen-srclist
+   
+WAY 1) Use automatic build with the Eclipse and AVD: 
+  - See: http://developer.android.com/guide/developing/projects/projects-eclipse.html
+
+WAY 2) Use command line driven build: 
+  - See: http://developer.android.com/guide/developing/projects/projects-cmdline.html
+  - Do not forget run ndk-build before.
+
+--------------------------------------------------------------------------------
+Author:    Radim Loskot
+E-mail:    xlosko01(at)stud.fit.vutbr.cz
+gmail.com: radim.loskot

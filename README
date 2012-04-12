@@ -1,0 +1,24 @@
+================================================================================
+                        BARCODES - root directory
+================================================================================
+
+This directory contains a few directories which are required for building the
+result application of QR Reader for Android. Each directory also represents
+one Eclipse project.
+
+DIRECTORY DESCRIPTION:
+
+----- (BarcodesLibrary)      Library written in C++ for detection/decoding of the barcodes.
+  |-- (Doc)                  Sources of technical report
+  |-- (DocomoDecoderPlugin)  Specific decoder of the application layer of QR codes.
+  |-- (GNUMake_OSSLib)       Library with the functions for GNU Make.
+  |-- (OpenCV)               Contains include header files and prebuilt Android libraries.
+  |-- (QRReader)             Application of the QR Reader for Android.
+
+Note: For further informations read README included inside every top level 
+      subdirectory.
+
+================================================================================
+Author:    Radim Loskot
+E-mail:    xlosko01(at)stud.fit.vutbr.cz
+gmail.com: radim.loskot

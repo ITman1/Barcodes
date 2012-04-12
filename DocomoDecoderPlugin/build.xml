@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!-- 
+	Project:    QR Reader for Android
+	File:       build.xml
+	Date:       May 2012
+	Author:     Radim Loskot
+	E-mail:     xlosko01(at)stud.fit.vutbr.cz
+	Brief:      Builds and packages DOCOMO NTT based decoder.
+	            Uses com.qrcode.decoders.QrDecoder interface and is built by dex compiler, so
+	            it can be loaded with DexClassLoader on the Android.
+ -->
+<project name="DocomoDecoderPlugin" default="build" basedir=".">
+  	<description>
+    	Decoder for format NTT DOCOMO developed with NTT DOCOMO, INC.
+      	http://www.nttdocomo.co.jp/english/service/developer/make/content/barcode/function/application/
+  	</description>
+    
+  	<property name="src.name" value="src"/>
+  	<property name="dest.name" value="dest"/>
+  	<property name="res.name" value="res"/>
+  	<property name="build.name" value="build"/>
+    
+  	<property name="src" location="${src.name}"/>
+  	<property name="dest" location="${dest.name}"/>
+  	<property name="res" location="${res.name}"/>
+  	<property name="build" location="${build.name}"/>
+    
+  	<property name="package" value="DocomoDecoderPlugin.jar"/>
+  	<property name="package.tmp" value="_DocomoDecoderPlugin.jar"/>
+  	<property name="decoder.base" location="../QRReader/src"/>
+    
+    <target name="clean">
+        <delete dir="${build}"/>
+        <delete dir="${dest}"/>
+    </target>
+
+  	<target name="build" description="Compile">
+    	<mkdir dir="${build}"/>
+      	<javac source="1.6" target="1.6" includeantruntime="false" classpath="${src}:${decoder.base}" srcdir="${src};${decoder.base}" destdir="${build}">
+ 			<include name="com/docomo/DocomoDecoder.java"/>
+            <include name="com/qrcode/decoders/QrDecoder.java"/>
+          	<include name="com/qrcode/qrcodes/**"/>
+          	<include name="com/qrcode/QrCodes.java"/>
+           	<include name="com/qrcode/QrDecoderManager.java"/>
+           	<include name="com/qrcode/QrEncoderManager.java"/>
+      	</javac>
+    	<jar destfile="${dest}/${package.tmp}" basedir="${build}" includes="com/docomo/**">
+            <fileset dir=".">
+                <include name="${res.name}/**" />
+            </fileset>
+    	</jar>
+    	<exec executable="cmd" os="Windows NT;Windows 7">
+      		<arg value="/c"/>
+      		<arg value="dx"/>
+      		<arg value="--dex"/>
+      		<arg value="--output=${dest}/${package}"/>
+      		<arg value="${dest}/${package.tmp}"/>
+    	</exec>
+  	    <delete file="${dest}/${package.tmp}"/>
+  	</target>
+</project>

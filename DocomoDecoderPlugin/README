@@ -1,0 +1,38 @@
+================================================================================
+                         DOCOMO DECODER PLUGIN
+================================================================================
+
+Docomo Decoder Plugin is library that implements specific decoder of the 
+application layer of QR codes defined by NTT DOCOMO, INC.
+
+See: www.nttdocomo.co.jp/english/service/developer/make/content/barcode/function/application/
+
+This library serves as a plugin into application QR Reader for Android (see
+project QRReader) and uses its provided interface for loading the plugins.
+
+--------------------------------------------------------------------------------
+                          BUILDING THE LIBRARY
+
+REQUIREMENTS:
+
+1) Have an installed Android SDK and defined in the PATH "platform-tools"
+   directory where dx script is located.
+2) Have an installed Java JDK, for avoiding possible compile problems it is 
+   recommended to use JDK 1.6.
+
+WAY 1) Using the Ant for building the library: 
+(Windows NT, Windows 7 support only)
+
+1) Have an installed Apache Ant building tool.
+2) Run Ant in this directory for building the library. 
+
+WAY 2) Self driven build:
+1) Compile sources with the javac.
+2) Package class and necessary resources into .jar archive.
+2) Run dx script over the .jar archive: 
+   dx --dex --output=packageAfter.jar packageBefore.jar
+
+--------------------------------------------------------------------------------
+Author:    Radim Loskot
+E-mail:    xlosko01(at)stud.fit.vutbr.cz
+gmail.com: radim.loskot

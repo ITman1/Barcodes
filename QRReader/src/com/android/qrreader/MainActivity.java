@@ -139,6 +139,7 @@ public class MainActivity extends Activity {
     /** The reference to the camera. */
     private DroidCamera        droidCamera;
     
+    /** Canvas where are drawn positions of the detected QR finder patterns in real-time. */
     private DrawingCanvas      drawingCanvas;
     
     /** Variable informs that read button has been pushed and no snapshot 
@@ -163,12 +164,18 @@ public class MainActivity extends Activity {
     /** The reference to the decoded QR data. */
     private DataSegments       dataSegments;
     
+    /** Array with the image of the camera preview. It us used for passing into JNI detection call. */
     private byte[]             previewDetectionImage;
     
+    /** Detected finder pattern in the image. */
     private DetectedMark[]     detectedMarks;
     
+    /** Lock used for accessing the drawing canvas and other things from the detection thread. */
     private Object             detectedMarksLock = new Object();
     
+    /**
+     *  Handles the message for redrawing the lines on the drawing canvas.
+     */
     private Handler invalidateHandler = new Handler() {
         public void  handleMessage(Message msg) {
             Paint paint = new Paint();
@@ -177,6 +184,7 @@ public class MainActivity extends Activity {
             
             drawingCanvas.removeLines();
             
+            // Inserting lines which should be drawn
             synchronized (detectedMarksLock) {
                 if (detectedMarks != null && !takingPicture) {
                     for (DetectedMark detectedMark : detectedMarks) {
@@ -201,6 +209,10 @@ public class MainActivity extends Activity {
         }
     };
     
+    /**
+     * Implements thread where detection of the QR finder patterns is done.
+     * Calls JNI native function for the detection.
+     */
     class DetectionThread extends Thread {
         public void run() {
             if (droidCamera != null) {
@@ -221,21 +233,27 @@ public class MainActivity extends Activity {
         }
     };
     
+    /** Instance of the detection thread. */
     DetectionThread detectionThread = new DetectionThread();
     
+    /**
+     * Implements thread where locating/decoding QR code is done.
+     * Calls JNI native function for the decoding.
+     */
     class DecodeThread extends Thread {
         public void run() {
             if (snapshotData != null) {
                 Image image = new Image();
-                image.data = snapshotData;Log.d(TAG, "Data length: " + snapshotData.length);
+                image.data = snapshotData;
                 image.compressed = true;
                 
-                dataSegments = QrCodes.readQrCode(image, QrCodes.Requests.GET_QR_CODE, QrCodes.Flags.ALL_FEATURES);               
+                dataSegments = QrCodes.readQrCode(image, 0, 0);               
                 startOpenQrIntent();
             }
         }
     };
     
+    /** Thread used for decoding of the QR code. */
     DecodeThread decodeThread = new DecodeThread();
        
     /** The listener of the click on the read button */

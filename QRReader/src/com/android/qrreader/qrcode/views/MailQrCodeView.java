@@ -73,8 +73,8 @@ public class MailQrCodeView  implements Adapter {
                 // Sending the intent and hoping that there is some application for sending the e-mails
                 intent.setType("plain/text");
                 intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{ receiverEdit.getText().toString()});
-                intent.putExtra(android.content.Intent.EXTRA_SUBJECT, subjectEdit.getText());
-                intent.putExtra(android.content.Intent.EXTRA_TEXT, bodyEdit.getText());
+                intent.putExtra(android.content.Intent.EXTRA_SUBJECT, subjectEdit.getText().toString());
+                intent.putExtra(android.content.Intent.EXTRA_TEXT, bodyEdit.getText().toString());
 
                 Resources res = context.getResources();
                 context.startActivity(Intent.createChooser(intent,  res.getString(R.string.QrCode_Title_Mail_Send)));                

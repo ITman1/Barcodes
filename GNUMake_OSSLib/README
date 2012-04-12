@@ -1,0 +1,30 @@
+================================================================================
+                GNU MAKE - OPERATION SYSTEM SPECIFICS LIBRARY
+================================================================================
+
+GNU Make - Operation System Specifics library is library for the makefiles 
+developed for the GNU Make building tool. This library groups some specific 
+shell commands which may differ on some OS platforms and creates unique 
+interface for using these commands. This enables creating the platform 
+independent makefiles and makes from the GNU make more powerfull tool.
+
+Library is currently implemented for the following OS: Windows NT, Linux
+
+--------------------------------------------------------------------------------
+                     INCLUDING AND USING THIS LIBRARY
+
+Including library into custom Makefile:
+    include GNUMake_OSSLib/include.mk
+
+Calling library functions (each function is prefixed with the "oss_" or variable
+with the "OSS_"):
+    # Removes directory/folder
+    $(call oss_rmdir,dir)
+    # copies header files from the directory "dir" into "dir2" and does not 
+    # print any output of the commands
+    $(call oss_cp,dir,dir2,*.h) $(OSS_RUN_QUIET)
+
+--------------------------------------------------------------------------------
+Author:    Radim Loskot
+E-mail:    xlosko01(at)stud.fit.vutbr.cz
+gmail.com: radim.loskot

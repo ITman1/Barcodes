@@ -17,8 +17,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.qrcode.QrDecoderManager;
 import com.qrcode.QrCodes.DataSegments;
@@ -162,12 +160,12 @@ final public class BaseQrDecoder extends QrDecoder {
         SmsQrCode smsQrCode = new SmsQrCode();
         String strData = new String(data).substring(SMS_SCHEMA.length() + 1);
         
-        if (regexMatches(SMS_URI_NUMBERS_REXEG, strData)) {
-            smsQrCode.setBody(QrDecoderManager.decodeUri(regexMatch(SMS_URI_NUMBERS_REXEG, strData, 5)));
-            return (smsQrCode.setReceiver(regexMatch(SMS_URI_NUMBERS_REXEG, strData, 3)))? smsQrCode : null;
-        } else if (regexMatches(SMS_URI_BROKEN_REGEX, strData)) {
-            smsQrCode.setBody(QrDecoderManager.decodeUri(regexMatch(SMS_URI_BROKEN_REGEX, strData, 2)));
-            return (smsQrCode.setReceiver(regexMatch(SMS_URI_BROKEN_REGEX, strData, 1)))? smsQrCode : null;
+        if (QrDecoderManager.regexMatches(SMS_URI_NUMBERS_REXEG, strData)) {
+            smsQrCode.setBody(QrDecoderManager.decodeUri(QrDecoderManager.regexMatch(SMS_URI_NUMBERS_REXEG, strData, 5)));
+            return (smsQrCode.setReceiver(QrDecoderManager.regexMatch(SMS_URI_NUMBERS_REXEG, strData, 3)))? smsQrCode : null;
+        } else if (QrDecoderManager.regexMatches(SMS_URI_BROKEN_REGEX, strData)) {
+            smsQrCode.setBody(QrDecoderManager.decodeUri(QrDecoderManager.regexMatch(SMS_URI_BROKEN_REGEX, strData, 2)));
+            return (smsQrCode.setReceiver(QrDecoderManager.regexMatch(SMS_URI_BROKEN_REGEX, strData, 1)))? smsQrCode : null;
         }
         
         return null;
@@ -203,16 +201,16 @@ final public class BaseQrDecoder extends QrDecoder {
         int queryIndex = mailtoStr.indexOf('?');
         String query = (queryIndex != -1)? mailtoStr.substring(queryIndex) : null;
 
-        mailQrCode.setBody(QrDecoderManager.decodeUri(regexMatch(MAILTO_QUERY_BODY_REGEX, query, 1)));
-        mailQrCode.setSubject(QrDecoderManager.decodeUri(regexMatch(MAILTO_QUERY_SUBJECT_REGEX, query, 1)));
+        mailQrCode.setBody(QrDecoderManager.decodeUri(QrDecoderManager.regexMatch(MAILTO_QUERY_BODY_REGEX, query, 1)));
+        mailQrCode.setSubject(QrDecoderManager.decodeUri(QrDecoderManager.regexMatch(MAILTO_QUERY_SUBJECT_REGEX, query, 1)));
 
         // Getting receiver e-mail address
         String receiver = mailtoStr.substring(
-                              // Start behind the "mailto:"
-                              MAILTO_SCHEMA.length() + 1,                           
-                              // If the query is present, stop here, otherwise at the end of the string
-                              (queryIndex != -1)? queryIndex : mailtoStr.length()   
-                          );
+                // Start behind the "mailto:"
+                MAILTO_SCHEMA.length() + 1,                           
+                // If the query is present, stop here, otherwise at the end of the string
+                (queryIndex != -1)? queryIndex : mailtoStr.length()   
+        );
         return (mailQrCode.setReceiver(receiver))? mailQrCode : null;
     }
     
@@ -228,42 +226,7 @@ final public class BaseQrDecoder extends QrDecoder {
         return (telephoneQrCode.setTelephone(telephone))? telephoneQrCode : null;
     }
     
-    /**
-     * Returns the match group on the passed string.
-     *
-     * @param pattern The pattern by which to match.
-     * @param against The string on which to match.
-     * @param group The position of the requested match group.
-     * @return The match group on success or null on fail.
-     */
-    private String regexMatch(String pattern, String against, int group) {
-        if (pattern != null && against != null) {
-            Pattern bodyPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-            Matcher matcher = bodyPattern.matcher(against);
-            if (group < matcher.groupCount() + 1 && matcher.find()) {
-                return matcher.group(group);
-            }
-        }
-            
-        return null;
-    }
-    
-    /**
-     * Tests whether the whole string matches the pattern (case insensitive).
-     *
-     * @param pattern The pattern by which to match.
-     * @param against The string on which to match.
-     * @return True, if the whole string matches the pattern, otherwise false.
-     */
-    private boolean regexMatches(String pattern, String against) {
-        if (pattern != null && against != null) {
-            Pattern bodyPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-            Matcher matcher = bodyPattern.matcher(against);
-            return matcher.matches();
-        }
-            
-        return false;
-    }
+
     
 }
 

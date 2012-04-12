@@ -17,6 +17,8 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.qrcode.QrCodes.DataSegments;
 import com.qrcode.decoders.QrDecoder;
@@ -186,6 +188,43 @@ final public class QrDecoderManager {
         }
         
         return null;
+    }
+    
+    /**
+     * Returns the match group on the passed string.
+     *
+     * @param pattern The pattern by which to match.
+     * @param against The string on which to match.
+     * @param group The position of the requested match group.
+     * @return The match group on success or null on fail.
+     */
+    public static String regexMatch(String pattern, String against, int group) {
+        if (pattern != null && against != null) {
+            Pattern bodyPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = bodyPattern.matcher(against);
+            if (group < matcher.groupCount() + 1 && matcher.find()) {
+                return matcher.group(group);
+            }
+        }
+            
+        return null;
+    }
+    
+    /**
+     * Tests whether the whole string matches the pattern (case insensitive).
+     *
+     * @param pattern The pattern by which to match.
+     * @param against The string on which to match.
+     * @return True, if the whole string matches the pattern, otherwise false.
+     */
+    public static boolean regexMatches(String pattern, String against) {
+        if (pattern != null && against != null) {
+            Pattern bodyPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = bodyPattern.matcher(against);
+            return matcher.matches();
+        }
+            
+        return false;
     }
 }
 

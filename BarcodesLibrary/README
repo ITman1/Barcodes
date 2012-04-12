@@ -1,0 +1,48 @@
+================================================================================
+                             BARCODES LIBRARY
+================================================================================
+
+Barcodes library is library that provides interface for detection of the 
+barcodes and their subsequent decoding written in C++ using OpenCV library.
+
+Detection support: QR code model 2
+Decoding support: QR code model 2
+
+--------------------------------------------------------------------------------
+                           BUILDING THE LIBRARY
+
+REQUIREMENTS:
+
+1) Have compiled OpenCV library.
+   See: http://sourceforge.net/projects/opencvlibrary/
+2) Have customized variables OPENCV_INSTALL_DIR, OPENCV_INCLUDE_PATH and
+   OPENCV_LIB_PATH (at the top of the Makefile)
+
+BUILDING:
+1) Run GNU Make inside this directory, library will be compiled into lib directory.
+
+--------------------------------------------------------------------------------
+                           USING THE LIBRARY
+
+REQUIREMENTS:
+
+1) Have in the search PATH the shared libraries of the OpenCV and compiled 
+   shared library of the Barcodes Library.
+2) Have generated include header files of the Barcodes Library (inside include
+   directory). That can be done with GNU Make inside this directory:
+       make gen-include
+3) For compiling include header files of this library and OpenCV library and 
+   for building executable/library link Barcodes Library and all libraries of 
+   the OpenCV.
+
+EXAMPLE OF USING LIBRARY
+    #include <barlib/barcodes/qr/QrBarcode.h>
+    using namespace barcodes;
+
+    Image image = Image::fromFileGrayscale("test.jpg");
+    QrBarcode::detect(image, detectedMarks);
+
+--------------------------------------------------------------------------------
+Author:    Radim Loskot
+E-mail:    xlosko01(at)stud.fit.vutbr.cz
+gmail.com: radim.loskot

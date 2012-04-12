@@ -112,8 +112,11 @@ void QrDecoder::_read_V1_40(Image &image, DataSegments &dataSegments, DetectedMa
 	//>>> 2) PERSPECTIVE TRANSFORMATION OF THE QR CODE
 
 	int warpPerspectiveSize = (binarized.cols > binarized.rows)? binarized.cols : binarized.rows;
-	Mat perspWarped = warpPerspective(binarized, corners, false, Size(warpPerspectiveSize, warpPerspectiveSize));
-	perspWarped = QrDetector::binarize(perspWarped, QrDetector::FLAG_GLOBAL_THRESH);
+	Mat perspWarped = warpPerspective(image, corners, false, Size(warpPerspectiveSize, warpPerspectiveSize));
+	/*Mat perspWarped;
+	cv::GaussianBlur(image2, perspWarped, cv::Size(0, 0), 3);
+	cv::addWeighted(image2, 1.5, perspWarped, -0.5, 0, perspWarped);*/
+	perspWarped = QrDetector::binarize(perspWarped, QrDetector::FLAG_ADAPT_THRESH | QrDetector::FLAG_DISTANCE_NEAR);
 	Mat transformation = getPerspectiveTransform(corners, Size(warpPerspectiveSize, warpPerspectiveSize));
 	_detectedMarks.perspectiveTransform(transformation);
 	DEBUG_WRITE_IMAGE("warped.jpg", perspWarped);

@@ -168,7 +168,8 @@ public class OpenQrActivity extends Activity {
         
         // Getting QR data from the intent
         DataSegments dataSegments = getQrCodeSegments();
-        if (dataSegments == null || dataSegments.segments.length == 0) {
+
+        if (dataSegments == null || dataSegments.segments == null || dataSegments.segments.length == 0) {
             resultTitle.setText(R.string.OpenQrActivity_Title_QrNoFound);
             resultSubTitle.setVisibility(TextView.INVISIBLE);
             removeButton(RESULT_SAVE_QRCODE_CLICKED);
