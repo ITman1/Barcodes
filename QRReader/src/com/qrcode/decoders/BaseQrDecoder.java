@@ -181,10 +181,15 @@ final public class BaseQrDecoder extends QrDecoder {
     private SmsQrCode smstoQrCode(byte[] data) {
         SmsQrCode smsQrCode = new SmsQrCode();
         String strData = new String(data).substring(SMSTO_SCHEMA.length() + 1);
-        if (QrDecoderManager.regexMatches(SMS_URI_BROKEN_REGEX, strData)) {
+        
+        if (QrDecoderManager.regexMatches(SMS_URI_NUMBERS_REXEG, strData)) {
+            smsQrCode.setBody(QrDecoderManager.decodeUri(QrDecoderManager.regexMatch(SMS_URI_NUMBERS_REXEG, strData, 5)));
+            return (smsQrCode.setReceiver(QrDecoderManager.regexMatch(SMS_URI_NUMBERS_REXEG, strData, 3)))? smsQrCode : null;
+        } else if (QrDecoderManager.regexMatches(SMS_URI_BROKEN_REGEX, strData)) {
             smsQrCode.setBody(QrDecoderManager.decodeUri(QrDecoderManager.regexMatch(SMS_URI_BROKEN_REGEX, strData, 2)));
             return (smsQrCode.setReceiver(QrDecoderManager.regexMatch(SMS_URI_BROKEN_REGEX, strData, 1)))? smsQrCode : null;
         }
+        
         return null;
     }
         
