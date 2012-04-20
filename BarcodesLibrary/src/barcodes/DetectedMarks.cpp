@@ -45,13 +45,8 @@ void DetectedMarks::filter(double centerPointsMinDistance) {
 				&& (fabs(centerDiff.dx) / (double)refMarkBox.boundingRect().width < centerPointsMinDistance)
 				&& (fabs(centerDiff.dy) / (double)refMarkBox.boundingRect().height < centerPointsMinDistance)
 			)  { // This mark is too close, filter it
-				if (iter2 == iter + 1) {
-					// If we are removing the following after the iter, we have to update where iterator points out.
 					iter2 = this->erase(iter2);
 					iter = this->begin();
-				} else {
-					iter2 = this->erase(iter2);
-				}
 			} else {
 				iter2++;
 			}

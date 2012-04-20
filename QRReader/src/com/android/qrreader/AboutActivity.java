@@ -17,7 +17,9 @@ import com.android.camera.DroidCamera;
 
 import android.app.Activity;
 import android.content.pm.ApplicationInfo;
+import android.graphics.ImageFormat;
 import android.hardware.Camera.Parameters;
+import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -40,7 +42,7 @@ public class AboutActivity extends Activity {
         setContentView(R.layout.about_layout);
         
         TextView textView;
-        DroidCamera droidCamera = DroidCamera.open();
+        DroidCamera droidCamera = DroidCamera.open(this);
         if (droidCamera != null) {
             Parameters camParams = droidCamera.getCamera().getParameters();
             List<String> flashModes = camParams.getSupportedFlashModes();
@@ -66,6 +68,31 @@ public class AboutActivity extends Activity {
             // Printing whether this device supports the auto-focusing
             textView = (TextView) findViewById(R.id.CameraAutoFocus);
             if (droidCamera.autoFocusSupport()) textView.setText(R.string.yes);
+            
+            
+            // Printing preview size
+            textView = (TextView) findViewById(R.id.MiscellaneousCameraPreviewSize);
+            if (droidCamera.autoFocusSupport()) textView.setText(R.string.yes);
+            
+            textView = (TextView) findViewById(R.id.MiscellaneousCameraPreviewColorFormat);
+            String str;
+            switch (camParams.getPreviewFormat()) {
+            case ImageFormat.JPEG: str = "JPEG"; break;
+            case ImageFormat.NV16: str = "NV16"; break;
+            case ImageFormat.NV21: str = "NV21"; break;
+            case ImageFormat.RGB_565: str = "RGB_565"; break;
+            case ImageFormat.YUY2: str = "YUY2"; break;
+            case ImageFormat.UNKNOWN: str = "UNKNOWN"; break;
+            default: str = "OTHER"; break;
+            }
+            textView.setText(str);
+            
+            Size s;
+            if ((s = droidCamera.getOptimalPreviewSize()) != null) {              
+                // Printing preview color format
+                textView = (TextView) findViewById(R.id.MiscellaneousCameraPreviewSize);
+                if (droidCamera.autoFocusSupport()) textView.setText(s.width + ":" + s.height);
+            }
             
             droidCamera.release();
         }

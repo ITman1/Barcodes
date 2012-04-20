@@ -35,11 +35,15 @@ namespace jni {
 class jImage: public JNIWrapper {
 private:
 	const static string CLASS_NAME;
+	jbyteArray dataArr;
+	jbyte *data_ptr;
 
+	void releaseDataReference();
 public:
 	jImage(JNIEnv *env);
 	jImage(JNIEnv *env, jobject jObject);
 	jImage(JNIEnv *env, Image image);
+	~jImage();
 
 	Size getSize();
 	void setSize(Size size);

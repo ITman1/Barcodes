@@ -91,6 +91,7 @@ public class InstallableQrCodeViewManager {
         adapterRegistry.registerAdapter(ContactQrCodeView.class);
         adapterRegistry.registerAdapter(TelephoneQrCodeView.class);
         adapterRegistry.registerAdapter(SmsQrCodeView.class);
+        adapterRegistry.registerAdapter(TextQrCodeView.class);
     }
     
     /**

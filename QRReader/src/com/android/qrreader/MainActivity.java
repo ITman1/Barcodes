@@ -37,6 +37,7 @@ import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.PreviewCallback;
+import android.hardware.Camera.Size;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -173,6 +174,12 @@ public class MainActivity extends Activity {
     /** Lock used for accessing the drawing canvas and other things from the detection thread. */
     private Object             detectedMarksLock = new Object();
     
+    /** Counter for steps when FPS should be displayed. */
+    private int                fpsStep = 0;
+    
+    /** Is true when real time detection is enabled in the settings. */
+    private boolean            realtimeDetection;
+    
     /**
      *  Handles the message for redrawing the lines on the drawing canvas.
      */
@@ -216,19 +223,23 @@ public class MainActivity extends Activity {
     class DetectionThread extends Thread {
         public void run() {
             if (droidCamera != null) {
-                Rect previewSize = droidCamera.previewRect();
-                Image image = new Image();
-                image.data = previewDetectionImage;
-                image.colorFormat = 0x03;
-                image.compressed = false;
-                image.size = new QrCodes.Size(previewSize.width(), previewSize.height());
-                               
-                synchronized (detectedMarksLock) {
-                    detectedMarks = QrCodes.detectQrCode(image, 0, 0);
-                };
-                                          
-                droidCamera.getCamera().addCallbackBuffer(previewDetectionImage);
-                invalidateHandler.sendEmptyMessage(0);
+                Size previewSize = droidCamera.previewSize();
+                Rect previewRect = droidCamera.previewRect();
+                if (previewSize != null) {
+                    Image image = new Image();
+                    image.data = previewDetectionImage;
+                    image.colorFormat = 0x03;
+                    image.compressed = false;
+                    image.size = new QrCodes.Size(previewSize.width, previewSize.height);
+                                   
+                    synchronized (detectedMarksLock) {
+                        detectedMarks = QrCodes.detectQrCode(image, 0, 0);
+                        DetectedMark.scaleOffsetMarks(detectedMarks, new QrCodes.Size(previewSize.width, previewSize.height), previewRect);
+                    };
+                                              
+                    droidCamera.getCamera().addCallbackBuffer(previewDetectionImage);
+                    invalidateHandler.sendEmptyMessage(0);
+                }
             }
         }
     };
@@ -248,7 +259,7 @@ public class MainActivity extends Activity {
                 image.compressed = true;
                 
                 dataSegments = QrCodes.readQrCode(image, 0, 0);               
-                startOpenQrIntent();
+                startOpenQrIntent(image.data);
             }
         }
     };
@@ -279,6 +290,7 @@ public class MainActivity extends Activity {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
                 Boolean autoFocus = prefs.getBoolean("Preferences_Camera_AutoFocus", false);
                 
+                cameraPreviewLayout.setVisibility(CameraPreview.INVISIBLE);
                 // Taking the picture or registering the flash callback
                 if (autoFocus && droidCamera.autoFocusSupport()) {
                     droidCamera.getCamera().autoFocus(autoFocusCallback);
@@ -302,16 +314,20 @@ public class MainActivity extends Activity {
      * TODO: Add support for real-time decoding. (in future) */
     private PreviewCallback droidCamera_PreviewCallback = new PreviewCallback() {
         public void onPreviewFrame(byte[] data, Camera camera) {
-            Log.i(MainActivity.TAG, "PreviewCallback::onPreviewFrame");
             
             // Displaying the FPS
             Resources res = getResources();
             String fps_text = res.getString(R.string.QRReaderActivity_PreviewFPS_TextView);
-            previewfps_TextView.setText(fps_text + " " + (long)(1 / (double)((System.currentTimeMillis()
-                    - lastTimePreviewFPS) / (double)1000)));
-            lastTimePreviewFPS = System.currentTimeMillis();
             
-            if (data!= null && !detectionThread.isAlive() && !takingPicture) {
+            fpsStep++;
+            if (fpsStep >= 3) {
+                previewfps_TextView.setText(fps_text + " " + (long)((1 / (double)((System.currentTimeMillis()
+                        - lastTimePreviewFPS) / (double)1000)) * 3));
+                lastTimePreviewFPS = System.currentTimeMillis();
+                fpsStep = 0;
+            }
+            
+            if (data!= null && !detectionThread.isAlive() && !takingPicture && realtimeDetection) {
                 previewDetectionImage = data;
                 detectionThread = new DetectionThread();
                 detectionThread.setPriority(Thread.NORM_PRIORITY + 1); 
@@ -390,7 +406,7 @@ public class MainActivity extends Activity {
         }
         
         // Saving the QR code if required.
-        if ((qrcodeSaveMethod.equals("autoSave")) 
+        if ((qrcodeSaveMethod.equals("autoSave") && dataSegments != null && dataSegments.segments != null && dataSegments.segments.length > 0) 
                 || ((resultCode & OpenQrActivity.RESULT_SAVE_QRCODE_CLICKED) > 0)
                 || ((resultCode & OpenQrActivity.RESULT_SAVE_BOTH_BUTTON_CLICKED) > 0)) {
                     
@@ -405,7 +421,7 @@ public class MainActivity extends Activity {
     /**
      * Sends an intent for opening the decoded QR code.
      */
-    private void startOpenQrIntent() {
+    private void startOpenQrIntent(byte[] warpedQrCode) {
         FileOutputStream fos;
         
         // Getting informations about saving methods, which will be used for
@@ -422,9 +438,9 @@ public class MainActivity extends Activity {
         try {
             // Saving the image into the internal storage for loading it from
             // here by the Open QR activity 
-            if (showImage) {
+            if (showImage && warpedQrCode != null && warpedQrCode.length > 0) {
                 fos = openFileOutput(TMP_QR_IMAGE_FILENAME, Context.MODE_PRIVATE);
-                fos.write(snapshotData);
+                fos.write(warpedQrCode);
                 fos.close();
             }
             
@@ -557,6 +573,7 @@ public class MainActivity extends Activity {
         // Setting window features and flags for making available the whole display
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         
         // Setting the default shared preferences on first run
@@ -698,7 +715,6 @@ public class MainActivity extends Activity {
         } else if (prefFormat.equals("RAW")) {
             droidCamera.getCamera().takePicture(null, takePictureCallback, null);
         } */
-        cameraPreviewLayout.setVisibility(CameraPreview.INVISIBLE);
         droidCamera.getCamera().takePicture(null, null, takePictureCallback);
     }
     
@@ -709,8 +725,10 @@ public class MainActivity extends Activity {
     private void startDroidCamera() {
         Log.i(TAG, "startDroidCamera");
         
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        
         // Opening the camera
-        if ((droidCamera = DroidCamera.open()) == null) {
+        if ((droidCamera = DroidCamera.open(this)) == null) {
             read_btn.setEnabled(false);
             Log.e(TAG, "Failed to open DroidCamera!");
             showErrorAlert(R.string.Errors_Camera_Failure);
@@ -719,7 +737,9 @@ public class MainActivity extends Activity {
         
         // Start camera previewing
         if (takingPicture == false) {
-            droidCamera.startPreviewing(cameraPreview);
+            String size = prefs.getString("Preferences_Camera_Preview_Resolution", null);
+            Size _size = parseSize(droidCamera.getCamera(), size);
+            droidCamera.startPreviewing(cameraPreview, _size);
             droidCamera.setPreviewCallback(droidCamera_PreviewCallback);
             status_LinearLayout.setVisibility(LinearLayout.INVISIBLE);
             statusText_TextView.setText("");
@@ -747,11 +767,14 @@ public class MainActivity extends Activity {
         
         // Removes the status layout from the camera preview.
         // Because snapshot callback has been probably aborted.
-        takingPicture = false;       
+        takingPicture = false;
         status_LinearLayout.setVisibility(LinearLayout.INVISIBLE);
         statusText_TextView.setText("");
+        invalidateHandler.removeMessages(0);
+        drawingCanvas.removeLines();
+        drawingCanvas.invalidate();
     }
-       
+    
     /**
      * Retrieves the set flash mode which is selected in the preferences by user.
      *
@@ -782,18 +805,21 @@ public class MainActivity extends Activity {
      */
     private void applySettings() {
         
-        // Visibility of the FPS text view
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        
+        realtimeDetection = prefs.getBoolean("Preferences_QRCodes_Realtime_Detection", true);
+        
+        // Visibility of the FPS text view        
         previewfps_TextView.setVisibility(
             (prefs.getBoolean("Preferences_View_ShowFPS", true))? TextView.VISIBLE : TextView.INVISIBLE
         );      
         detectionfps_TextView.setVisibility(
-            (prefs.getBoolean("Preferences_View_ShowFPS", true))? TextView.VISIBLE : TextView.INVISIBLE
+            (prefs.getBoolean("Preferences_View_ShowFPS", true) && realtimeDetection)? TextView.VISIBLE : TextView.INVISIBLE
         );      
         
         // Visibility of the center mark
         centerMark.setVisibility(
-            (prefs.getBoolean("Preferences_View_ShowTarget", true))? ImageView.VISIBLE : ImageView.INVISIBLE
+            (prefs.getBoolean("Preferences_View_ShowTarget", false))? ImageView.VISIBLE : ImageView.INVISIBLE
         );
         
         if (droidCamera != null) {
@@ -815,17 +841,27 @@ public class MainActivity extends Activity {
             
             // Snapshot resolution
             String size = prefs.getString("Preferences_Images_Resolution", null);
-            int pos = size.indexOf('_');
-            if (size != null && pos != -1 && size.length() > pos + 1) {
-                int width = Integer.parseInt(size.substring(0, pos));
-                int height = Integer.parseInt(size.substring(pos + 1));
-                camParams.setPictureSize(width, height);
+            Size _size = parseSize(droidCamera.getCamera(), size);
+            if (_size != null) {
+                camParams.setPictureSize(_size.width, _size.height);
             }
             
             // Finally set the new one parameters
             cam.setParameters(camParams);
         }
                
+    }
+    
+    private Size parseSize(Camera cam, String size) {
+        if (cam != null && size != null) {
+            int pos = size.indexOf('_');
+            if (size != null && pos != -1 && size.length() > pos + 1) {
+                int width = Integer.parseInt(size.substring(0, pos));
+                int height = Integer.parseInt(size.substring(pos + 1));
+                return cam.new Size(width, height);
+            }
+        }
+        return null;
     }
        
     /**

@@ -28,14 +28,15 @@ public class SmsQrCode extends QrCode {
      * @param receiver The number of the receiver.
      * @return True, if successful, otherwise false.
      */
-    public boolean setReceiver(String receiver) {
+    public boolean setReceiver(String rec) {
+        String receiver = rec.trim();
         try {
             char leadingChar = receiver.charAt(0);
             
             if (leadingChar == '+') {
-                Integer.parseInt(receiver.substring(1));
+                Long.parseLong(receiver.substring(1));
             } else {
-                Integer.parseInt(receiver);
+                Long.parseLong(receiver);
             }
             
             this.receiver = receiver;

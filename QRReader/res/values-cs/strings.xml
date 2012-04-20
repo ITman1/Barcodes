@@ -16,16 +16,17 @@
     
     <string name="QRReaderAboutActivity_Title">O aplikaci</string>
     <string name="QRReaderAboutActivity_License">License</string>
-    <string name="QRReaderAboutActivity_License_Text">Apache License, version 2.0</string>
+    <string name="QRReaderAboutActivity_License_Text">GNU General Public License, verze 3.0</string>
     <string name="QRReaderAboutActivity_Author">Autor</string>
     <string name="QRReaderAboutActivity_Author_Text">Radim Loskot</string>
     <string name="QRReaderAboutActivity_Summary">Popis</string>
-    <string name="QRReaderAboutActivity_Summary_Text">Popis aplikace tady</string>
+    <string name="QRReaderAboutActivity_Summary_Text">Aplikace Čtečka QR kódu pro Android slouží pro detekci těchto kódů v reálném obraze a jejich následné dekódování na žádost uživatele.</string>
     <string name="QRReaderAboutActivity_Features">Podporované rozšíření</string>
+    <string name="QRReaderAboutActivity_Miscellaneous_Informations">Ostatní informace</string>
     
     <string name="QRReaderOpenQrActivity_SaveImageButtonText">Uložit obrázek</string>
     <string name="QRReaderOpenQrActivity_SaveQRCodeButtonText">Uložit QR kód</string>
-    <string name="QRReaderOpenQrActivity_SaveBothButtonText">Uložit oboje</string>
+    <string name="QRReaderOpenQrActivity_SaveBothButtonText">Uložit vše</string>
     
     <string name="InstallationManagerActivity_unknown">(neznámý)</string>
     <string name="InstallationManagerActivity_brief">Popis:</string>
@@ -45,8 +46,9 @@
     <string name="OpenQrActivity_RawResult_TextNone">(žádný)</string>
     <string name="OpenQrActivity_RawResult_DataNone">(žádná)</string>
     <string name="OpenQrActivity_RawResult_TryLuck">Zkusit štěstí!</string>
-    <string name="OpenQrActivity_RawResult_TryLuckBrief">Pokusí se odeslat dekódovaný text jako akci. Tato akce může, ale nemusí, být zachycena jinou aplikací, která může být zchopna zpracovat dekódovaný QR kód!</string>
+    <string name="OpenQrActivity_RawResult_TryLuckBrief">Pokusí se odeslat dekódovaný text jako akci. Tato akce může, ale nemusí být zachycena jinou aplikací, která může být zchopna zpracovat dekódovaný QR kód!</string>
     <string name="OpenQrActivity_RawResult_TryLuckWith">Zkusit štěstí s?</string>
+    <string name="OpenQrActivity_Decode_Warning">Ověření bezchybnosti selhalo, dekódovaný kód může obsahovat chyby.</string>
     
     <string name="QrCode_Title_Url">(URL odkaz)</string>
     <string name="QrCode_Title_Url_GoTo">Přejít na</string>
@@ -70,6 +72,11 @@
     <string name="QrCode_Title_Telephone">(telefon)</string>
     <string name="QrCode_Title_Telephone_Number">Telefonní číslo</string>
     <string name="QrCode_Title_Telephone_Call">VOLAT</string>
+    
+    <string name="QrCode_Title_Text">(text)</string>
+    <string name="QrCode_Title_Text_Send_Sms">Odeslat SMS</string>
+    <string name="QrCode_Title_Text_Send_Mail">Odeslat mail</string>   
+    <string name="QrCode_Title_Text_Read_Text">Přečtený text:</string>   
     
     <string name="QrCode_Title_Contact">(kontakt)</string>
 </resources>

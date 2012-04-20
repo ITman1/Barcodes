@@ -32,6 +32,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
+import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.CheckBoxPreference;
@@ -80,9 +81,9 @@ public class SettingsActivity extends PreferenceActivity {
                 File.separator + res.getString(R.string.app_name) +
                 File.separator + res.getString(R.string.dir_qrcodes));
         
-        // Sets default image resolution
-        DroidCamera droidCamera = DroidCamera.open();
+        DroidCamera droidCamera = DroidCamera.open(context);
         if (droidCamera != null) {
+            // Sets default image resolution
             List<Camera.Size> sizes = droidCamera.getCamera().getParameters().getSupportedPictureSizes();
             
             if (sizes.size() > 0) {
@@ -90,7 +91,17 @@ public class SettingsActivity extends PreferenceActivity {
                         "%d_%d", sizes.get(sizes.size() / 2).width, sizes.get(sizes.size() / 2).height)
                 );
             }
+            
+            // Sets default camera preview resolution
+            Size size = droidCamera.getOptimalPreviewSize();
+            
+            if (size != null) {
+                editor.putString("Preferences_Camera_Preview_Resolution", String.format(
+                        "%d_%d", size.width, size.height)
+                );
+            }
             droidCamera.release();
+
         }
         
         editor.commit();
@@ -197,7 +208,7 @@ public class SettingsActivity extends PreferenceActivity {
         ListPreference flashPreference = (ListPreference)findPreference("Preferences_Camera_Flash");
         
         // Disables the setting of sum preferences when the camera does not support this features
-        DroidCamera droidCamera = DroidCamera.open();
+        DroidCamera droidCamera = DroidCamera.open(this);
         if (droidCamera != null) {
             // Enable/Disable autofocus preference
             autoFocusPreference.setEnabled(droidCamera.autoFocusSupport());
@@ -223,6 +234,20 @@ public class SettingsActivity extends PreferenceActivity {
             
             resolutionsPreference.setEntries((CharSequence[])entries.toArray(new CharSequence[entries.size()]));
             resolutionsPreference.setEntryValues((CharSequence[])entryValues.toArray(new CharSequence[entryValues.size()]));
+            
+            // Sets resolution entries of camera preview
+            ListPreference previewResolutionsPreference = (ListPreference)findPreference("Preferences_Camera_Preview_Resolution");
+            entries.clear();
+            entryValues.clear();
+            sizes = droidCamera.getCamera().getParameters().getSupportedPreviewSizes();
+            
+            for (Camera.Size size : sizes) {
+                entries.add(String.format("%d x %d", size.width, size.height));
+                entryValues.add(String.format("%d_%d", size.width, size.height));
+            }
+            
+            previewResolutionsPreference.setEntries((CharSequence[])entries.toArray(new CharSequence[entries.size()]));
+            previewResolutionsPreference.setEntryValues((CharSequence[])entryValues.toArray(new CharSequence[entryValues.size()]));
         }
         
         // Registering the listener of the click for opening the about activity

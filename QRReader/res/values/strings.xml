@@ -16,12 +16,13 @@
     
     <string name="QRReaderAboutActivity_Title">About application</string>
     <string name="QRReaderAboutActivity_License">License</string>
-    <string name="QRReaderAboutActivity_License_Text">Apache License, version 2.0</string>
+    <string name="QRReaderAboutActivity_License_Text">GNU General Public License, version 3.0</string>
     <string name="QRReaderAboutActivity_Author">Author</string>
     <string name="QRReaderAboutActivity_Author_Text">Radim Loskot</string>
     <string name="QRReaderAboutActivity_Summary">Summary</string>
-    <string name="QRReaderAboutActivity_Summary_Text">Application summary text here</string>
+    <string name="QRReaderAboutActivity_Summary_Text">Application QR Reader for Android serves for the detection of the QR codes in the real-time camera preview and decoding of the QR codes on demand.</string>
     <string name="QRReaderAboutActivity_Features">Support of the features</string>
+    <string name="QRReaderAboutActivity_Miscellaneous_Informations">Miscellaneous informations</string>
     
     <string name="QRReaderOpenQrActivity_SaveImageButtonText">Save image</string>
     <string name="QRReaderOpenQrActivity_SaveQRCodeButtonText">Save QR code</string>
@@ -45,8 +46,9 @@
     <string name="OpenQrActivity_RawResult_TextNone">(none)</string>
     <string name="OpenQrActivity_RawResult_DataNone">(none)</string>
     <string name="OpenQrActivity_RawResult_TryLuck">Try luck!</string>
-    <string name="OpenQrActivity_RawResult_TryLuckBrief">Tries to send the decoded text as an action. This action might be captured by an 3rd party application which can handle this decoded QR code!</string>
+    <string name="OpenQrActivity_RawResult_TryLuckBrief">Tries to send the decoded text as an intent action. This action might be captured by 3rd party application which can handle this decoded QR code.</string>
     <string name="OpenQrActivity_RawResult_TryLuckWith">Try luck with?</string>
+    <string name="OpenQrActivity_Decode_Warning">Error correction failed. Decoded QR code might be invalid.</string>
     
     <string name="QrCode_Title_Url">(URL link)</string>
     <string name="QrCode_Title_Url_GoTo">Go to</string>
@@ -70,6 +72,11 @@
     <string name="QrCode_Title_Telephone">(telephone)</string>
     <string name="QrCode_Title_Telephone_Number">Telephone number</string>
     <string name="QrCode_Title_Telephone_Call">CALL</string>
+    
+    <string name="QrCode_Title_Text">(text)</string>
+    <string name="QrCode_Title_Text_Send_Sms">Send SMS</string>
+    <string name="QrCode_Title_Text_Send_Mail">Send mail</string>   
+    <string name="QrCode_Title_Text_Read_Text">Decoded text:</string>  
     
     <string name="QrCode_Title_Contact">(contact)</string>
 </resources>

@@ -2,9 +2,9 @@
                         BARCODES - root directory
 ================================================================================
 
-This directory contains a few directories where each (except Doc) is required 
-for building the result application of the QR Reader for Android. Each directory
-also represents one Eclipse project.
+This directory contains a few directories where each is required for building
+the result application of the QR Reader for Android. Each directory also
+represents one Eclipse project.
 
 DIRECTORY DESCRIPTION:
 

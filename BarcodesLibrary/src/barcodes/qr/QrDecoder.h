@@ -46,6 +46,13 @@ public:
 			QrDetector::REPAIR_FLAGS | QrDetector::DISTANCE_FLAGS | QrDetector::FLAG_QR_MARK_MATCH_TOLERANCE_NORMAL) const;
 
 	/**
+	 * Returns last processed image during reading.
+	 *
+	 * @return Last processed image during reading.
+	 */
+	Image lastProcessedImage() const;
+
+	/**
 	 * Returns instance of the QR decoder.
 	 *
 	 * @return Instance of the QR decoder.
@@ -91,6 +98,11 @@ protected:
 	 * Temporary matrix for calculations.
 	 */
 	mutable Mat transformed;
+
+	/**
+	 * Last processed wrapped image.
+	 */
+	mutable Mat warpedImage;
 
 	QrDecoder() {}
 	virtual ~QrDecoder() {}

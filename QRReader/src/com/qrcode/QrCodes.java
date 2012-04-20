@@ -16,6 +16,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.graphics.Rect;
+
 import com.qrcode.qrcodes.QrCode;
 
 /**
@@ -35,6 +37,21 @@ final public class QrCodes {
      */
     final public class ImageFormats {
         final public static int JPEG = 0x01;
+    };
+    
+    final public static class DecoderModes {
+        public static final int NUMERIC_MODE          = 0x01;
+        public static final int ALPHANUMERIC_MODE     = 0x02;
+        public static final int STRUCTUREDAPPEND_MODE = 0x03;
+        public static final int BYTE_MODE             = 0x04;
+        public static final int FNC1_MODE             = 0x05;
+        public static final int ECI_MODE              = 0x07;
+        public static final int KANJI_MODE            = 0x08;
+        public static final int FNC1_2_MODE           = 0x09;
+    };
+    
+    final public static class DataSegmentsFlags {
+        public static final int DATA_SEGMENTS_CORRUPTED = 0x01;
     };
    
     /**
@@ -65,6 +82,30 @@ final public class QrCodes {
         public Point[] points;
         public double match;
         public int flags;
+        
+        /**
+         * Transforms the points of the detected marks to the specified rectangle.
+         * 
+         * @param detectedMarks Detected marks of which points should be transformed.
+         * @param srcSize Rectangle size in which are currently represented points.
+         * @param destRect Rectangle into which should be transformed points.
+         */
+        public static void scaleOffsetMarks(DetectedMark[] detectedMarks, Size srcSize, Rect destRect) {
+            if (detectedMarks != null) {
+                for (DetectedMark detectedMark : detectedMarks) {
+                    if (detectedMark.points != null) {
+                        for (Point point : detectedMark.points) {
+                            // Scale
+                            point.x = (int)((double)point.x * (double)destRect.width() / (double)srcSize.width);
+                            point.y = (int)((double)point.y * (double)destRect.height() / (double)srcSize.height);
+                            // Offset
+                            point.x += destRect.left;
+                            point.y += destRect.top;
+                        }
+                    }
+                }
+            }
+        }
     };
     
     /**

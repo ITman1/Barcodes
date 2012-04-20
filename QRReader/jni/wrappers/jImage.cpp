@@ -31,14 +31,18 @@ using namespace std;
 
 const string jImage::CLASS_NAME = "com/qrcode/QrCodes$Image";
 
-jImage::jImage(JNIEnv *env) : JNIWrapper(env, CLASS_NAME) {}
+jImage::jImage(JNIEnv *env) : JNIWrapper(env, CLASS_NAME), dataArr(NULL), data_ptr(NULL) {}
 
-jImage::jImage(JNIEnv *env, jobject jObject) : JNIWrapper(env, jObject) {}
+jImage::jImage(JNIEnv *env, jobject jObject) : JNIWrapper(env, jObject), dataArr(NULL), data_ptr(NULL) {}
 
-jImage::jImage(JNIEnv *env, Image image) : JNIWrapper(env, CLASS_NAME) {
+jImage::jImage(JNIEnv *env, Image image) : JNIWrapper(env, CLASS_NAME), dataArr(NULL), data_ptr(NULL) {
 	setColorFormat(image.getColorFormat());
 	setData(image.data, image.rows * image.cols * CV_ELEM_SIZE(image.type()) * CV_ELEM_SIZE1(image.type()));
 	setSize(Size(image.cols, image.rows));
+}
+
+jImage::~jImage() {
+	releaseDataReference();
 }
 
 void jImage::setColorFormat(int colorFormat) {
@@ -62,6 +66,8 @@ void jImage::setData(uchar *data, int length) {
 }
 
 void jImage::getData(ByteArray &data) {
+	data.clear();
+
 	jbyteArray dataArr = getByteArray(this, "data");
 	jsize length = env->GetArrayLength(dataArr);
 	jbyte *data_ptr = env->GetByteArrayElements(dataArr, NULL);
@@ -90,17 +96,29 @@ bool jImage::getCompressed() {
 	return getBooleanField(this, "compressed");
 }
 
+void jImage::releaseDataReference() {
+	if (dataArr != NULL && data_ptr != NULL) {
+		env->ReleaseByteArrayElements(dataArr, data_ptr, JNI_ABORT);
+	}
+}
+
 jImage::operator Image() {
-	ByteArray data;
-	getData(data);
+	releaseDataReference();
+	dataArr = getByteArray(this, "data");
+	jsize length = env->GetArrayLength(dataArr);
+	data_ptr = env->GetByteArrayElements(dataArr, JNI_FALSE);
+
 	int format = getColorFormat();
-	int compressed = getCompressed();
+	bool compressed = getCompressed();
 	Size size = getSize();
+	DEBUG_PRINT(DEBUG_TAG, "Compressed: %d", compressed);
 	DEBUG_PRINT(DEBUG_TAG, "Data length: %d", data.size());
+	DEBUG_PRINT(DEBUG_TAG, "Image size: %d : %d", size.width, size.height);
+
 	if (compressed) {
-		return Image::fromByteArrayGrayscale(data);
-	} else  {
-		return Image(Image(size.height * 3/2, size.width, (void *)&data[0], format).clone(), format);
+		return Image::fromByteArrayGrayscale(data_ptr, length);
+	} else {
+		return Image(Image(size.height * 3/2, size.width, (void *)data_ptr, format), format);
 	}
 }
 

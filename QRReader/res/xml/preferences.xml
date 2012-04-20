@@ -12,7 +12,7 @@
 	         android:title="@string/title_Preferences_Images_SaveMethod"
 	         android:entries="@array/entries_Preferences_SaveMethod"
 	         android:entryValues="@array/entryValues_Preferences_SaveMethod"
-	         android:defaultValue="autoSave" />
+	         android:defaultValue="prompt" />
          <com.android.preferences.ValidateEditTextPreference
              android:key="Preferences_Images_FilePath"
 	         android:summary="@string/summary_Preferences_Images_FilePath"
@@ -65,12 +65,14 @@
 	         android:title="@string/title_Preferences_QRCodes_SaveMethod"
 	         android:entries="@array/entries_Preferences_SaveMethod"
 	         android:entryValues="@array/entryValues_Preferences_SaveMethod"
-	         android:defaultValue="autoSave" />
+	         android:defaultValue="prompt" />
+         
          <com.android.preferences.ValidateEditTextPreference
              android:key="Preferences_QRCodes_FilePath"
 	         android:summary="@string/summary_Preferences_QRCodes_FilePath"
 	         android:title="@string/title_Preferences_QRCodes_FilePath"
              android:defaultValue="QRReader/QR_Codes"/>
+         
          <EditTextPreference 
              android:key="Preferences_QRCodes_FilePrefix"
 	         android:summary="@string/summary_Preferences_QRCodes_FilePrefix"
@@ -86,6 +88,12 @@
 	         android:dialogMessage="@string/dialogMessage_Preferences_QRCodes_Clear"
 	         android:positiveButtonText="@string/yes"
 	         android:negativeButtonText="@string/no"/>
+		 
+		 <CheckBoxPreference 
+	         android:key="Preferences_QRCodes_Realtime_Detection"
+	         android:summary="@string/summary_Preferences_QRCodes_Realtime_Detection"
+	         android:title="@string/title_Preferences_QRCodes_Realtime_Detection" 
+	         android:defaultValue="true" />
      </PreferenceScreen>  
      
      <PreferenceScreen 
@@ -106,6 +114,13 @@
 	         android:entries="@array/entries_Preferences_Camera_Flash"
 	         android:entryValues="@array/entryValues_Preferences_Camera_Flash"
 	         android:defaultValue="off" />
+         
+         <ListPreference
+             android:key="Preferences_Camera_Preview_Resolution"
+	         android:summary="@string/summary_Preferences_Camera_Preview_Resolution"
+	         android:title="@string/title_Preferences_Camera_Preview_Resolution"
+	         android:entries="@array/entries_Preferences_Camera_Preview_Resolution"
+	         android:entryValues="@array/entryValues_Preferences_Camera_Preview_Resolution" />
      </PreferenceScreen>  
      
         

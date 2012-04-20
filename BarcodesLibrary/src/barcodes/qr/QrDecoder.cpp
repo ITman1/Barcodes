@@ -71,6 +71,10 @@ const QrDecoder *QrDecoder::getInstance() {
 	return &DECODER_INSTANCE;
 }
 
+Image QrDecoder::lastProcessedImage() const {
+	return Image(warpedImage, IMAGE_COLOR_GRAYSCALE);
+}
+
 /**
  * Decodes QR code of the versions 1-40 and returns decoded data segments.
  *
@@ -112,18 +116,18 @@ void QrDecoder::_read_V1_40(Image &image, DataSegments &dataSegments, DetectedMa
 	//>>> 2) PERSPECTIVE TRANSFORMATION OF THE QR CODE
 
 	int warpPerspectiveSize = (binarized.cols > binarized.rows)? binarized.cols : binarized.rows;
-	Mat perspWarped = warpPerspective(image, corners, false, Size(warpPerspectiveSize, warpPerspectiveSize));
+	warpedImage = warpPerspective(image, corners, false, Size(warpPerspectiveSize, warpPerspectiveSize));
 	/*Mat perspWarped;
 	cv::GaussianBlur(image2, perspWarped, cv::Size(0, 0), 3);
 	cv::addWeighted(image2, 1.5, perspWarped, -0.5, 0, perspWarped);*/
-	perspWarped = QrDetector::binarize(perspWarped, QrDetector::FLAG_ADAPT_THRESH | QrDetector::FLAG_DISTANCE_NEAR);
+	warpedImage = QrDetector::binarize(warpedImage, QrDetector::FLAG_ADAPT_THRESH | QrDetector::FLAG_DISTANCE_NEAR);
 	Mat transformation = getPerspectiveTransform(corners, Size(warpPerspectiveSize, warpPerspectiveSize));
 	_detectedMarks.perspectiveTransform(transformation);
 	DEBUG_WRITE_IMAGE("warped.jpg", perspWarped);
 
 	//>>> 3) GETTING THE QR CODE VERSION FROM THE IMAGE
 
-	QrVersionInformation versionInformation = QrVersionInformation::fromImage(perspWarped, _detectedMarks);
+	QrVersionInformation versionInformation = QrVersionInformation::fromImage(warpedImage, _detectedMarks);
 
 	if (versionInformation == QrVersionInformation::INVALID_VERSION) {
 		DEBUG_PRINT(DEBUG_TAG, "FAILED TO GET VERSION!");
@@ -134,7 +138,7 @@ void QrDecoder::_read_V1_40(Image &image, DataSegments &dataSegments, DetectedMa
 	//>>> 4) TRANSLATING THE IMAGE TO THE BIT MATRIX
 
 	BitMatrix qrBitMatrix;
-	BitMatrix::fromImage(perspWarped, versionInformation.getQrBarcodeSize(), qrBitMatrix);
+	BitMatrix::fromImage(warpedImage, versionInformation.getQrBarcodeSize(), qrBitMatrix);
 
 	if (qrBitMatrix.data == NULL) {
 		DEBUG_PRINT(DEBUG_TAG, "FAILED TO GET QR BIT MATRIX!");

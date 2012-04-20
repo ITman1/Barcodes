@@ -45,6 +45,7 @@ extern "C" {
 		DEBUG_PRINT(DEBUG_TAG, "Image size: [%d : %d]", img.cols, img.rows);
 
 		if (img.convertColorFormat(IMAGE_COLOR_GRAYSCALE)) {
+			DEBUG_WRITE_IMAGE(std::string("detect_image.jpg") , img);
 			// Detects the finder patterns in the image
 			barcode.detect(img, detectedMarks, QrDetector::FLAG_DISTANCE_MEDIUM | QrDetector::FLAG_QR_MARK_MATCH_TOLERANCE_HIGH);
 
@@ -82,7 +83,20 @@ extern "C" {
 		if (img.convertColorFormat(IMAGE_COLOR_GRAYSCALE)) {
 
 			// Decodes the QR code from the image
-			barcode.decode(img, dataSegments);
+			barcode.decode(img, dataSegments, QrDetector::FLAG_ADAPT_THRESH | QrDetector::FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR
+					| QrDetector::DISTANCE_FLAGS | QrDetector::FLAG_QR_MARK_MATCH_TOLERANCE_NORMAL);
+
+			// If there are any data segments, return found QR code image
+			if (dataSegments.size() > 0) {
+		        vector<uchar> outImageBuffer;
+		        vector<int> param = vector<int>(2);
+		        param[0]=CV_IMWRITE_JPEG_QUALITY;
+		        param[1]=40;
+
+		        imencode(".jpg", QrDecoder::getInstance()->lastProcessedImage(), outImageBuffer,param);
+
+		        jImage(env, image).setData(&outImageBuffer[0], outImageBuffer.size());
+			}
 
 			return jDataSegments(env, dataSegments);
 		}

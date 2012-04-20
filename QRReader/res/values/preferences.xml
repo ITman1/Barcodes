@@ -9,7 +9,7 @@
     <string name="title_Preferences_View">View</string>
     <string name="summary_Preferences_View">Customization of the application and camera preview</string>
     <string name="title_Prefereces_ResetPreferences">Restore default settings</string>
-    <string name="summary_Prefereces_ResetPreferences">Restores first use settings</string>  
+    <string name="summary_Prefereces_ResetPreferences">Restores settings applied after first installation of the application</string>  
     <string name="dialogMessage_Preferences_ResetPreferences">Do you wish to restore default settings?</string>  
     <string name="title_Prefereces_About">About application</string>
     <string name="summary_Prefereces_About">Shows the informations about this application and supported device features</string> 
@@ -20,15 +20,17 @@
     <string name="summary_Preferences_Camera_AutoFocus">Enables or disables auto-focus feature when capturing image</string>
     <string name="title_Preferences_Camera_Flash">Flash mode</string>
     <string name="summary_Preferences_Camera_Flash">Defines when should be the flash invoked</string>
+    <string name="title_Preferences_Camera_Preview_Resolution">Preview resolution</string>
+    <string name="summary_Preferences_Camera_Preview_Resolution">Defines resolution of the real-time preview from the camera</string>
 
     <string name="title_Preferences_View_ShowFPS">Show FPS</string>
-    <string name="summary_Preferences_View_ShowFPS">Displays or hides info about FPS of camera</string>
+    <string name="summary_Preferences_View_ShowFPS">Displays or hides info about FPS of the camera</string>
     <string name="title_Preferences_View_ShowTarget">Show target</string>
-    <string name="summary_Preferences_View_ShowTarget">Defines whether to display the target during camera previewing</string>
-    <string name="title_Preferences_View_ShowDecodedImage">Display decoded image</string>
+    <string name="summary_Preferences_View_ShowTarget">Defines whether to display the target image during camera previewing</string>
+    <string name="title_Preferences_View_ShowDecodedImage">Display captured decoded image</string>
     <string name="summary_Preferences_View_ShowDecodedImage">Defines whether to show the decoded image when the window with the result is displayed</string>
     
-    <string name="title_Preferences_Images_SaveMethod">Saving of image</string>
+    <string name="title_Preferences_Images_SaveMethod">Saving of the images</string>
     <string name="summary_Preferences_Images_SaveMethod">Defines options when to save images</string>
     <string name="title_Preferences_Images_FilePath">Storage path</string>
     <string name="summary_Preferences_Images_FilePath">Defines path where to store captured images</string>
@@ -37,9 +39,9 @@
     <string name="title_Preferences_Images_Format">File format</string>
     <string name="summary_Preferences_Images_Format">Defines the format in which will be images stored</string>
     <string name="title_Preferences_Images_JpegQuality">JPEG quality</string>
-    <string name="summary_Preferences_Images_JpegQuality">Defines the quality of the JPEG format in which will be image stored</string>
+    <string name="summary_Preferences_Images_JpegQuality">Defines the quality of the JPEG format in which will be an image stored</string>
     <string name="title_Preferences_Images_Resolution">Image resolution</string>
-    <string name="summary_Preferences_Images_Resolution">Defines the resolution of the captured image used for the decoding of the QR code</string>
+    <string name="summary_Preferences_Images_Resolution">Defines the resolution of the captured image used for decoding of the QR code</string>
     <string name="dialogMessage_Preferences_Images_JpegQuality">Please set the quality of the JPEG in the percents</string>
     <string name="progessText_Preferences_Images_JpegQuality"> % of the maximal possible quality</string>
     <string name="title_Preferences_Images_Clear">Clear storage directory</string>
@@ -47,14 +49,17 @@
     <string name="dialogMessage_Preferences_Images_Clear">Do you wish to delete all files from the image storage directory?</string>  
     
     <string name="title_Preferences_QRCodes_SaveMethod">Saving of QR code</string>
-    <string name="summary_Preferences_QRCodes_SaveMethod">Defines options when to QR codes</string>
+    <string name="summary_Preferences_QRCodes_SaveMethod">Defines options when to save QR codes</string>
     <string name="title_Preferences_QRCodes_FilePath">Storage path</string>
     <string name="summary_Preferences_QRCodes_FilePath">Defines path where to store decoded QR codes</string>
     <string name="title_Preferences_QRCodes_FilePrefix">File prefix</string>
     <string name="summary_Preferences_QRCodes_FilePrefix">Defines prefix of the files with the decoded QR codes</string>
     <string name="title_Preferences_QRCodes_Clear">Clear storage directory</string>
     <string name="summary_Preferences_QRCodes_Clear">Clears all stored files inside set storage directory for QR codes</string>  
-    <string name="dialogMessage_Preferences_QRCodes_Clear">Do you wish to delete all files from the QR code storage directory?</string> 
+    <string name="dialogMessage_Preferences_QRCodes_Clear">Do you wish to delete all files from the storage directory of QR codes?</string> 
+    <string name="title_Preferences_QRCodes_Realtime_Detection">Real-time detection</string>
+    <string name="summary_Preferences_QRCodes_Realtime_Detection">Defines whether to use the detection of the QR codes in the real-time camera preview</string>  
+    
    
 	<string-array name="entries_Preferences_SaveMethod">
 		<item>Autosave</item>
@@ -91,8 +96,9 @@
 		<item>torch</item>
 	</string-array>  
 	
-	<string-array name="entries_Preferences_Images_Resolution">
-	</string-array>
-	<string-array name="entryValues_Preferences_Images_Resolution">
-	</string-array>  
+	<string-array name="entries_Preferences_Images_Resolution"/>
+	<string-array name="entryValues_Preferences_Images_Resolution"/>
+	
+	<string-array name="entries_Preferences_Camera_Preview_Resolution"/>
+	<string-array name="entryValues_Preferences_Camera_Preview_Resolution"/>
 </resources>

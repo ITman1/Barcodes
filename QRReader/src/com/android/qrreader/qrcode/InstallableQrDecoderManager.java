@@ -119,8 +119,8 @@ final public class InstallableQrDecoderManager {
      * 
      */
     public QrCode decodeQrCode(DataSegments dataSegments) {
-        QrCode qrCode = qrStaticDecoderManager.decodeQrCode(dataSegments);
-        return (qrCode == null)? QrDecoderManager.decodeQrCode(decoders, dataSegments) : qrCode;
+        QrCode qrCode = QrDecoderManager.decodeQrCode(decoders, dataSegments);
+        return (qrCode == null)? qrStaticDecoderManager.decodeQrCode(dataSegments) : qrCode;
     }
     
     /**

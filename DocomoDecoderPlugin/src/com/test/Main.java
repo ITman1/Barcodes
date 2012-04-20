@@ -17,12 +17,15 @@ import com.qrcode.QrCodes.DataSegments;
 
 public class Main {
 public static void main(String[] args) {
+    DocomoDecoder decoder = new DocomoDecoder();
     DataSegments dataSegments = new DataSegments();
     dataSegments.segments = new DataSegment[1];
     dataSegments.segments[0] = new DataSegment();
-    dataSegments.segments[0].data = new String("MATMSG:TO:ahoj@seznam.cz;SUB:Test;BODY:This is a test. Please reply if received.;;").getBytes();
     
-    DocomoDecoder decoder = new DocomoDecoder();
-    decoder.decode(dataSegments);
+    dataSegments.segments[0].data = new String("MATMSG:TO:test@seznam.cz;SUB:Test;BODY:This is a test. Please reply if received.;;").getBytes();
+    assert(decoder.decode(dataSegments) != null);
+
+    dataSegments.segments[0].data = new String("MATMSG:TO: docomo.triangletriangletriangle.taro@docomo.ne.jp;SUB:Test;BODY:This is a test. Please reply if received.;; ").getBytes();
+    assert(decoder.decode(dataSegments) != null);
 }
 }

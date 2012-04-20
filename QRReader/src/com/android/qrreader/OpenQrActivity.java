@@ -35,11 +35,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.qrreader.R;
 import com.android.qrreader.qrcode.InstallableQrCodeViewManager;
 import com.android.qrreader.qrcode.InstallableQrDecoderManager;
 import com.qrcode.QrCodes.DataSegments;
+import com.qrcode.QrCodes.DataSegmentsFlags;
 import com.qrcode.qrcodes.QrCode;
 
 /**
@@ -112,6 +114,9 @@ public class OpenQrActivity extends Activity {
     /** The reference to the text view with the title of the result. */
     private TextView resultTitle;
     
+    /** The reference to the icon which signals error control error. */
+    private ImageView decodeWarning;
+    
     /** The reference to the text view with the subtitle of the result. */
     private TextView resultSubTitle;
     
@@ -124,11 +129,22 @@ public class OpenQrActivity extends Activity {
     /** The registered on pause callbacks - {@link OnPauseCallback}. */
     private List<OnPauseCallback> OnPauseCallbacks = new ArrayList<OnPauseCallback>();
     
+    /** Layout where subtitle is placed. */
+    private LinearLayout resultSutitleLayout;
+    
     /** The listener of the click on the some result button. */
     private OnClickListener resultButtonOnClick = new OnClickListener() {
         public void onClick(View v) {
             setResult(v.getId(), null);
             finish();
+        }
+    };
+    
+    /** The listener of the click on the some result button. */
+    private OnClickListener decodeWarningClick = new OnClickListener() {
+        public void onClick(View v) {
+            Toast warningToast = Toast.makeText(OpenQrActivity.this, R.string.OpenQrActivity_Decode_Warning, Toast.LENGTH_SHORT);
+            warningToast.show();
         }
     };
     
@@ -157,6 +173,9 @@ public class OpenQrActivity extends Activity {
         resultSubTitle = (TextView) findViewById(R.id.QRCodeResultSubTitle);
         resultView = (LinearLayout) findViewById(R.id.QRCodeResult);
         qrCodeImage = (ImageView) findViewById(R.id.QRCodeImage);
+        decodeWarning = (ImageView) findViewById(R.id.decodeWarning);
+        resultSutitleLayout = (LinearLayout) findViewById(R.id.QRCodeResultSubTitleLinearLayout);
+        decodeWarning.setOnClickListener(decodeWarningClick);
         
         // Inflating result buttons and inserting image if exists
         createResultButtons();
@@ -185,7 +204,12 @@ public class OpenQrActivity extends Activity {
         if (qrCode == null) {
             resultSubTitle.setText(R.string.OpenQrActivity_SubTitle_NoDecoder);
             displayRAW(dataSegments.toByteArray());
+            resultSutitleLayout.removeView(decodeWarning);
             return;
+        } else if (dataSegments.flags == DataSegmentsFlags.DATA_SEGMENTS_CORRUPTED) {
+            decodeWarning.setVisibility(ImageView.VISIBLE);
+        } else {
+            resultSutitleLayout.removeView(decodeWarning);
         }
         
         // Getting the view for the QR code
@@ -282,11 +306,11 @@ public class OpenQrActivity extends Activity {
         String rawData = toHexString(data);
         String rawText = new String(data);
         
-        if (!rawText.isEmpty()) {
+        if (rawText.length() > 0) {
             ((TextView)rawResult.findViewById(R.id.rawText)).setText(rawText);
         }
         
-        if (!rawData.isEmpty()) {
+        if (rawData.length() > 0) {
             ((TextView)rawResult.findViewById(R.id.rawData)).setText(rawData);
         }
         

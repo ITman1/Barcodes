@@ -146,8 +146,9 @@ final public class BaseQrDecoder extends QrDecoder {
         try {
             return (urlQrCode.setLink(URI.create(urlString).toURL()))? urlQrCode : null;
         } catch (MalformedURLException e) {
-            return null;
-        }
+        } catch (IllegalArgumentException e) {}
+        
+        return null;
     }
     
     /**
@@ -178,8 +179,13 @@ final public class BaseQrDecoder extends QrDecoder {
      * @return The SMS link QR code.
      */
     private SmsQrCode smstoQrCode(byte[] data) {
-        SmsQrCode urlQrCode = new SmsQrCode();
-        return (urlQrCode.setReceiver(new String(data).substring(SMSTO_SCHEMA.length() + 1)))? urlQrCode : null;
+        SmsQrCode smsQrCode = new SmsQrCode();
+        String strData = new String(data).substring(SMSTO_SCHEMA.length() + 1);
+        if (QrDecoderManager.regexMatches(SMS_URI_BROKEN_REGEX, strData)) {
+            smsQrCode.setBody(QrDecoderManager.decodeUri(QrDecoderManager.regexMatch(SMS_URI_BROKEN_REGEX, strData, 2)));
+            return (smsQrCode.setReceiver(QrDecoderManager.regexMatch(SMS_URI_BROKEN_REGEX, strData, 1)))? smsQrCode : null;
+        }
+        return null;
     }
         
     /**

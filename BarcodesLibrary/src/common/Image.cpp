@@ -54,6 +54,11 @@ Image Image::fromByteArrayRGB(vector<uint8_t> &arr) {
 	return Image(mat, IMAGE_COLOR_RGB);
 }
 
+Image Image::fromByteArrayRGB(void *buffer, int length) {
+	Mat mat = imdecode(Mat(Size(length, 1), CV_8UC1, buffer), CV_LOAD_IMAGE_COLOR);
+	return Image(mat, IMAGE_COLOR_RGB);
+}
+
 /**
  * Decodes and loads the image from the byte array in grayscale color mode.
  *
@@ -62,6 +67,10 @@ Image Image::fromByteArrayRGB(vector<uint8_t> &arr) {
  */
 Image Image::fromByteArrayGrayscale(vector<uint8_t> &arr) {
 	Mat mat = imdecode(Mat(arr), CV_LOAD_IMAGE_GRAYSCALE);
+	return Image(mat, IMAGE_COLOR_GRAYSCALE);
+}
+Image Image::fromByteArrayGrayscale(void *buffer, int length) {
+	Mat mat = imdecode(Mat(Size(length, 1), CV_8UC1, buffer), IMAGE_COLOR_GRAYSCALE);
 	return Image(mat, IMAGE_COLOR_GRAYSCALE);
 }
 

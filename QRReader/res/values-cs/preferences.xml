@@ -19,14 +19,16 @@
     <string name="title_Preferences_Camera_AutoFocus">Zapnout autofocus</string>
     <string name="summary_Preferences_Camera_AutoFocus">Zapne nebo nebo vypne autofocus pro zachycení obrazu</string>
     <string name="title_Preferences_Camera_Flash">Režim blesku</string>
-    <string name="summary_Preferences_Camera_Flash">Definuje za jakých okolnostech má bý blesk spuštěn</string>
+    <string name="summary_Preferences_Camera_Flash">Definuje za jakých okolností má být blesk vyvolán</string>
+    <string name="title_Preferences_Camera_Preview_Resolution">Rozlišení náhledu kamery</string>
+    <string name="summary_Preferences_Camera_Preview_Resolution">Definuje rozlišení zobrazovaného náhledu z kamery</string>
 
     <string name="title_Preferences_View_ShowFPS">Zobrazit FPS</string>
     <string name="summary_Preferences_View_ShowFPS">Zobrazí nebo skryje údaj o snímkové frekvenci kamery</string>
     <string name="title_Preferences_View_ShowTarget">Zobrazit terčík</string>
     <string name="summary_Preferences_View_ShowTarget">Zviditelní nebo odstraní terčík z náhledu kamery</string>
     <string name="title_Preferences_View_ShowDecodedImage">Zobrazit dekódovaný obrázek</string>
-    <string name="summary_Preferences_View_ShowDecodedImage">Definuje zda se má zobrazit v okně pro výsledek dekódování i náhled obrázku</string>
+    <string name="summary_Preferences_View_ShowDecodedImage">Definuje zda se má zobrazit v okně pro výsledek dekódování i náhled dekódovaného obrázku</string>
     
     <string name="title_Preferences_Images_SaveMethod">Ukládání obrázků</string>
     <string name="summary_Preferences_Images_SaveMethod">Definuje způsob ukládání zachyceného obrázku</string>
@@ -55,6 +57,8 @@
     <string name="title_Preferences_QRCodes_Clear">Vymazat úložiště</string>
     <string name="summary_Preferences_QRCodes_Clear">Smaže všechny soubory z úložiště pro QR kódy</string>  
     <string name="dialogMessage_Preferences_QRCodes_Clear">Přejete si smazat všechny soubory z adresáře pro QR kódy?</string> 
+    <string name="title_Preferences_QRCodes_Realtime_Detection">Detekce v náhledu kamery</string>
+    <string name="summary_Preferences_QRCodes_Realtime_Detection">Definuje, zda má docházet k detekci QR kódů v náhledu z kamery</string> 
    
 	<string-array name="entries_Preferences_SaveMethod">
 		<item>Automaticky</item>
@@ -67,6 +71,6 @@
 		<item>Automaticky</item>
 		<item>Vždy během focení</item>
 		<item>Vždy s redukcí červených očí</item>
-		<item>Použít jako baterku</item>
+		<item>Neustále zaplý</item>
 	</string-array>
 </resources>

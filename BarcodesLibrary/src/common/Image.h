@@ -119,6 +119,7 @@ public:
 	 * @return Loaded image.
 	 */
 	static Image fromByteArrayRGB(vector<uint8_t> &arr);
+	static Image fromByteArrayRGB(void *buffer, int length);
 
 	/**
 	 * Decodes and loads the image from the byte array in grayscale color mode.
@@ -127,6 +128,7 @@ public:
 	 * @return Loaded image.
 	 */
 	static Image fromByteArrayGrayscale(vector<uint8_t> &arr);
+	static Image fromByteArrayGrayscale(void *buffer, int length);
 
 	/**
 	 * Returns color format of this image.

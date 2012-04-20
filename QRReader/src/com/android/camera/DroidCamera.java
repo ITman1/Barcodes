@@ -14,6 +14,9 @@ package com.android.camera;
 
 import java.util.List;
 
+import com.android.camera.CameraPreview.CameraPreviewCallback;
+
+import android.content.Context;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.hardware.Camera;
@@ -21,6 +24,7 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.util.Log;
+import android.view.View;
 
 /**
  * Class which extends android API {@link android.hardware.Camera Camera}.
@@ -55,6 +59,21 @@ final public class DroidCamera {
 	
 	/** The preview surface of the camera. */
 	private CameraPreview             camPreviewSurface;
+	
+	/** Preview callback */
+	private PreviewCallback cb;
+	
+	private Context context;
+	
+	/** Callback of the CameraPreview class */
+	private CameraPreviewCallback previewCameraSurfaceCallback = new CameraPreviewCallback() {
+
+        @Override
+        public void previewStarted(Size previewSize) {
+            setPreviewCallback(previewSize);
+        }
+	    
+	};
 
     /**
      * Instantiates a new camera.
@@ -68,7 +87,6 @@ final public class DroidCamera {
      * @see android.hardware.Camera Camera
      */
     public Camera getCamera() {
-        Log.i(TAG, "getCamera");
     	return camera;
     }
    
@@ -89,7 +107,7 @@ final public class DroidCamera {
      * opening failed. If already another camera is opened returns instance 
      * of the opened camera.
      */
-    public static DroidCamera open() {
+    public static DroidCamera open(Context context) {
         synchronized (sLock) { 
             Log.i(TAG, "open");
             Camera cam;
@@ -98,6 +116,7 @@ final public class DroidCamera {
                 try {
                     instance = ((cam = Camera.open()) != null)? new DroidCamera() : null;
                     if (instance != null) instance.camera = cam;
+                    instance.context = context;
                 } catch (RuntimeException e) {
                     e.printStackTrace();
                     instance = null;
@@ -129,9 +148,15 @@ final public class DroidCamera {
      * @param surface The surface where will be rendered camera preview.
      */
     public void startPreviewing(CameraPreview surface) {
+        startPreviewing(surface, null);
+    }
+    
+    public void startPreviewing(CameraPreview surface, Size previewSize) {
         camPreviewSurface = surface;
         if (camPreviewSurface != null) {
             camPreviewSurface.setCamera(camera);
+            camPreviewSurface.setPreviewCallback(previewCameraSurfaceCallback);
+            camPreviewSurface.setPreviewSize(previewSize);
             camPreviewSurface.startPreviewing();
         }
         
@@ -154,10 +179,22 @@ final public class DroidCamera {
      * @param cb The new preview callback.
      */
     public void setPreviewCallback(PreviewCallback cb) {
+        this.cb = cb;
+        if (camera != null && camPreviewSurface != null && camPreviewSurface.isPreviewing()) {
+            setPreviewCallback(camera.getParameters().getPreviewSize());
+        }
+    }
+    
+    /**
+     * Sets the preview callback that will be called when a new frame is 
+     * available to be rendered. 
+     *
+     * @param previewSize The preview sizeThe new preview callback.
+     */
+    private void setPreviewCallback(Size previewSize) {
         // Counting the size for the store buffers
         int bitsPrePixel = ImageFormat.getBitsPerPixel(camera.getParameters().getPreviewFormat());
-        Size size = camera.getParameters().getPreviewSize();
-        int bufferSize = (size.width * size.height * bitsPrePixel) / 8 + 1;
+        int bufferSize = (previewSize.width * previewSize.height * bitsPrePixel) / 8 + 1;
         
         // Allocating the store buffers
         callbackBuffer = new byte[bufferSize];
@@ -191,13 +228,37 @@ final public class DroidCamera {
     }
     
     /**
+     * Retrieves the rectangle of the camera preview where camera preview is rendered.
+     *
+     * @return Size of the camera preview surface whether is active.
+     */
+    public Rect previewRect() {
+        if (camPreviewSurface != null && camPreviewSurface.isPreviewing()) {
+            View v = camPreviewSurface.getPreviewView();
+            return new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Returns suggestion of the optimal size which will be used if there is not any specified size.
+     *
+     * @return Suggestion of the camera preview size which is calculated from the size of the display.
+     */
+    public Size getOptimalPreviewSize() {
+        return CameraPreview.getOptimalPreviewSize(context, camera);
+    }
+    
+    
+    /**
      * Retrieves the sizes of the camera preview.
      *
      * @return Size of the camera preview whether is active.
      */
-    public Rect previewRect() {
-        if (camPreviewSurface != null && camPreviewSurface.isPreviewing()) {
-            return new Rect(0, 0, camPreviewSurface.getWidth(), camPreviewSurface.getHeight());
+    public Size previewSize() {
+        if (camera != null) {
+            return camera.getParameters().getPreviewSize();
         }
         
         return null;

@@ -28,13 +28,31 @@
         		<requestFocus></requestFocus>
         	</TextView>
 		
-		    <TextView
-		        android:id="@+id/QRCodeResultSubTitle"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_gravity="center_horizontal"
-		        android:text="@string/OpenQrActivity_SubTitle_NoDecoder"
-		        android:textAppearance="?android:attr/textAppearanceMedium" />
+		    <LinearLayout
+		        android:id="@+id/QRCodeResultSubTitleLinearLayout"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_gravity="center_horizontal"
+			    android:orientation="horizontal" >
+		    
+			    <TextView
+			        android:id="@+id/QRCodeResultSubTitle"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_gravity="center_horizontal"
+			        android:text="@string/OpenQrActivity_SubTitle_NoDecoder"
+			        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+			    <ImageView
+			        android:layout_height="match_parent"
+			        android:layout_width="wrap_content"
+			        android:layout_gravity="center_vertical"
+			        android:paddingLeft="5dp"
+			        android:visibility="invisible"
+			        android:id="@+id/decodeWarning"
+			        android:src="@android:drawable/stat_sys_warning" />
+			    
+			</LinearLayout>
 		    <ImageView
 		        android:id="@+id/QRCodeImage"
 		        android:layout_width="wrap_content"

@@ -90,7 +90,6 @@
 	            <TextView
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
-	
 	                android:text="Camera flash"
 	                android:textAppearance="?android:attr/textAppearanceSmall" />
 	
@@ -175,6 +174,72 @@
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:text="@string/no"
+			        android:textAppearance="?android:attr/textAppearanceSmall" />
+	        </LinearLayout>
+	    </LinearLayout>
+	    
+	    <TextView
+	        android:id="@+id/miscellaneousInformations"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/QRReaderAboutActivity_Miscellaneous_Informations"
+	        android:paddingTop="10dp"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
+	
+	        <LinearLayout
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:paddingLeft="20dp"
+	            android:paddingRight="10dp"
+	            android:orientation="vertical" >
+	
+	            <TextView
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:text="Camera"
+	                android:textAppearance="?android:attr/textAppearanceSmall" />
+	
+	            <TextView
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="- default preview size"
+			        android:textAppearance="?android:attr/textAppearanceSmall"
+			        android:paddingLeft="5dp" />
+	            
+	            <TextView
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="- preview color format"
+			        android:textAppearance="?android:attr/textAppearanceSmall"
+			        android:paddingLeft="5dp" />
+	        </LinearLayout>
+	
+	        <LinearLayout
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical" >
+	            
+	            <TextView
+	                android:id="@+id/MiscellaneousCamera"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:textAppearance="?android:attr/textAppearanceSmall" />
+	            <TextView
+			        android:id="@+id/MiscellaneousCameraPreviewSize"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="X:X"
+			        android:textAppearance="?android:attr/textAppearanceSmall" />
+	            
+	            <TextView
+			        android:id="@+id/MiscellaneousCameraPreviewColorFormat"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="X"
 			        android:textAppearance="?android:attr/textAppearanceSmall" />
 	        </LinearLayout>
 	    </LinearLayout>

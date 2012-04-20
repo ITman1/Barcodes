@@ -41,7 +41,8 @@ final public class QrDecoderManager {
     
     /** The constants that contains the classes of the decoders. */
     final private static List<String> DECODER_CLASSES = Arrays.asList(
-            "com.qrcode.decoders.BaseQrDecoder"
+            "com.qrcode.decoders.BaseQrDecoder",
+            "com.qrcode.decoders.TextDecoder"
     );
     
     /** The delimiter of the URI scheme. */
@@ -161,7 +162,7 @@ final public class QrDecoderManager {
     public static QrCode decodeQrCode(ArrayList<QrDecoder> decoders, DataSegments segments) {
         ArrayList<QrDecoder> passedDecoders = new ArrayList<QrDecoder>();
         String scheme;
-        QrCode qrCode;
+        QrCode qrCode = null;
         
         if (segments == null || (scheme = getUriScheme(segments.toByteArray())) == null && decoders.isEmpty()) {
             return null;
@@ -176,6 +177,7 @@ final public class QrDecoderManager {
         for (QrDecoder decoder : passedDecoders) {
             //try {
                 qrCode = decoder.decode(segments);
+                if (qrCode != null) break;
             /*} catch (LexicalError e) {
                 qrCode = null;
             } catch (SyntaxError e) {
@@ -184,10 +186,9 @@ final public class QrDecoderManager {
                 qrCode = null;
             }*/
             
-            return qrCode;
         }
         
-        return null;
+        return qrCode;
     }
     
     /**

@@ -25,7 +25,8 @@ public class TelephoneQrCode extends QrCode {
      * @param telephone The new telephone number.
      * @return True, if successful, otherwise false.
      */
-    public boolean setTelephone(String telephone) {
+    public boolean setTelephone(String tel) {
+        String telephone = tel.trim();
         if (telephone.length() > 0) {
             char leadingChar = telephone.charAt(0);
             

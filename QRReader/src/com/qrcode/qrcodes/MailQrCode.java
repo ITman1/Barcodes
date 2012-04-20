@@ -34,7 +34,8 @@ public class MailQrCode extends QrCode {
      * @param receiver The receiver of this mail.
      * @return True, if successful, otherwise false.
      */
-    public boolean setReceiver(String receiver) {
+    public boolean setReceiver(String rec) {
+        String receiver = rec.trim();
         if (receiver.matches(MAILTO_RECEIVER_REGEX)) {
             this.receiver = receiver;
             return true;
