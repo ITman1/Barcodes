@@ -53,6 +53,7 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -136,6 +137,9 @@ public class MainActivity extends Activity {
     
     /** The reference to text view which displays the status of the decoding the image. */
     private TextView           statusText_TextView;
+    
+    /** Layout where FPS are displayed. */
+    private LinearLayout       fpsLayout;
     
     /** The reference to the camera. */
     private DroidCamera        droidCamera;
@@ -282,6 +286,9 @@ public class MainActivity extends Activity {
                 drawingCanvas.invalidate();
         	    status_LinearLayout.setVisibility(LinearLayout.VISIBLE);
                 statusText_TextView.setText(R.string.QRReaderActivity_StatusText_Capturing);
+                cameraPreviewLayout.setVisibility(CameraPreview.INVISIBLE);
+                read_btn.setVisibility(Button.INVISIBLE);
+                fpsLayout.setVisibility(LinearLayout.INVISIBLE);
                 
                 // Just due to bug in the version 2.3.X
                 droidCamera.getCamera().setPreviewCallback(null); 
@@ -290,7 +297,6 @@ public class MainActivity extends Activity {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
                 Boolean autoFocus = prefs.getBoolean("Preferences_Camera_AutoFocus", false);
                 
-                cameraPreviewLayout.setVisibility(CameraPreview.INVISIBLE);
                 // Taking the picture or registering the flash callback
                 if (autoFocus && droidCamera.autoFocusSupport()) {
                     droidCamera.getCamera().autoFocus(autoFocusCallback);
@@ -364,13 +370,22 @@ public class MainActivity extends Activity {
                 decodeThread = new DecodeThread();
                 decodeThread.start();
             } else {                // There are not any data, ignoring the fact (error)
-                status_LinearLayout.setVisibility(LinearLayout.INVISIBLE);
-                statusText_TextView.setText("");
-                cameraPreviewLayout.setVisibility(CameraPreview.VISIBLE);
+                displayControls();
             }
             
         }
     };
+    
+    /**
+     * Hides camera capture controls and labels and shows status text.
+     */
+    private void displayControls() {
+        status_LinearLayout.setVisibility(LinearLayout.INVISIBLE);
+        statusText_TextView.setText("");
+        cameraPreviewLayout.setVisibility(CameraPreview.VISIBLE);
+        read_btn.setVisibility(Button.VISIBLE);
+        fpsLayout.setVisibility(LinearLayout.VISIBLE);
+    }
     
     /**
      * Handles returning from the Open QR activity which can include the saving
@@ -415,7 +430,7 @@ public class MainActivity extends Activity {
 
         // Ends the taking of the picture
         takingPicture = false;
-        cameraPreviewLayout.setVisibility(CameraPreview.VISIBLE);
+        displayControls();
     }
     
     /**
@@ -610,6 +625,7 @@ public class MainActivity extends Activity {
         read_btn = (ImageButton) findViewById(R.id.read_btn);
         status_LinearLayout = (LinearLayout) findViewById(R.id.status_LinearLayout);
         statusText_TextView = (TextView) findViewById(R.id.statusText_TextView);
+        fpsLayout = (LinearLayout) findViewById(R.id.fpsLayout);
         
         // Registering the click listener on the read button
         read_btn.setOnClickListener(read_btn_OnClick);
@@ -768,8 +784,6 @@ public class MainActivity extends Activity {
         // Removes the status layout from the camera preview.
         // Because snapshot callback has been probably aborted.
         takingPicture = false;
-        status_LinearLayout.setVisibility(LinearLayout.INVISIBLE);
-        statusText_TextView.setText("");
         invalidateHandler.removeMessages(0);
         drawingCanvas.removeLines();
         drawingCanvas.invalidate();
