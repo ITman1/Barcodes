@@ -34,9 +34,17 @@ public:
 	 * Builds the finder pattern with the specified size.
 	 *
 	 * @param size Size of the finder mark.
-	 * @return Image with the build finder mark.
+	 * @return Image with the built finder mark.
 	 */
 	static Mat buildQrMark(int size);
+
+	/**
+	 * Builds the alignment pattern with the specified size.
+	 *
+	 * @param size Size of the alignment mark.
+	 * @return Image with the built alignment mark.
+	 */
+	static Mat buildAlignementMark(int size);
 };
 
 } /* namespace barcodes */

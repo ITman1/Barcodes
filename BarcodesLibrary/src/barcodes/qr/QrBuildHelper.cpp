@@ -29,11 +29,28 @@ namespace barcodes {
  * @return Image with the build finder mark.
  */
 Mat QrBuildHelper::buildQrMark(int size) {
-	int dotSize = size / 7;
+	double dotSize = size / 7.0;
 	Mat mark = Mat::zeros(Size(size, size), CV_8UC1);
 
 	rectangle(mark, Rect(dotSize, dotSize, 5 * dotSize, 5 * dotSize), Scalar(255), 1);
 	rectangle(mark, Rect(2 * dotSize - 1, 2 * dotSize - 1, 3 * dotSize + 2, 3 * dotSize + 2), Scalar(255), 1);
+	floodFill(mark, Point(dotSize + 1, dotSize + 1), Scalar(255));
+
+	return mark;
+}
+
+/**
+ * Builds the alignment pattern with the specified size.
+ *
+ * @param size Size of the alignment mark.
+ * @return Image with the built alignment mark.
+ */
+Mat QrBuildHelper::buildAlignementMark(int size) {
+	double dotSize = size / 5.0;
+	Mat mark = Mat::zeros(Size(size, size), CV_8UC1);
+
+	rectangle(mark, Rect(dotSize, dotSize, 3 * dotSize, 3 * dotSize), Scalar(255), 1);
+	rectangle(mark, Rect(2 * dotSize - 1, 2 * dotSize - 1, dotSize + 2, dotSize + 2), Scalar(255), 1);
 	floodFill(mark, Point(dotSize + 1, dotSize + 1), Scalar(255));
 
 	return mark;

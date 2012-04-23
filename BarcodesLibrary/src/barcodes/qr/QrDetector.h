@@ -113,6 +113,11 @@ public:
 	static const int FLAG_QR_MARK_MATCH_TOLERANCE_HIGH     = 0x0400;
 
 	/**
+	 * Hierarchy flag. Defines whether to use the hierarchy for the detection.
+	 */
+	static const int FLAG_USE_HIERARCHY                    = 0x0800;
+
+	/**
 	 * Groups all repair flags.
 	 */
 	static const int REPAIR_FLAGS = FLAG_ADAPT_THRESH_CORRUPT_FILL_REPAIR | FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR;

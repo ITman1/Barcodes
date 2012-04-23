@@ -47,7 +47,7 @@ extern "C" {
 		if (img.convertColorFormat(IMAGE_COLOR_GRAYSCALE)) {
 			DEBUG_WRITE_IMAGE(std::string("detect_image.jpg") , img);
 			// Detects the finder patterns in the image
-			barcode.detect(img, detectedMarks, QrDetector::FLAG_DISTANCE_MEDIUM | QrDetector::FLAG_QR_MARK_MATCH_TOLERANCE_HIGH);
+			barcode.detect(img, detectedMarks, QrDetector::FLAG_DISTANCE_MEDIUM | QrDetector::FLAG_QR_MARK_MATCH_TOLERANCE_HIGH | QrDetector::FLAG_USE_HIERARCHY);
 
 			// Allocating memory for java array
 			int arrLength = detectedMarks.size();

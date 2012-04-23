@@ -23,37 +23,41 @@
 namespace barcodes {
 
 /**
- * Finds match inside image. (not tested, never used)
- * Copied sample from: http://opencv.itseez.com/doc/tutorials/imgproc/histograms/template_matching/template_matching.html
+ * Finds match inside an image.
  *
- * @param img ...
- * @param imgTemplate ...
- * @return ...
- * @todo Finish implementation.
+ * @param img Source image.
+ * @param imgTemplate Template image.
+ * @param matchLoc Location with the best match.
+ * @return Value of the match.
+ *
+ * @see http://opencv.itseez.com/doc/tutorials/imgproc/histograms/template_matching/template_matching.html
  */
-double matchTemplate(Mat img, Mat imgTemplate) {
+double matchTemplate(Mat img, Mat imgTemplate, int match_method, Point &matchLoc) {
 	Mat result;
-	  int result_cols =  img.cols - imgTemplate.cols + 1;
-	  int result_rows = img.rows - imgTemplate.rows + 1;
 
-	  result.create( result_cols, result_rows, CV_32FC1 );
+	// Create the result matrix
+	int result_cols =  img.cols - imgTemplate.cols + 1;
+	int result_rows = img.rows - imgTemplate.rows + 1;
 
-	  /// Do the Matching and Normalize
-	  cv::matchTemplate( img, imgTemplate, result, CV_TM_SQDIFF );
-	  normalize( result, result, 0, 1, NORM_MINMAX, -1, Mat() );
+	result.create( result_cols, result_rows, CV_32FC1 );
 
-	  /// Localizing the best match with minMaxLoc
-	  double minVal; double maxVal; Point minLoc; Point maxLoc;
-	  minMaxLoc( result, &minVal, &maxVal, &minLoc, &maxLoc, Mat() );
+	// Do the Matching and Normalize
+	matchTemplate( img, imgTemplate, result, match_method );
+	normalize( result, result, 0, 1, NORM_MINMAX, -1, Mat() );
 
-	  Mat img_display;
-	  img.copyTo( img_display );
+	// Localizing the best match with minMaxLoc
+	double minVal; double maxVal; Point minLoc; Point maxLoc;
 
-	  /// Show me what you got
-	  rectangle( img_display, minLoc, Point( minLoc.x + imgTemplate.cols , minLoc.y + imgTemplate.rows ), Scalar::all(0), 2, 8, 0 );
-	  rectangle( result, minLoc, Point( minLoc.x + imgTemplate.cols , minLoc.y + imgTemplate.rows ), Scalar::all(0), 2, 8, 0 );
+	minMaxLoc( result, &minVal, &maxVal, &minLoc, &maxLoc, Mat() );
 
-	  return minVal;
+	// For SQDIFF and SQDIFF_NORMED, the best matches are lower values. For all the other methods, the higher the better
+	if( match_method  == CV_TM_SQDIFF || match_method == CV_TM_SQDIFF_NORMED ) {
+	    matchLoc = minLoc;
+		return minVal;
+	} else {
+		matchLoc = maxLoc;
+		return maxVal;
+	}
 }
 
 /**
@@ -85,6 +89,39 @@ Mat getPerspectiveTransform(vector<Point> &corners, Size resultSize) {
 	dstPoints[2].y = resultSize.height;
 	dstPoints[3].x = resultSize.width;
 	dstPoints[3].y = resultSize.height;
+
+	return cv::getPerspectiveTransform(srcPoints, dstPoints);
+}
+
+/**
+ * Returns transformation matrix for perspective transformation.
+ *
+ * @param srcCorners Four points of the source projection, should be ordered from top right and clockwise.
+ * @param dstCorners Four points of the destination projection, should be ordered from top right and clockwise.
+ * @return Transformation matrix for perspective transformation.
+ */
+Mat getPerspectiveTransform(vector<Point> &srcCorners, vector<Point> &dstCorners) {
+	Point2f srcPoints[4], dstPoints[4];
+
+	// Coordinates in the perspective
+	srcPoints[0].x = srcCorners.at(3).x; // left up
+	srcPoints[0].y = srcCorners.at(3).y;
+	srcPoints[1].x = srcCorners.at(0).x; // right up
+	srcPoints[1].y = srcCorners.at(0).y;
+	srcPoints[2].x = srcCorners.at(2).x; // left bottom
+	srcPoints[2].y = srcCorners.at(2).y;
+	srcPoints[3].x = srcCorners.at(1).x; // right bottom
+	srcPoints[3].y = srcCorners.at(1).y;
+
+	// Output warped coordinates
+	dstPoints[0].x = dstCorners.at(3).x; // left up
+	dstPoints[0].y = dstCorners.at(3).y;
+	dstPoints[1].x = dstCorners.at(0).x; // right up
+	dstPoints[1].y = dstCorners.at(0).y;
+	dstPoints[2].x = dstCorners.at(2).x; // left bottom
+	dstPoints[2].y = dstCorners.at(2).y;
+	dstPoints[3].x = dstCorners.at(1).x; // right bottom
+	dstPoints[3].y = dstCorners.at(1).y;
 
 	return cv::getPerspectiveTransform(srcPoints, dstPoints);
 }

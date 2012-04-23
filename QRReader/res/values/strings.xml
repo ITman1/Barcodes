@@ -77,6 +77,7 @@
     <string name="QrCode_Title_Text_Send_Sms">Send SMS</string>
     <string name="QrCode_Title_Text_Send_Mail">Send mail</string>   
     <string name="QrCode_Title_Text_Read_Text">Decoded text:</string>  
+    <string name="QrCode_Title_Text_Send_As_Action">Send as action</string>
     
     <string name="QrCode_Title_Contact">(contact)</string>
 </resources>

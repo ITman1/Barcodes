@@ -68,6 +68,16 @@ public class TextQrCodeView implements Adapter {
                 intent.setData(Uri.parse("sms:"));
                 context.startActivity(intent);
             }
+        };        
+        
+        private OnClickListener onClickSendAsActionButton = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setData(Uri.parse(textEdit.getText().toString()));
+                Resources res = context.getResources();
+                context.startActivity(Intent.createChooser(intent,  res.getString(R.string.OpenQrActivity_RawResult_TryLuckWith)));   
+            }
         };
         
         /** The listener of the click on the send mail button. */
@@ -110,11 +120,13 @@ public class TextQrCodeView implements Adapter {
                 // Getting references and setting on call click listener
                 Button sendMailButton = (Button) resultView.findViewById(R.id.sendMailButton);
                 Button sendSmsButton = (Button) resultView.findViewById(R.id.sendSmsButton);
+                Button sendAsActionButton = (Button) resultView.findViewById(R.id.sendAsActionButton);
                 textEdit = (EditText) resultView.findViewById(R.id.textEdit);
                 
                 textEdit.setText(qrCode.getText());
                 sendMailButton.setOnClickListener(onClickSendMailButton);
                 sendSmsButton.setOnClickListener(onClickSendSmsButton);
+                sendAsActionButton.setOnClickListener(onClickSendAsActionButton);
                 
             }
             

@@ -158,6 +158,7 @@ DEBUG_PRINT(DEBUG_TAG, "_detect(image,detectedMarks,%d)", flags);
 	vector<vector<Point> > drawVec;
 	Mat cropped, diff;
 	vector<vector<Point> > contours;
+	vector<Vec4i> hierarchy;
 	DetectedMark currMark;
 	Mat contourImage = image.clone();
 	Mat qrMark = QrBuildHelper::buildQrMark(QR_MARK_TEMPLATE_SIZE);
@@ -175,10 +176,15 @@ DEBUG_PRINT(DEBUG_TAG, "_detect(image,detectedMarks,%d)", flags);
 	}
 
 	DEBUG_PRINT(DEBUG_TAG, "================ NEW DETECT CALL ================ ");
-	findContours(contourImage, contours, CV_RETR_LIST , CV_CHAIN_APPROX_SIMPLE);
+	if (flags & FLAG_USE_HIERARCHY) {
+		findContours(contourImage, contours, hierarchy, CV_RETR_TREE , CV_CHAIN_APPROX_SIMPLE);
+	} else {
+		findContours(contourImage, contours, CV_RETR_LIST , CV_CHAIN_APPROX_SIMPLE);
+	}
 
 	for( unsigned int i = 0; i < contours.size(); i++ ) {
 		if (contours[i].size() < 4) continue;
+		if ((flags & FLAG_USE_HIERARCHY) && (hierarchy[i][2] < 0)) continue;
 
 		//approxPolyDP(Mat(contours[i]), contours[i], 7, true);
 

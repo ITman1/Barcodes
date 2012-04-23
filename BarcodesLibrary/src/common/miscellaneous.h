@@ -44,6 +44,15 @@ void calcBinarizedHistogram(Mat &image, Mat &contourMask, MatND &hist);
 Mat getPerspectiveTransform(vector<Point> &corners, Size resultSize);
 
 /**
+ * Returns transformation matrix for perspective transformation.
+ *
+ * @param srcCorners Four points of the source projection, should be ordered from top right and clockwise.
+ * @param dstCorners Four points of the destination projection, should be ordered from top right and clockwise.
+ * @return Transformation matrix for perspective transformation.
+ */
+Mat getPerspectiveTransform(vector<Point> &srcCorners, vector<Point> &dstCorners);
+
+/**
  * Applies perspective transformation.
  *
  * @param image Image to be transformed.
@@ -67,15 +76,16 @@ Mat warpPerspective(Mat &image, vector<Point> &corners, bool sortCorners = false
 double exactMatch(Mat &mat, Mat &tmpl, Mat &diff);
 
 /**
- * Finds match inside image. (not tested, never used)
- * Copied sample from: http://opencv.itseez.com/doc/tutorials/imgproc/histograms/template_matching/template_matching.html
+ * Finds match inside an image.
  *
- * @param img ...
- * @param imgTemplate ...
- * @return ...
- * @todo Finish implementation.
+ * @param img Source image.
+ * @param imgTemplate Template image.
+ * @param matchLoc Location with the best match.
+ * @return Value of the match.
+ *
+ * @see http://opencv.itseez.com/doc/tutorials/imgproc/histograms/template_matching/template_matching.html
  */
-double matchTemplate(Mat img, Mat imgTemplate);
+double matchTemplate(Mat img, Mat imgTemplate, int match_method, Point &matchLoc);
 
 /**
  * Calculates average mean on the row in specified column ranges.

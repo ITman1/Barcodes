@@ -49,6 +49,13 @@
 		        android:layout_height="wrap_content"
 		        android:layout_gravity="center_horizontal"
 		        android:text="@string/QrCode_Title_Text_Send_Mail" />
+		    
+		    <Button
+		        android:id="@+id/sendAsActionButton"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center_horizontal"
+		        android:text="@string/QrCode_Title_Text_Send_As_Action" />
     	</LinearLayout>
     </LinearLayout>
 
