@@ -184,9 +184,9 @@ public:
 	 * @param sampleSize Size of the output bit matrix.
 	 * @param outMatrix Output bit matrix.
 	 * @param roi Rectangle of interest from which should be sampled.
-	 * @param marginRatio Margin of each sampled cell. | (marginRatio/2) ((1-marginRatio) == sampleRatio) (marginRatio/2) |
+	 * @param paddingRatio Padding of each sampled cell. | (paddingRatio/2) ((1-paddingRatio) == sampleRatio) (paddingRatio/2) |
 	 */
-	static void fromImage(Mat img, Size sampleSize, BitMatrix &outMatrix, Rect roi = Rect(-1, -1, -1, -1), double marginRatio = 0.4);
+	static void fromImage(Mat img, Size sampleSize, BitMatrix &outMatrix, Rect roi = Rect(-1, -1, -1, -1), double paddingRatio = 0.4);
 };
 
 } /* namespace barcodes */

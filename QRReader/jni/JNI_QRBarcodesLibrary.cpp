@@ -32,6 +32,9 @@ using namespace barcodes;
 
 #define DEBUG_TAG "JNI_QRBarcodesLibrary.cpp"
 
+static Image img_detect;
+static Image img_rgb_detect;
+
 extern "C" {
 	/**
 	 * JNI method which is called for detection of the QR code.
@@ -40,14 +43,15 @@ extern "C" {
 		DEBUG_PRINT(DEBUG_TAG, "===== DETECT CALL =====");
 		QrBarcode barcode;
 		DetectedMarks detectedMarks;
-		Image img = jImage(env, image);
+		jImage _jImage(env, image);
+		_jImage(img_detect);
 
-		DEBUG_PRINT(DEBUG_TAG, "Image size: [%d : %d]", img.cols, img.rows);
+		DEBUG_PRINT(DEBUG_TAG, "Image size: [%d : %d]", img_detect.cols, img_detect.rows);
 
-		if (img.convertColorFormat(IMAGE_COLOR_GRAYSCALE)) {
-			DEBUG_WRITE_IMAGE(std::string("detect_image.jpg") , img);
+		if (Image::convertColorFormat(img_detect, img_rgb_detect, IMAGE_COLOR_GRAYSCALE)) {
+			DEBUG_WRITE_IMAGE(std::string("detect_image.jpg") , img_detect);
 			// Detects the finder patterns in the image
-			barcode.detect(img, detectedMarks, QrDetector::FLAG_DISTANCE_MEDIUM | QrDetector::FLAG_QR_MARK_MATCH_TOLERANCE_HIGH | QrDetector::FLAG_USE_HIERARCHY);
+			barcode.detect(img_rgb_detect, detectedMarks, QrDetector::FLAG_DISTANCE_MEDIUM | QrDetector::FLAG_QR_MARK_MATCH_TOLERANCE_HIGH | QrDetector::FLAG_USE_HIERARCHY);
 
 			// Allocating memory for java array
 			int arrLength = detectedMarks.size();
@@ -75,15 +79,16 @@ extern "C" {
 		DEBUG_PRINT(DEBUG_TAG, "===== DECODE CALL =====");
 
 		QrBarcode barcode;
-		Image img = jImage(env, image);
+		jImage _jImage(env, image);
+		Image img_decode = _jImage;
 		DataSegments dataSegments;
 
-		DEBUG_PRINT(DEBUG_TAG, "Image size: [%d : %d]", img.cols, img.rows);
+		DEBUG_PRINT(DEBUG_TAG, "Image size: [%d : %d]", img_decode.cols, img_decode.rows);
 
-		if (img.convertColorFormat(IMAGE_COLOR_GRAYSCALE)) {
+		if (img_decode.convertColorFormat(IMAGE_COLOR_GRAYSCALE)) {
 
 			// Decodes the QR code from the image
-			barcode.decode(img, dataSegments, QrDetector::FLAG_ADAPT_THRESH | QrDetector::FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR
+			barcode.decode(img_decode, dataSegments, QrDetector::FLAG_ADAPT_THRESH | QrDetector::FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR
 					| QrDetector::DISTANCE_FLAGS | QrDetector::FLAG_QR_MARK_MATCH_TOLERANCE_NORMAL);
 
 			// If there are any data segments, return found QR code image

@@ -62,8 +62,40 @@ void QrDecoder::decode(Image &image, DataSegments &dataSegments, int flags) cons
 
 	QrDetector::getInstance()->detect(image, detectedMarks, flags);
 
-	if (detectedMarks.size() == 3) {
-		read_V1_40(image, dataSegments, detectedMarks);
+	map<int,int> parentContourOccurances;
+	bool foundThreeOnSameParentLevel = false;
+	int parentIndex = 0;;
+	if (detectedMarks.size() >= 3) {
+
+		// Tries to find marks which has the same parent
+		// If it fails, it uses original detected marks
+
+		for (unsigned int i = 0; i < detectedMarks.size(); i++) {
+			if (parentContourOccurances.find(detectedMarks[i].variant) == parentContourOccurances.end()) {
+				parentContourOccurances.insert(pair<int,int>(detectedMarks[i].variant, 1));
+			} else {
+				parentContourOccurances.at(detectedMarks[i].variant) += 1;
+
+				if (parentContourOccurances.at(detectedMarks[i].variant) == 3) {
+					foundThreeOnSameParentLevel = true;
+					parentIndex = detectedMarks[i].variant;
+					break;
+				}
+			}
+		}
+
+
+		if (foundThreeOnSameParentLevel) { // There are three marks on the same parent
+			DetectedMarks _detectedMarks;
+			for (unsigned int i = 0; i < detectedMarks.size(); i++) {
+				if (detectedMarks[i].variant == parentIndex) {
+					_detectedMarks.push_back(detectedMarks[i]);
+				}
+			}
+			read_V1_40(image, dataSegments, _detectedMarks);
+		} else { // There are no three marks on the same parent level, just try luck
+			read_V1_40(image, dataSegments, detectedMarks);
+		}
 	}
 }
 
@@ -98,7 +130,6 @@ void QrDecoder::_read_V1_40(Image &image, Mat &binarized, DataSegments &dataSegm
 	DetectedMarks _detectedMarks = detectedMarks;
 
 	//>>> 1) GETTING THE FOUR CORNERS OF THE QR CODE FROM THE IMAGE
-
 	perspCornersFunct.getPerspectiveCorners(image, binarized, _detectedMarks, corners);
 
 	if (corners.size() < 4) {

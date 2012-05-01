@@ -98,11 +98,12 @@ bool jImage::getCompressed() {
 
 void jImage::releaseDataReference() {
 	if (dataArr != NULL && data_ptr != NULL) {
+		DEBUG_PRINT(DEBUG_TAG, "Realesing reference...");
 		env->ReleaseByteArrayElements(dataArr, data_ptr, JNI_ABORT);
 	}
 }
 
-jImage::operator Image() {
+Image& jImage::operator() (Image &img) {
 	releaseDataReference();
 	dataArr = getByteArray(this, "data");
 	jsize length = env->GetArrayLength(dataArr);
@@ -112,14 +113,21 @@ jImage::operator Image() {
 	bool compressed = getCompressed();
 	Size size = getSize();
 	DEBUG_PRINT(DEBUG_TAG, "Compressed: %d", compressed);
-	DEBUG_PRINT(DEBUG_TAG, "Data length: %d", data.size());
+	DEBUG_PRINT(DEBUG_TAG, "Data length: %d", length);
 	DEBUG_PRINT(DEBUG_TAG, "Image size: %d : %d", size.width, size.height);
 
 	if (compressed) {
-		return Image::fromByteArrayGrayscale(data_ptr, length);
+		img = Image::fromByteArrayGrayscale(data_ptr, length);
 	} else {
-		return Image(Image(size.height * 3/2, size.width, (void *)data_ptr, format), format);
+		img(data_ptr, size, format);
 	}
+
+	return img;
+}
+
+jImage::operator Image() {
+	Image img;
+	return (*this)(img);
 }
 
 jclass jImage::getJClass(JNIEnv *env) {

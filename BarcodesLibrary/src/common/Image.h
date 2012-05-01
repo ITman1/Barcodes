@@ -100,17 +100,19 @@ public:
 	 * Loads the image from the file in RGB color mode.
 	 *
 	 * @param filename Filename of the file to be loaded.
+	 * @param img Optional parameter where to store the image.
 	 * @return Loaded image.
 	 */
-	static Image fromFileRGB(string filename);
+	static Image fromFileRGB(string filename, Mat *img = 0);
 
 	/**
 	 * Loads the image from the file in grayscale color mode.
 	 *
 	 * @param filename Filename of the file to be loaded.
+	 * @param img Optional parameter where to store the image.
 	 * @return Loaded image.
 	 */
-	static Image fromFileGrayscale(string filename);
+	static Image fromFileGrayscale(string filename, Mat *img = 0);
 
 	/**
 	 * Decodes and loads the image from the byte array in RGB color mode.
@@ -144,6 +146,18 @@ public:
 	 * @return True if this conversion method exists and ends with success, otherwise false.
 	 */
 	bool convertColorFormat(int newColorFormat);
+
+	/**
+	 * Converts image from one color format to another one, if supported.
+	 *
+	 * @param srcImage Source image.
+	 * @param dstImage Destination image.
+	 * @param newColorFormat Format to which should be an image converted.
+	 * @return True if this conversion method exists and ends with success, otherwise false.
+	 */
+	static bool convertColorFormat(Image &srcImage, Image &dstImage, int newColorFormat);
+
+	Image& operator() (void *data, Size size, int colorFormat);
 };
 
 } /* namespace barcodes */

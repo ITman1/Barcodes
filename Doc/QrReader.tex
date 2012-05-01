@@ -1,0 +1,195 @@
+%============================================================================
+% tento soubor pouzijte jako zaklad
+% (c) 2008 Michal Bidlo
+% E-mail: bidlom AT fit vutbr cz
+%============================================================================
+% kodovaní: UTF-8 (zmena prikazem iconv, recode nebo cstocs)
+%----------------------------------------------------------------------------
+% zpracování: make, make pdf, make desky, make clean
+% připomínky posílejte na e-mail: bidlom AT fit.vutbr.cz
+%============================================================================
+% Šablonu upravil: Ing. Jaroslav Dytrych, xdytry00@stud.fit.vutbr.cz
+%============================================================================
+\documentclass[cover]{fitthesis} % odevzdani do wisu - odkazy jsou barevné
+%\documentclass[cover,print]{fitthesis} % pro tisk - odkazy jsou černé
+%\documentclass[english,print]{fitthesis} % pro tisk - odkazy jsou černé
+%      \documentclass[english]{fitthesis}
+% * Je-li prace psana v anglickem jazyce, je zapotrebi u tridy pouzit 
+%   parametr english nasledovne:
+%      \documentclass[english]{fitthesis}
+% * Neprejete-li si vysazet na prvni strane dokumentu desky, zruste 
+%   parametr cover
+
+% zde zvolime kodovani, ve kterem je napsan text prace
+% "latin2" pro iso8859-2 nebo "cp1250" pro windows-1250, "utf8" nebo "utf8x" pro "utf-8"
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\PrerenderUnicode{ěščřžýáíéĚŠČŘŽÝÁÍÉďťňĎŤŇŮůúÚóÓ}
+\usepackage{url}
+\DeclareUrlCommand\url{\def\UrlLeft{<}\def\UrlRight{>} \urlstyle{tt}}
+
+%zde muzeme vlozit vlastni balicky
+\usepackage{listings}
+\usepackage[toc,page,header]{appendix}
+\RequirePackage{titletoc}
+\ifczech
+  \usepackage{ae}
+\fi
+
+% vypne funkci nové šablony, která automaticky nahrazuje uvozovky,
+% aby nebyly prováděny nevhodné náhrady v popisech API apod.
+\csdoublequotesoff
+
+% nějaké další věci
+\pdfpageattr{/Group << /S /Transparency /I true /CS /DeviceRGB>>}
+\usepackage{float}
+\usepackage{enumitem}
+\setlist{topsep=7pt,partopsep=0pt,itemsep=0pt,parsep=7pt}
+
+% =======================================================================
+% balíček "hyperref" vytváří klikací odkazy v pdf, pokud tedy použijeme pdflatex
+% problém je, že balíček hyperref musí být uveden jako poslední, takže nemůže
+% být v šabloně
+\ifWis
+\ifx\pdfoutput\undefined % nejedeme pod pdflatexem
+\else
+  \usepackage{color}
+  \usepackage[unicode,colorlinks,hyperindex,plainpages=false,pdftex]{hyperref}
+  \definecolor{links}{rgb}{0.4,0.5,0}
+  \definecolor{anchors}{rgb}{1,0,0}
+  \def\AnchorColor{anchors}
+  \def\LinkColor{links}
+  \def\pdfBorderAttrs{/Border [0 0 0] }  % bez okrajů kolem odkazů
+  \pdfcompresslevel=9
+\fi
+\else % pro tisk budou odkazy, na které se dá klikat, černé
+\ifx\pdfoutput\undefined % nejedeme pod pdflatexem
+\else
+  \usepackage{color}
+  \usepackage[unicode,colorlinks,hyperindex,plainpages=false,pdftex,urlcolor=black,linkcolor=black,citecolor=black]{hyperref}
+  \definecolor{links}{rgb}{0,0,0}
+  \definecolor{anchors}{rgb}{0,0,0}
+  \def\AnchorColor{anchors}
+  \def\LinkColor{links}
+  \def\pdfBorderAttrs{/Border [0 0 0] } % bez okrajů kolem odkazů
+  \pdfcompresslevel=9
+\fi
+\fi
+
+%Informace o praci/projektu
+%---------------------------------------------------------------------------
+\projectinfo{
+  %Prace
+  project=BP,               %typ prace BP
+  year=2012,                %rok
+  date=\today,              %datum odevzdani
+  %Nazev prace
+  title.cs=Čtečka QR kódů pro Android,  %nazev prace v cestine
+  title.en=QR Reader for Android,       %nazev prace v anglictine
+  %Autor
+  author=Radim Loskot,      %jmeno prijmeni autora
+  %Ustav
+  department=UPGM,          % zkratka ustavu
+  %Skolitel
+  supervisor=Lukáš Maršík,  %jmeno prijmeni skolitele
+  supervisor.title.p=Ing.,  %titul pred jmenem
+  %Klicova slova, abstrakty, prohlaseni a podekovani je mozne definovat 
+  %bud pomoci nasledujicich parametru nebo pomoci vyhrazenych maker (viz dale)
+  %===========================================================================
+  %Klicova slova
+  %keywords.cs={Klíčová slova v českém jazyce.}, %klicova slova v ceskem jazyce
+  %keywords.en={Klíčová slova v anglickém jazyce.}, %klicova slova v anglickem jazyce
+  %Abstract
+  %abstract.cs={Výtah (abstrakt) práce v českém jazyce.}, % abstrakt v ceskem jazyce
+  %abstract.en={Výtah (abstrakt) práce v anglickém jazyce.}, % abstrakt v anglickem jazyce
+  %Prohlaseni
+  %declaration={Prohlašuji, že jsem tuto bakalářskou práci vypracoval samostatně pod vedením pana ...},
+  %Podekovani (nepovinne)
+  %acknowledgment={Zde je možné uvést poděkování vedoucímu práce a těm, kteří poskytli odbornou pomoc.} % nepovinne
+}
+
+%Abstrakt (cesky, anglicky)
+\abstract[cs]{Tato bakalářská práce se věnuje problematice čtení dvourozměrných
+čárových QR kódů, návrhu a popisu implementace aplikace čtečky QR kódů pro 
+mobilní platformu Android. V teoretické části analyzuje strukturu QR kódů včetně
+způsobu kódování obsažených informací a uvádí referenční přístupy, jakými lze
+tyto informace dekódovat. S ohledem na cílovou platformu Android navrhuje
+přístupy pro detekci QR kódů v reálném obraze a dekódování v zachyceném obraze
+z kamery mobilního zařízení. Závěrem hodnotí spolehlivost a výkonnost
+implementovaných funkcionalit a zamýšlí se nad možnostmi jejich dalšího
+budoucího rozšíření.}
+\abstract[en]{Do tohoto odstavce bude zapsán výtah (abstrakt) práce v anglickém jazyce.}
+
+%Klicova slova (cesky, anglicky)
+\keywords[cs]{dvourozměrné čárové kódy,QR kódy,detekce,dekódování,čtečka QR
+kódů,Android,OpenCV}
+\keywords[en]{2D barcodes,QR codes,detection,decoding,QR
+code reader,Android,OpenCV}
+
+%Prohlaseni
+\declaration{Prohlašuji, že jsem tuto bakalářskou práci vypracoval samostatně
+pod vedením pana Ing. Lukáše Maršíka. Uvedl jsem všechny literární prameny a
+publikace, ze kterých jsem čerpal.}
+
+%Podekovani (nepovinne)
+\acknowledgment{Na tomto místě bych rád poděkoval panu Ing. Lukáši Maršíkovi za
+vedení mé práce, věcné připomínky a poskytnutí mobilních zařízení k otestování
+finální aplikace.}
+
+\begin{document}
+  % Vysazeni titulnich stran
+  % ----------------------------------------------
+  \maketitle
+  % Obsah
+  % ----------------------------------------------
+  \tableofcontents
+  
+  % Seznam obrazku a tabulek (pokud prace obsahuje velke mnozstvi obrazku, tak se to hodi)
+  \renewcommand\listfigurename{Seznam obrázků}
+  % \listoffigures
+  \renewcommand\listtablename{Seznam tabulek}
+  % \listoftables 
+
+  % Text prace
+  % ----------------------------------------------
+  \input{obsah} % viz. obsah.tex
+
+  % Pouzita literatura
+  % ----------------------------------------------
+\ifczech
+  \makeatletter
+  \def\@openbib@code{\addcontentsline{toc}{chapter}{Literatura}}
+  \makeatother
+  \bibliographystyle{czechiso}
+\else 
+  \makeatletter
+  \def\@openbib@code{\addcontentsline{toc}{chapter}{Literature}}
+  \makeatother
+  \bibliographystyle{plain}
+%  \bibliographystyle{alpha}
+\fi
+  \begin{flushleft}
+  \bibliography{literatura} % viz. literatura.bib
+  \end{flushleft}
+
+  % Prilohy
+  % ---------------------------------------------
+  \appendix
+\ifczech
+  \renewcommand{\appendixpagename}{Přílohy}
+  \renewcommand{\appendixtocname}{Přílohy}
+  \renewcommand{\appendixname}{Příloha}
+\fi
+  \appendixpage
+\ifczech
+  \section*{Seznam příloh}
+  \addcontentsline{toc}{section}{Seznam příloh}
+\else
+  \section*{List of Appendices}
+  \addcontentsline{toc}{section}{List of Appendices}
+\fi
+  \startcontents[chapters]
+  \printcontents[chapters]{l}{0}{\setcounter{tocdepth}{2}}
+  \input{prilohy} % viz. prilohy.tex
+\end{document}

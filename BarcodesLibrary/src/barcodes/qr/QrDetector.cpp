@@ -176,11 +176,8 @@ DEBUG_PRINT(DEBUG_TAG, "_detect(image,detectedMarks,%d)", flags);
 	}
 
 	DEBUG_PRINT(DEBUG_TAG, "================ NEW DETECT CALL ================ ");
-	if (flags & FLAG_USE_HIERARCHY) {
-		findContours(contourImage, contours, hierarchy, CV_RETR_TREE , CV_CHAIN_APPROX_SIMPLE);
-	} else {
-		findContours(contourImage, contours, CV_RETR_LIST , CV_CHAIN_APPROX_SIMPLE);
-	}
+	findContours(contourImage, contours, hierarchy, CV_RETR_TREE , CV_CHAIN_APPROX_SIMPLE);
+	//findContours(contourImage, contours, CV_RETR_LIST , CV_CHAIN_APPROX_SIMPLE);
 
 	for( unsigned int i = 0; i < contours.size(); i++ ) {
 		if (contours[i].size() < 4) continue;
@@ -283,8 +280,10 @@ DEBUG_PRINT(DEBUG_TAG, "_detect(image,detectedMarks,%d)", flags);
 	    currMark.match = match;
 	    currMark.flags = flags & DISTANCE_FLAGS;
 	    currMark.points = corners;
+	    currMark.variant = contourOffset + hierarchy[i][3];
 	    detectedMarks.push_back(currMark);
 	}
+	contourOffset += contours.size();
 }
 
 /**

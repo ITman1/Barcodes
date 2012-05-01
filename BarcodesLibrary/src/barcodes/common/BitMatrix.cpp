@@ -201,9 +201,9 @@ void BitMatrix::removeCol(int col) {
  * @param sampleSize Size of the output bit matrix.
  * @param outMatrix Output bit matrix.
  * @param roi Rectangle of interest from which should be sampled.
- * @param marginRatio Margin of each sampled cell. | (marginRatio/2) ((1-marginRatio) == sampleRatio) (marginRatio/2) |
+ * @param paddingRatio Padding of each sampled cell. | (paddingRatio/2) ((1-paddingRatio) == sampleRatio) (paddingRatio/2) |
  */
-void BitMatrix::fromImage(Mat img, Size sampleGridSize, BitMatrix &outMatrix, Rect roi, double marginRatio) {
+void BitMatrix::fromImage(Mat img, Size sampleGridSize, BitMatrix &outMatrix, Rect roi, double paddingRatio) {
 	Mat _img;
 	if (roi.height != -1) {
 		_img = img(roi);
@@ -215,11 +215,11 @@ void BitMatrix::fromImage(Mat img, Size sampleGridSize, BitMatrix &outMatrix, Re
 	int _cols = sampleGridSize.width;
 	double _rowSize = _img.rows / (double)_rows;
 	double _colSize = _img.cols / (double)_cols;
-	double _marginColSize = ceil(_colSize * (1 - marginRatio));
-	double _marginRowSize = ceil(_rowSize * (1 - marginRatio));
-	double _marginColOffset = _colSize * (marginRatio / 2.0);
-	double _marginRowOffset = _rowSize * (marginRatio / 2.0);
-	int _pixelsPerModule = (int)_marginColSize * (int)_marginRowSize;
+	double _paddingColSize = ceil(_colSize * (1 - paddingRatio));
+	double _paddingRowSize = ceil(_rowSize * (1 - paddingRatio));
+	double _paddingColOffset = _colSize * (paddingRatio / 2.0);
+	double _paddingRowOffset = _rowSize * (paddingRatio / 2.0);
+	int _pixelsPerModule = (int)_paddingColSize * (int)_paddingRowSize;
 
 	if (_rows >= 1 && _cols >= 1) {
 		outMatrix = BitMatrix(0, _cols);
@@ -229,8 +229,10 @@ void BitMatrix::fromImage(Mat img, Size sampleGridSize, BitMatrix &outMatrix, Re
 			_rowArr.clear();
 
 			for (int j = 0; j < _cols; j++) {
-				int _blackPixels = cv::countNonZero(_img(Rect(_marginColOffset + j * _colSize, _marginRowOffset + i * _rowSize, _marginColSize, _marginRowSize)));
-				bool _notBit = round(_blackPixels / (double)_pixelsPerModule);
+				/*int _blackPixels = cv::countNonZero(_img(Rect(_paddingColOffset + j * _colSize, _paddingRowOffset + i * _rowSize, _paddingColSize, _paddingRowSize)));
+				bool _notBit = round(_blackPixels / (double)_pixelsPerModule);*/
+				int _blackPixels = cv::countNonZero(_img(Rect((j * _colSize + (j + 1) * _colSize) / 2 - 1, (i * _rowSize + (i + 1) * _rowSize) / 2 - 1, 3, 3)));
+				bool _notBit = round(_blackPixels / (double)9.0);
 				_rowArr.pushBit( ! _notBit );
 			}
 

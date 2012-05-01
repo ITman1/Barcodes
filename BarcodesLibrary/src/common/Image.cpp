@@ -18,6 +18,7 @@
  */
 
 #include "Image.h"
+#include "../debug.h"
 
 using namespace barcodes;
 
@@ -25,22 +26,34 @@ using namespace barcodes;
  * Loads the image from the file in RGB color mode.
  *
  * @param filename Filename of the file to be loaded.
+ * @param img Optional parameter where to store the image.
  * @return Loaded image.
  */
-Image Image::fromFileRGB(string filename) {
-	Mat mat = imread(filename, CV_LOAD_IMAGE_COLOR);
-	return Image(mat, IMAGE_COLOR_RGB);
+Image Image::fromFileRGB(string filename, Mat *img) {
+	if (img == 0) {
+		Mat mat = imread(filename, CV_LOAD_IMAGE_COLOR);
+		return Image(mat, IMAGE_COLOR_RGB);
+	} else {
+		*img = imread(filename, CV_LOAD_IMAGE_COLOR);
+		return Image(*img, IMAGE_COLOR_RGB);
+	}
 }
 
 /**
  * Loads the image from the file in grayscale color mode.
  *
  * @param filename Filename of the file to be loaded.
+ * @param img Optional parameter where to store the image.
  * @return Loaded image.
  */
-Image Image::fromFileGrayscale(string filename) {
-	Mat mat = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
-	return Image(mat, IMAGE_COLOR_GRAYSCALE);
+Image Image::fromFileGrayscale(string filename, Mat *img) {
+	if (img == 0) {
+		Mat mat = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+		return Image(mat, IMAGE_COLOR_GRAYSCALE);
+	} else {
+		*img = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+		return Image(*img, IMAGE_COLOR_GRAYSCALE);
+	}
 }
 
 /**
@@ -81,39 +94,51 @@ Image Image::fromByteArrayGrayscale(void *buffer, int length) {
  * @return True if this conversion method exists and ends with success, otherwise false.
  */
 bool Image::convertColorFormat(int newColorFormat) {
+	return convertColorFormat(*this, *this, newColorFormat);
+}
+
+/**
+ * Converts image from one color format to another one, if supported.
+ *
+ * @param srcImage Source image.
+ * @param dstImage Destination image.
+ * @param newColorFormat Format to which should be an image converted.
+ * @return True if this conversion method exists and ends with success, otherwise false.
+ */
+bool Image::convertColorFormat(Image &srcImage, Image &dstImage, int newColorFormat) {
 	Mat destImage;
 
-	if (getColorFormat() == newColorFormat) return true;
+	if (srcImage.getColorFormat() == newColorFormat) return true;
 
-	switch (colorFormat) {
+	switch (srcImage.getColorFormat()) {
 	case IMAGE_COLOR_RGB:
 		switch (newColorFormat) {
 		case IMAGE_COLOR_GRAYSCALE:
-			cvtColor(*this, destImage, CV_RGB2GRAY);
+			cvtColor(srcImage, destImage, CV_RGB2GRAY);
 			break;
 		case IMAGE_COLOR_YUV420sp:
-			//cvtColor(*this, destImage, );
+			//cvtColor(srcImage, destImage, );
 			break;
 		}
 		break;
 	case IMAGE_COLOR_GRAYSCALE:
 		switch (newColorFormat) {
 		case IMAGE_COLOR_RGB:
-			cvtColor(*this, destImage, CV_GRAY2RGB);
+			cvtColor(srcImage, destImage, CV_GRAY2RGB);
 			break;
 		case IMAGE_COLOR_YUV420sp:
-			//cvtColor(*this, destImage, CV_GRAY2RGB);
+			//cvtColor(srcImage, destImage, CV_GRAY2RGB);
 			break;
 		}
 		break;
 	case IMAGE_COLOR_YUV420sp:
 		switch (newColorFormat) {
 		case IMAGE_COLOR_RGB:
-			cvtColor(*this, destImage, CV_YUV420sp2RGB, 3);
+			cvtColor(srcImage, destImage, CV_YUV420sp2RGB, 3);
 			break;
 		case IMAGE_COLOR_GRAYSCALE:
-			cvtColor(*this, destImage, CV_YUV420sp2RGB, 3);
-			cvtColor(*this, destImage, CV_YUV420sp2RGB);
+			cvtColor(srcImage, destImage, CV_YUV420sp2RGB, 3);
+			cvtColor(srcImage, destImage, CV_YUV420sp2RGB);
 			cvtColor(destImage, destImage, CV_RGB2GRAY);
 			break;
 		}
@@ -121,7 +146,7 @@ bool Image::convertColorFormat(int newColorFormat) {
 	}
 
 	if (destImage.data != NULL) {
-		*this = Image(destImage, newColorFormat);
+		dstImage = Image(destImage, newColorFormat);
 		return true;
 	} else {
 		return false;
@@ -136,3 +161,22 @@ bool Image::convertColorFormat(int newColorFormat) {
 int Image::getColorFormat() {
 	return colorFormat;
 }
+
+Image& Image::operator() (void *data, Size size, int colorFormat) {
+	switch (colorFormat) {
+	case IMAGE_COLOR_YUV420sp:
+		if ((this->rows != size.height * 3/2) || (this->type() != FORMAT2TYPE(IMAGE_COLOR_YUV420sp))
+				|| (this->cols != size.width) || this->colorFormat != colorFormat) {
+			DEBUG_PRINT("Image.cpp", "operator() CREATE IMAGE");
+			*this = Image(size.height * 3/2, size.width, (void *)data, colorFormat);
+		} else {
+			DEBUG_PRINT("Image.cpp", "operator() USING ALLOCATED IMAGE");
+			this->data = (uchar *)data;
+		}
+		break;
+	}
+
+	return *this;
+}
+
+

@@ -201,15 +201,16 @@ public class OpenQrActivity extends Activity {
         
         // Decoding QR code
         QrCode qrCode = decoderManager.decodeQrCode(dataSegments);
+        if (dataSegments != null && dataSegments.flags == DataSegmentsFlags.DATA_SEGMENTS_CORRUPTED) {
+            decodeWarning.setVisibility(ImageView.VISIBLE);
+        } else {
+            resultSutitleLayout.removeView(decodeWarning);
+        }
         if (qrCode == null) {
             resultSubTitle.setText(R.string.OpenQrActivity_SubTitle_NoDecoder);
             displayRAW(dataSegments.toByteArray());
             resultSutitleLayout.removeView(decodeWarning);
             return;
-        } else if (dataSegments.flags == DataSegmentsFlags.DATA_SEGMENTS_CORRUPTED) {
-            decodeWarning.setVisibility(ImageView.VISIBLE);
-        } else {
-            resultSutitleLayout.removeView(decodeWarning);
         }
         
         // Getting the view for the QR code

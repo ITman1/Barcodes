@@ -59,6 +59,7 @@ public:
 
 	static jclass getJClass(JNIEnv *env);
 	operator Image();
+	Image& operator() (Image &img);
 };
 
 }

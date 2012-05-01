@@ -2,40 +2,51 @@
 # (c) 2008 Michal Bidlo
 # E-mail: bidlom AT fit vutbr cz
 #===========================================
+# Upravil: Ing. Jaroslav Dytrych
+#===========================================
 # asi budete chtit prejmenovat:
-PROJECT_NAME=barcodes
-TEX_DIR=tex
-TMP_DIR=tmp
+SHELL=cmd.exe
+CO=QrReader
+OUT_DIR=out
 
-all: $(PROJECT_NAME).pdf
+# Including OS Specifics Library
+include ../GNUMake_OSSLib/include.mk
 
-pdf: $(PROJECT_NAME).pdf
+all: $(OUT_DIR)/$(CO).pdf
 
-$(TMP_DIR)/$(PROJECT_NAME).ps: $(PROJECT_NAME).dvi
-	dvips $(PROJECT_NAME)
+pdf: $(OUT_DIR)/$(CO).pdf
 
-$(PROJECT_NAME).pdf: clean
-	pdflatex $(PROJECT_NAME)
-	bibtex $(PROJECT_NAME)
-	pdflatex $(PROJECT_NAME)
-	pdflatex $(PROJECT_NAME)
+$(OUT_DIR)/$(CO).ps: $(OUT_DIR)/$(CO).dvi
+	dvips $(CO)
 
-$(PROJECT_NAME).dvi: $(PROJECT_NAME).tex $(PROJECT_NAME).bib
-	latex $(PROJECT_NAME)
-	bibtex $(PROJECT_NAME)
-	latex $(PROJECT_NAME)
-	latex $(PROJECT_NAME)
+$(OUT_DIR)/$(CO).pdf: reset
+	pdflatex -output-directory=$(OUT_DIR) $(CO)
+	bibtex $(OUT_DIR)/$(CO)
+	pdflatex -output-directory=$(OUT_DIR) $(CO)
+	pdflatex -output-directory=$(OUT_DIR) $(CO)
+
+$(OUT_DIR)/$(CO).dvi: $(CO).tex $(CO).bib
+	latex -output-directory=$(OUT_DIR) $(CO)
+	bibtex $(CO)
+	latex -output-directory=$(OUT_DIR) $(CO)
+	latex -output-directory=$(OUT_DIR) $(CO)
 
 desky:
 #	latex desky
 #	dvips desky
 #	dvipdf desky
-	pdflatex desky
+	$(call oss_mkdir,$(OUT_DIR))
+	pdflatex -output-directory=$(OUT_DIR) desky
+
+spojit:
+	mv $(CO).pdf zprava.pdf
+	pdftk A=zprava.pdf B=zadani.pdf cat A1-2 B1-end A3-end output $(CO).pdf
 
 clean:
-	rm -f *.dvi *.log $(PROJECT_NAME).blg $(PROJECT_NAME).bbl $(PROJECT_NAME).toc *.aux $(PROJECT_NAME).out $(PROJECT_NAME).lof
-	rm -f $(PROJECT_NAME).pdf
-	rm -f *~
+	$(call oss_rmdir,$(OUT_DIR))
+
+reset: clean
+	$(call oss_mkdir,$(OUT_DIR))
 
 pack:
-	tar czvf bp-xjmeno.tar.gz *.tex *.bib *.bst ./fig/* ./cls/* Makefile Changelog
+	tar czvf bp-xjmeno.tar.gz *.tex *.bib *.bst ./fig/* ./cls/* $(CO).pdf Makefile Changelog

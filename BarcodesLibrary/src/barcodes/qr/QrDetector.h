@@ -160,6 +160,11 @@ public:
 	static Mat binarize(Mat &image, int flags, int mean_C = BINARIZE_MEAN_C);
 protected:
 	/**
+	 * Offset for storing contours indices. Is changed every time after detect call.
+	 */
+	mutable int contourOffset;
+
+	/**
 	 * Instance of the QR detector.
 	 */
 	static const QrDetector DETECTOR_INSTANCE;
@@ -320,7 +325,7 @@ protected:
 	 */
 	static const int QR_MARK_MINIMAL_SIZE_LARGE                 =    20;
 
-	QrDetector() {}
+	QrDetector() : contourOffset(0) {}
 	virtual ~QrDetector() {}
 
 	/**

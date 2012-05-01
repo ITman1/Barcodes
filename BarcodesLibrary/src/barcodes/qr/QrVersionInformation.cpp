@@ -353,6 +353,7 @@ QrVersionInformation QrVersionInformation::fromImage(const Mat &image, const Det
 	double X = (W_UL + W_UR) / 14.0;
 	int V = round(((D / (double)X) - 10) / 4.0);
 
+	if (V < VERSION_1.getVersion()) return INVALID_VERSION;
 	if (V <= VERSION_6.getVersion()) return QrVersionInformation(V);
 
 	BitMatrix versionBitMatrix;
@@ -379,7 +380,7 @@ QrVersionInformation QrVersionInformation::fromImage(const Mat &image, const Det
 #ifdef TARGET_DEBUG
 	return INVALID_VERSION;
 #else
-	return (V > VERSION_40.getVersion())? INVALID_VERSION : QrVersionInformation(V);
+	return ((V > VERSION_40.getVersion()) || (V < VERSION_1.getVersion()))? INVALID_VERSION : QrVersionInformation(V);
 #endif
 }
 
