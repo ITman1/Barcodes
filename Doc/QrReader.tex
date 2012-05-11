@@ -46,6 +46,12 @@
 \usepackage{float}
 \usepackage{enumitem}
 \setlist{topsep=7pt,partopsep=0pt,itemsep=0pt,parsep=7pt}
+\makeatletter
+\g@addto@macro{\UrlBreaks}{\UrlOrds}
+\makeatother
+\usepackage{multirow}
+\usepackage{epstopdf}
+\newcommand\csuv[1]{\quotedblbase #1\textquotedblleft}
 
 % =======================================================================
 % balíček "hyperref" vytváří klikací odkazy v pdf, pokud tedy použijeme pdflatex
@@ -112,25 +118,34 @@
 %Abstrakt (cesky, anglicky)
 \abstract[cs]{Tato bakalářská práce se věnuje problematice čtení dvourozměrných
 čárových QR kódů, návrhu a popisu implementace aplikace čtečky QR kódů pro 
-mobilní platformu Android. V teoretické části analyzuje strukturu QR kódů včetně
-způsobu kódování obsažených informací a uvádí referenční přístupy, jakými lze
+mobilní platformu Android. V~teoretické části analyzuje strukturu QR kódů
+včetně způsobu kódování obsažených informací a uvádí referenční přístupy, jakými lze
 tyto informace dekódovat. S ohledem na cílovou platformu Android navrhuje
 přístupy pro detekci QR kódů v reálném obraze a dekódování v zachyceném obraze
 z kamery mobilního zařízení. Závěrem hodnotí spolehlivost a výkonnost
 implementovaných funkcionalit a zamýšlí se nad možnostmi jejich dalšího
 budoucího rozšíření.}
-\abstract[en]{Do tohoto odstavce bude zapsán výtah (abstrakt) práce v anglickém jazyce.}
+\abstract[en]{This bachelor thesis focuses on the topic of reading the QR codes
+with the aim of designing and description of the implementation of QR codes’ 
+reader application for Android mobile platform. In theoretical part it analyzes
+structure of the QR codes including the way of information encoding and states
+the possible reference approaches of decoding them. With regard to the target
+platform Android it proposes algorithms for the detection of QR codes in the
+real time image and for decoding of the captured image from a mobile phone
+camera. At the end it evaluates the reliability and efficiency of the
+implemented functionalities and considers possibilities of their further
+development.}
 
 %Klicova slova (cesky, anglicky)
-\keywords[cs]{dvourozměrné čárové kódy,QR kódy,detekce,dekódování,čtečka QR
-kódů,Android,OpenCV}
-\keywords[en]{2D barcodes,QR codes,detection,decoding,QR
-code reader,Android,OpenCV}
+\keywords[cs]{dvourozměrné čárové kódy, QR kódy, detekce, dekódování, čtečka QR
+kódů, Android, OpenCV}
+\keywords[en]{2D barcodes, QR codes, detection, decoding, QR
+code reader, Android, OpenCV}
 
 %Prohlaseni
 \declaration{Prohlašuji, že jsem tuto bakalářskou práci vypracoval samostatně
-pod vedením pana Ing. Lukáše Maršíka. Uvedl jsem všechny literární prameny a
-publikace, ze kterých jsem čerpal.}
+pod vedením pana \linebreak[4]Ing. Lukáše Maršíka. Uvedl jsem všechny literární
+prameny a publikace, ze kterých jsem čerpal.}
 
 %Podekovani (nepovinne)
 \acknowledgment{Na tomto místě bych rád poděkoval panu Ing. Lukáši Maršíkovi za

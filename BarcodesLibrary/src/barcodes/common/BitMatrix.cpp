@@ -217,9 +217,9 @@ void BitMatrix::fromImage(Mat img, Size sampleGridSize, BitMatrix &outMatrix, Re
 	double _colSize = _img.cols / (double)_cols;
 	double _paddingColSize = ceil(_colSize * (1 - paddingRatio));
 	double _paddingRowSize = ceil(_rowSize * (1 - paddingRatio));
-	double _paddingColOffset = _colSize * (paddingRatio / 2.0);
-	double _paddingRowOffset = _rowSize * (paddingRatio / 2.0);
-	int _pixelsPerModule = (int)_paddingColSize * (int)_paddingRowSize;
+	//double _paddingColOffset = _colSize * (paddingRatio / 2.0);
+	//double _paddingRowOffset = _rowSize * (paddingRatio / 2.0);
+	//int _pixelsPerModule = (int)_paddingColSize * (int)_paddingRowSize;
 
 	if (_rows >= 1 && _cols >= 1) {
 		outMatrix = BitMatrix(0, _cols);

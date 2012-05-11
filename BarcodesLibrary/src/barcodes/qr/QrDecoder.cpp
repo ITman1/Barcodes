@@ -59,9 +59,9 @@ const Size QrDecoder::CODEWORD_SAMPLE_SIZE(2, 4);
  */
 void QrDecoder::decode(Image &image, DataSegments &dataSegments, int flags) const {
 	DetectedMarks detectedMarks;
-
+	DEBUG_PRINT(DEBUG_TAG, "start time [ms]: %d", DIFF_TIME());
 	QrDetector::getInstance()->detect(image, detectedMarks, flags);
-
+	DEBUG_PRINT(DEBUG_TAG, "detect [ms]: %d", DIFF_TIME());
 	map<int,int> parentContourOccurances;
 	bool foundThreeOnSameParentLevel = false;
 	int parentIndex = 0;;
@@ -112,6 +112,19 @@ Image QrDecoder::lastProcessedImage() const {
 	return Image(warpedImage, IMAGE_COLOR_GRAYSCALE);
 }
 
+int getMaxSize(vector<Point> corners) {
+	int max = 0;
+	for (int i = 1; i < corners.size(); i++) {
+		Vector2D vec(corners[i - 1], corners[i]);
+		int max_vec = vec.size();
+		if (max_vec > max) {
+			max = max_vec;
+		}
+	}
+
+	return max;
+}
+
 /**
  * Decodes QR code of the versions 1-40 and returns decoded data segments.
  *
@@ -151,9 +164,10 @@ void QrDecoder::_read_V1_40(Image &image, Mat &binarized, DataSegments &dataSegm
 				"perspective_corners.jpg"
 		), img);
 
+	DEBUG_PRINT(DEBUG_TAG, "corners [ms]: %d", DIFF_TIME());
 	//>>> 2) PERSPECTIVE TRANSFORMATION OF THE QR CODE
 
-	int warpPerspectiveSize = (binarized.cols > binarized.rows)? binarized.cols : binarized.rows;
+	int warpPerspectiveSize = getMaxSize(corners); //(binarized.cols > binarized.rows)? binarized.rows : binarized.cols;
 	warpedImage = warpPerspective(image, corners, false, Size(warpPerspectiveSize, warpPerspectiveSize));
 	/*Mat perspWarped;
 	cv::GaussianBlur(image2, perspWarped, cv::Size(0, 0), 3);
@@ -163,6 +177,7 @@ void QrDecoder::_read_V1_40(Image &image, Mat &binarized, DataSegments &dataSegm
 	_detectedMarks.perspectiveTransform(transformation);
 	DEBUG_WRITE_IMAGE("warped.jpg", warpedImage);
 
+	DEBUG_PRINT(DEBUG_TAG, "transform [ms]: %d", DIFF_TIME());
 	//>>> 3) GETTING THE QR CODE VERSION FROM THE IMAGE
 
 	QrVersionInformation versionInformation = QrVersionInformation::fromImage(warpedImage, _detectedMarks);
@@ -173,6 +188,7 @@ void QrDecoder::_read_V1_40(Image &image, Mat &binarized, DataSegments &dataSegm
 	}
 	DEBUG_PRINT(DEBUG_TAG, "Processing version: %d", versionInformation.getVersion());
 
+	DEBUG_PRINT(DEBUG_TAG, "version [ms]: %d", DIFF_TIME());
 	//>>> 4) TRANSLATING THE IMAGE TO THE BIT MATRIX
 
 	BitMatrix qrBitMatrix;
@@ -184,6 +200,7 @@ void QrDecoder::_read_V1_40(Image &image, Mat &binarized, DataSegments &dataSegm
 	}
 	DEBUG_WRITE_BITMATRIX("data_unmasked.bmp", qrBitMatrix);
 
+	DEBUG_PRINT(DEBUG_TAG, "bit matrix [ms]: %d", DIFF_TIME());
 	//>>> 5) GETTING THE FORMAT INFORMATION FROM THE BIT MATRIX
 
 	QrFormatInformation formatInformation = QrFormatInformation::fromBitMatrix(qrBitMatrix, versionInformation);
@@ -194,6 +211,7 @@ void QrDecoder::_read_V1_40(Image &image, Mat &binarized, DataSegments &dataSegm
 	}
 	DEBUG_PRINT(DEBUG_TAG, "XOR DATA MASK: %d | ERROR CORRECTION LEVEL: %d", formatInformation.getXORDataMask(), formatInformation.getErrorCorrectionLevel());
 
+	DEBUG_PRINT(DEBUG_TAG, "format [ms]: %d", DIFF_TIME());
 	//>>> 6) BUILDING THE XOR DATA MASK AND MASKING THE QR CODE BIT MATRIX
 
 	BitMatrix xorDataMask;
@@ -203,6 +221,7 @@ void QrDecoder::_read_V1_40(Image &image, Mat &binarized, DataSegments &dataSegm
 	DEBUG_WRITE_BITMATRIX("xor_mask.bmp", xorDataMask);
 	DEBUG_WRITE_BITMATRIX("data_masked.bmp", qrBitMatrix);
 
+	DEBUG_PRINT(DEBUG_TAG, "xor mask [ms]: %d", DIFF_TIME());
 	//>>> 7) SAMPLING THE QR CODE AND RETRIEVING BIT ARRAY CONTATINING DATA AND ERROR CORRECTION CODEWORDS
 
 	GridSampler sampler(CODEWORD_SAMPLE_SIZE, GridSampler::LEFT_TOP, GridSampler::TOP_LEFT, false, true);
@@ -216,12 +235,14 @@ void QrDecoder::_read_V1_40(Image &image, Mat &binarized, DataSegments &dataSegm
 	DEBUG_PRINT(DEBUG_TAG, "READ DATA/ERROR BITS: %d", qrDataErrorBits.size());
 	DEBUG_WRITE_BITMATRIX("data_mask.bmp", dataMask);
 
+	DEBUG_PRINT(DEBUG_TAG, "bit arraz [ms]: %d", DIFF_TIME());
 	//>>> 8) DIVIDES BITARRAY INTO CODEWORDS, RE-ORDERS AND RETURNS ORDERED BLOCKS CONTAINING EC PARITY BITS
 
 	QrCodewordOrganizer codewordOrganizer(versionInformation, formatInformation);
 	vector<BitArray> blocks;
 	codewordOrganizer.extractBlocks(qrDataErrorBits, blocks);
 
+	DEBUG_PRINT(DEBUG_TAG, "blocks [ms]: %d", DIFF_TIME());
 	//>>> 9) PROCEEDS THE ERROR CORRECTION AND EXTRACTS CORECTED CODEWORDS
 
 	BitArray codewords;
@@ -231,6 +252,7 @@ void QrDecoder::_read_V1_40(Image &image, Mat &binarized, DataSegments &dataSegm
 	}
 	codewordOrganizer.blocksToCodewords(blocks, codewords);
 
+	DEBUG_PRINT(DEBUG_TAG, "error correct [ms]: %d", DIFF_TIME());
 	//>>> 10) FINALLY DECODE THE DATA
 
 	QrBitDecoder::getInstance().decode(codewords, dataSegments, versionInformation);
@@ -240,6 +262,7 @@ void QrDecoder::_read_V1_40(Image &image, Mat &binarized, DataSegments &dataSegm
 		return;
 	}
 
+	DEBUG_PRINT(DEBUG_TAG, "final message [ms]: %d", DIFF_TIME());
 	DEBUG_PRINT(DEBUG_TAG, "FIRST DATA SEGMENT length: %d", dataSegments[0].data.size());
 	DEBUG_PRINT(DEBUG_TAG, "FIRST DATA SEGMENT mode: %d", dataSegments[0].mode);
 	DEBUG_PRINT(DEBUG_TAG, "FIRST DATA SEGMENT: %s", (dataSegments[0].data.size() > 0)? string((const char *)&dataSegments[0].data[0], dataSegments[0].data.size()).c_str() : NULL);

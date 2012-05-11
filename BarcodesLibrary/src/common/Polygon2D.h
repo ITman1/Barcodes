@@ -48,7 +48,7 @@ struct PointNearbyPoints {
 /**
  * Template for creation 2D polygons which are defined as a set of points.
  *
- * @todo For now only gathers static methods which should be template.
+ * @todo For now only gathers static methods which should be templated.
  */
 template<typename T>
 class Polygon2D_:vector<Point_<T> > {

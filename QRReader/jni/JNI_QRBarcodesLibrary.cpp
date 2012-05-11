@@ -77,6 +77,7 @@ extern "C" {
 	 */
 	JNIEXPORT jobject JNICALL Java_com_qrcode_QrCodes_readQrCode(JNIEnv *env, jobject obj, jobject image, jint request, jint flags) {
 		DEBUG_PRINT(DEBUG_TAG, "===== DECODE CALL =====");
+		DEBUG_PRINT(DEBUG_TAG, "start call [ms]: %d", DIFF_TIME());
 
 		QrBarcode barcode;
 		jImage _jImage(env, image);

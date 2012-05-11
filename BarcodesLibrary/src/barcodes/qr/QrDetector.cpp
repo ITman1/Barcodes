@@ -181,7 +181,10 @@ DEBUG_PRINT(DEBUG_TAG, "_detect(image,detectedMarks,%d)", flags);
 
 	for( unsigned int i = 0; i < contours.size(); i++ ) {
 		if (contours[i].size() < 4) continue;
-		if ((flags & FLAG_USE_HIERARCHY) && (hierarchy[i][2] < 0)) continue;
+		if (flags & FLAG_USE_HIERARCHY) {
+			if (hierarchy[i][2] < 0) continue;
+			if ((detectedMarks.size() > 0) && (currMark.variant != contourOffset + hierarchy[i][3])) continue;
+		}
 
 		//approxPolyDP(Mat(contours[i]), contours[i], 7, true);
 
@@ -227,7 +230,7 @@ DEBUG_PRINT(DEBUG_TAG, "_detect(image,detectedMarks,%d)", flags);
 		Mat hullMask = Mat::zeros(boxRect.size(), CV_8UC1);
 		drawVec.clear(); drawVec.push_back(hull);
 	    drawContours(hullMask, drawVec, -1, Scalar(255), CV_FILLED, 8, noArray(), INT_MAX, Point(-boxRect.x, -boxRect.y));
-	    int contourFill = cv::countNonZero(contourMask);
+	    int contourFill = fill_density + bg_density;//cv::countNonZero(contourMask);
 	    int hullFill = cv::countNonZero(hullMask);
         DEBUG_PRINT(DEBUG_TAG, "cont/hull compare: %d : %d : %d : %d", i, contourFill, hullFill, boxRectSize.width * boxRectSize.height);
 	    if (contourFill / (double) hullFill < QR_MARK_CONVEX_CONTOUR_MATCH) continue;

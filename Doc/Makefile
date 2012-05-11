@@ -4,6 +4,10 @@
 #===========================================
 # Upravil: Ing. Jaroslav Dytrych
 #===========================================
+#===========================================
+# Upravil: Radim Loskot
+# - pridano GNUMake_OSSLib
+#===========================================
 # asi budete chtit prejmenovat:
 SHELL=cmd.exe
 CO=QrReader

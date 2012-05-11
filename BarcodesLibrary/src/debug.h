@@ -29,6 +29,7 @@
 	#include <vector>
 	#include <sstream>
 	#include <string>
+	#include <ctime>
 	#include <opencv2/core/core.hpp>
 
 	/** Debug string used for string collection. */
@@ -96,6 +97,11 @@
 			} \
 		} \
 		DEBUG_WRITE_IMAGE(filename, __DEBUG_MATRIX);
+
+	static clock_t __clock_m = clock();
+	static clock_t __clock_diff;
+	#define DIFF_TIME() \
+		((__clock_diff = clock() - __clock_m, __clock_m += __clock_diff), (int)(1000 * ((double)__clock_diff / (double)CLOCKS_PER_SEC)))
 
 #else
 	#define DEBUG_WRITE_IMAGE(filename, image)

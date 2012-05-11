@@ -30,6 +30,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -225,6 +227,29 @@ public class OpenQrActivity extends Activity {
             ((ScrollView)findViewById(R.id.scrollView)).fullScroll(ScrollView.FOCUS_UP);
         }
     }
+    
+    //http://stackoverflow.com/questions/1949066/java-lang-outofmemoryerror-bitmap-size-exceeds-vm-budget-android
+    private void unbindDrawables(View view) {
+        if (view != null && view.getBackground() != null) {
+        view.getBackground().setCallback(null);
+        }
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+            unbindDrawables(((ViewGroup) view).getChildAt(i));
+            }
+        ((ViewGroup) view).removeAllViews();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    
+        ViewParent parent = qrCodeImage.getParent();
+        if (parent instanceof View) unbindDrawables((View)parent);
+        System.gc();
+    }
+
     
     /**
      * Called when activity is stopping. Fires the on pause callbacks

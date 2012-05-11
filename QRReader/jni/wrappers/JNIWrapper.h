@@ -71,6 +71,7 @@ public:
 	virtual ~JNIWrapper() {
 		if (localJObject) {
 			env->DeleteLocalRef(jObject);
+			env->DeleteLocalRef(this->cls);
 		}
 	}
 
@@ -389,6 +390,7 @@ public:
 		string className = string(strClassName);
 
 		env->ReleaseStringUTFChars(jClassName , strClassName);
+		env->DeleteLocalRef(jClassName);
 
 		replace(className.begin(), className.end(), '.', '/');
 		return "L" + className + ";";
