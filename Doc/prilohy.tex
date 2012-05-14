@@ -1,38 +1,41 @@
 \chapter{Obsah DVD}
 \label{obsahDVD}
 
+Na elektronický nosič byly přiloženy následující součásti bakalářské práce: 
+\bigskip
+
 \begin{itemize}
-  \item \textbf{BarcodesLibrary/} -- C++ knihovna pro detekci a dekódování QR
-  kódů
+  \item \textbf{BarcodesLibrary/} -- C++ knihovna pro detekci a
+  dekódování QR kódů;
   	\begin{itemize}
-  	  \item \textbf{src/} -- Zdrojové kódy knihovny
-  	  \item \textbf{doc/} -- Programová dokumentace knihovny v HTML formátu
-  	  \item \textbf{lib/} -- Výstupní složka pro sestavenou knihovnu
-  	  \item \textbf{tests/} -- Složka obsahující zdrojové kódy pro sestavení
-  	  testů kníhovny
+  	  \item \textbf{src/} -- zdrojové kódy knihovny;
+  	  \item \textbf{doc/} -- programová dokumentace knihovny v HTML formátu;
+  	  \item \textbf{lib/} -- výstupní složka pro sestavenou knihovnu;
+  	  \item \textbf{tests/} -- složka obsahující zdrojové kódy pro sestavení
+  	  testů knihovny;
 	\end{itemize}
-  \item \textbf{Doc/} -- Technická zpráva
+  \item \textbf{Doc/} -- technická zpráva;
   	\begin{itemize}
-  	  \item \textbf{out/QrReader.pdf} -- Technická zpráva ve formátu PDF
+  	  \item \textbf{zprava.pdf} -- technická zpráva ve formátu PDF;
 	\end{itemize}
-  \item \textbf{DocomoDecoderPlugin/} -- Plugin obsahující dekódér
+  \item \textbf{DocomoDecoderPlugin/} -- plugin obsahující dekódér
   specifické aplikační vrstvy, který lze doinstalovat do aplikace čtečky QR
-  kódů.
+  kódů;
   	\begin{itemize}
-  	  \item \textbf{src/} -- Zdrojové kódy pluginu
-  	  \item \textbf{dest/DocomoDecoderPlugin.jar} -- Plugin ve formě archivu JAR,
-  	  obsahující třídy zkompilované pro Dalvik VM.
+  	  \item \textbf{src/} -- zdrojové kódy pluginu;
+  	  \item \textbf{DocomoDecoderPlugin.jar} -- plugin ve formě archivu JAR,
+  	  obsahující třídy zkompilované pro Dalvik VM;
 	\end{itemize}
-  \item \textbf{GNUMake\_OSSLib/} -- GNU Make knihovna s makry pro překlad C++
-  knihovny (BarcodesLibrary)
-  \item \textbf{OpenCV/} -- Sestavená OpenCV knihovna pro cílové mobilní
-  architektury procesorů ARM a ARMv7a.
-  \item \textbf{QRReader/} -- Aplikace čtečky QR kódu pro Android
+  \item \textbf{GNUMake\_OSSLib/} -- GNU Make knihovna s makry pro překlad
+  knihovny \linebreak[5]BarcodesLibrary;
+  \item \textbf{OpenCV/} -- sestavená OpenCV knihovna pro cílové mobilní
+  architektury procesorů ARMv6 a ARMv7a;
+  \item \textbf{QRReader/} -- aplikace čtečky QR kódů pro Android;
   	\begin{itemize}
-  	  \item \textbf{src/} -- Zdrojové kódy aplikace
-  	  \item \textbf{doc/} -- Programová dokumentace aplikace v HTML formátu
-  	  \item \textbf{dest/QRReader.apk} -- Sestavená výsledná aplikace čtečky QR
-  	  kódu pro Android.
+  	  \item \textbf{src/} -- zdrojové kódy aplikace;
+  	  \item \textbf{doc/} -- programová dokumentace aplikace v HTML formátu;
+  	  \item \textbf{QRReader.apk} -- sestavená výsledná aplikace čtečky QR
+  	  kódů pro Android.
 	\end{itemize}
 \end{itemize}
 
@@ -44,8 +47,8 @@ bity korekce chyby. Pro výpočet těchto bitů se využívá
 cyklických Bose-Chaudhuri-Hocquenghem kódů, zkráceně BCH. Redundantní bity
 jsou tvořeny generujícími polynomy $G(x)$, jejichž tvar je pevně stanoven. Pro
 kódování metainformace formátu QR kódu je konkrétně využito kódu BCH(15, 5)\footnote{BCH($n$, $k$) -- Zápis pro Bose-Chaudhuri-Hocquenghem kódy, kde $n$ udává, na kolika bitech bude výsledný řetězec bloku metainformace 
-(včetně korekci) a $k$, pro kolik informačních bitu je korekce chyby počítána.} 
-a pro kódování metainformace verze QR kódu BCH(18, 6). \cite{ISO180042006}
+(včetně redundantních bitů) a $k$, pro kolik informačních bitů je korekce chyby
+počítána.} a pro kódování metainformace verze QR kódu BCH(18, 6). \cite{ISO180042006}
 
 \bigskip \noindent Generující polynom formátu QR kódu:
 \begin{equation}
@@ -59,54 +62,54 @@ G(x) = x^{12} + x^{11} + x^{10} + x^9 + x^8 + x^5 + x^2 + 1
 
 \bigskip \noindent Zabezpečení informačních bitů probíhá s využitím vztahu 
 \begin{equation}
-  \frac{f(x) x^{n-k}}{G(x)} = h(x) + \frac{r(x)}{g(x)}
+  \frac{f(x) x^{n-k}}{G(x)} = h(x) + \frac{r(x)}{g(x)}\mbox{,}
 \end{equation}
 \noindent kde redundantní bity jsou zjištěny jako zbytek po dělení generujícím
 polynomem $G(x)$. \cite{BCHCodesLiterature}
 
-\subsubsection{Postup výpočtu redundatních bitu verze QR kódu}
+\subsubsection{Postup výpočtu redundatních bitů verze QR kódu}
 \noindent -- vstupní informační bity: $000111$ (verze 7)
 
 \begin{enumerate}
   \item Převedení binárního řetězce informačních bitů do polynomického tvaru:
 	\begin{equation}
-	  000111 \Rightarrow x^2 + x + 1
+	  000111 \Rightarrow x^2 + x + 1\mbox{.}
 	\end{equation}
   \item Zvýšení mocnin polynomu v závislosti na BCH($n$, $k$) o $n - k$ pozic,
   neboli vynásobení polynomem $x^{n-k}$, zde BCH(18, 6):
 	\begin{equation}
-	  x^2 + x + 1 \Rightarrow x^{14} + x^{13} + x^{12}
+	  x^2 + x + 1 \Rightarrow x^{14} + x^{13} + x^{12}\mbox{.}
 	\end{equation}
   \item Vydělení vzniklého polynomu generujícím polynomem:
 	\begin{equation}
 	  \frac{x^{14} + x^{13} + x^{12}}{G(X)} =  x^2 + \frac{x^{11} + x^{10} + x^7 +
-	  x^4 +x^2}{x^{12} + x^{11} + x^{10} + x^9 + x^8 + x^5 + x^2 + 1}
+	  x^4 +x^2}{x^{12} + x^{11} + x^{10} + x^9 + x^8 + x^5 + x^2 + 1}\mbox{.}
 	\end{equation}
   \item Převod zbytku po dělení na binární řetězec (redundatních bitů):
 	\begin{equation}
-      x^{11} + x^{10} + x^7 + x^4 +x^2 \Rightarrow 110010010100
+      x^{11} + x^{10} + x^7 + x^4 +x^2 \Rightarrow 110010010100\mbox{.}
 	\end{equation}
   \item Konkatenace informačních bitů a jejich redundatních bitů korekce chyby:
 	\begin{equation}
-      000111 + 110010010100 \Rightarrow 000111110010010100
+      000111 + 110010010100 \Rightarrow 000111110010010100\mbox{.}
 	\end{equation}
-  \item Aplikace XOR masky $101010000010010$, jedná li se o kódování
+  \item Aplikace XOR masky $101010000010010$, jedná-li se o kódování
   metainforamce formátu QR kódu, k zamezení vzniku binárního řetězce s
   nulovými bity ve všech pozicích.
 \end{enumerate}
 
-\chapter{Algoritmus pro hledání rohů polygonu}
+\chapter{Algoritmus hledání rohů polygonu}
 \label{algoritmusHledaniRohu}
 
 Algoritmus hledání rohů polynomu byl navržen pro hledání čtyř bodů (rohů)
 poziční značky, která byla definovaná množinou bodů, jež ohraničovaly danou
 značku. Obecně lze ovšem algoritmus použít pro jakýkoliv polynom, princip jeho
-činnosti můžeme vidět na obrázku \ref{prilohaHledaniRohuObr}.
+činnosti můžeme vidět na obrázku~\ref{prilohaHledaniRohuObr}.
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.25}{
-      \includegraphics{fig/SearchCornersOfPolygonAlgorithm.PNG}
+    \scalebox{0.85}{
+      \includegraphics{fig/SearchCornersOfPolygonAlgorithm.pdf}
     }
     \caption{Zobrazení dvou kroků algoritmu a výsledku hledání rohů polynomu}
     \label{prilohaHledaniRohuObr}
@@ -115,8 +118,8 @@ značku. Obecně lze ovšem algoritmus použít pro jakýkoliv polynom, princip 
 
 \noindent Vstupními parametry algoritmu jsou:
 \begin{itemize}
-  \item Velikost sousedství v pixelech $V$
-  \item Interval povolených úhlů $R$, jež mohou svírat přímky $p$ a $p'$, aby
+  \item velikost sousedství v pixelech $V$,
+  \item interval povolených úhlů $R$, jež mohou svírat přímky $p$ a $p'$, aby
   jejich průsečík byl uznán jako roh polygonu. 
 \end{itemize}
 
@@ -141,14 +144,37 @@ značku. Obecně lze ovšem algoritmus použít pro jakýkoliv polynom, princip 
 	\end{enumerate}
   \item Projdi všechny vytvořené struktury a sestroj z bodů $I$ a $O$ přímku $p$
   a z bodů $I'$ a $O'$ přímku $p'$. Zjisti úhel $\alpha$, jež svírají obě dvě
-  přímky a v případě, že $\alpha \in E$, vlož průsečík tšchto přímek do seznamu
+  přímky a v případě, že $\alpha \in R$, vlož průsečík těchto přímek do seznamu
   získaných rohů $S$.
   \item Projdi všechny získané rohy $S$ a ověř, zda se v sousedství rohů
-  nenachází jiný z nalezených rohů. Pokud je nalezen v sousedství nějakého rohu jiný roh,
-  odstraň oba dva rohy a vlož do seznamu rohů nový roh daný aritmetickým
+  nenachází jiný z~nalezených rohů $S$. Pokud je nalezen v sousedství nějakého
+  rohu jiný roh, odstraň oba dva rohy a vlož do seznamu rohů nový roh daný aritmetickým
   průměrem souřadnic obou rohů a opakuj krok 4, dokud sousedství každého rohu
   není prázdné. 
 \end{enumerate}
+
+\chapter{Diagram tříd aplikace}
+\label{diagramTrid}
+
+ \begin{figure}[H]
+  \begin{center}
+    \scalebox{0.30}{
+      \includegraphics{fig/application_uml_1.eps}
+    }
+    \caption{Zjednodušený diagram tříd aplikace čtečky QR kódů -- 1. část}
+    \label{application_uml_1}
+  \end{center}
+\end{figure}
+
+ \begin{figure}[H]
+  \begin{center}
+    \scalebox{0.30}{
+      \includegraphics{fig/application_uml_2.eps}
+    }
+    \caption{Zjednodušený diagram tříd aplikace čtečky QR kódů -- 2. část}
+    \label{application_uml_1}
+  \end{center}
+\end{figure}
 
 %\chapter{Manual}
 %\chapter{Konfigrační soubor}

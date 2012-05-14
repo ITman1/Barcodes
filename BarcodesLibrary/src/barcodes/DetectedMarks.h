@@ -33,7 +33,7 @@ public:
 	vector<Point> points; /**< Points of the mark */
 	double match;		  /**< Match ratio and possibility that this is the mark */
 	int flags;			  /**< Flags/Conditions in which has been detected this mark */
-	long long int variant;/**< Variant object attribute, it can serve for passing int value or pointer etc. */
+	int variant;/**< Variant object attribute, it can serve for passing int value or pointer etc. */
 
 	DetectedMark() : match(0), flags(0), variant(0) {}
 

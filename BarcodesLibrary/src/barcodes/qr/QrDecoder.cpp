@@ -58,6 +58,7 @@ const Size QrDecoder::CODEWORD_SAMPLE_SIZE(2, 4);
  * @param flags Flags used for detection and decoding.
  */
 void QrDecoder::decode(Image &image, DataSegments &dataSegments, int flags) const {
+	DEBUG_PRINT(DEBUG_TAG, ">>>>>>>>>>> DECODE START <<<<<<<<<<<<<");
 	DetectedMarks detectedMarks;
 	DEBUG_PRINT(DEBUG_TAG, "start time [ms]: %d", DIFF_TIME());
 	QrDetector::getInstance()->detect(image, detectedMarks, flags);
@@ -97,6 +98,7 @@ void QrDecoder::decode(Image &image, DataSegments &dataSegments, int flags) cons
 			read_V1_40(image, dataSegments, detectedMarks);
 		}
 	}
+	DEBUG_PRINT(DEBUG_TAG, ">>>>>>>>>>> DECODE END <<<<<<<<<<<<<");
 }
 
 /**
@@ -114,7 +116,7 @@ Image QrDecoder::lastProcessedImage() const {
 
 int getMaxSize(vector<Point> corners) {
 	int max = 0;
-	for (int i = 1; i < corners.size(); i++) {
+	for (unsigned int i = 1; i < corners.size(); i++) {
 		Vector2D vec(corners[i - 1], corners[i]);
 		int max_vec = vec.size();
 		if (max_vec > max) {

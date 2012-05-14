@@ -34,6 +34,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -211,7 +212,6 @@ public class OpenQrActivity extends Activity {
         if (qrCode == null) {
             resultSubTitle.setText(R.string.OpenQrActivity_SubTitle_NoDecoder);
             displayRAW(dataSegments.toByteArray());
-            resultSutitleLayout.removeView(decodeWarning);
             return;
         }
         
@@ -294,6 +294,7 @@ public class OpenQrActivity extends Activity {
             File imageFile = new File(imagePath);
             if (imageFile.exists()) { // If exists open it from the URI
                 qrCodeImage.setImageURI(Uri.fromFile(imageFile));
+                qrCodeImage.setScaleType(ScaleType.FIT_XY);
                 return;
             }
         }

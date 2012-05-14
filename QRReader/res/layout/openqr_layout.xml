@@ -55,7 +55,7 @@
 			</LinearLayout>
 		    <ImageView
 		        android:id="@+id/QRCodeImage"
-		        android:layout_width="wrap_content"
+		        android:layout_width="150dp"
 		        android:layout_height="150dp"
 		        android:layout_gravity="center_horizontal"
 		        android:padding="10dp" />

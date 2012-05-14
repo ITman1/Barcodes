@@ -8,16 +8,15 @@ informaci, která jednoznačně identifikuje daný typ zboží, společně s
 pokladními systémy usnadňují a zrychlují proces prodeje zboží většině současným
 prodejcům.
 
-Čárové kódy jsou primárně určeny pro čtení strojem, mohou ovšem obsahovat i 
-textové části, které lze využít, pokud kód je poškozen či ho nejde z jiného
+Čárové kódy jsou primárně určeny pro čtení strojem, mohou však obsahovat i 
+textové části, které lze využít, pokud je kód poškozen či ho nelze z jiného
 důvodu  přečíst. Pro čtení čárových kódů se využívá čteček čárových kódů. 
 Existuje celá řada druhů čteček. Jednotlivé čtečky se odlišují ve schopnosti 
 snímání kódů z jiných povrchů materiálu, za odlišných okolních světelných 
-podmínek a v samotné podpoře čárových kódu, jež mohou číst. Při čtení čárových 
+podmínek a v samotné podpoře čárových kódů, jež mohou číst. Při čtení čárových 
 kódů se využívá odrazivosti světla, jehož zdrojem může být sama čtečka nebo 
-okolní světlo. Pro zachycení světla se využívá řady (matice) CCD\footnote{Charge 
-coupled device -- elektronická součástka určená pro snímání obrazové informace}
-snímačů nebo fotodiod, přičemž, v dnes již výjimečných případech, může být použito i pouze 
+okolní světlo. Pro zachycení světla se využívá řady (matice)
+CCD\footnote{Charge-coupled device -- elektronická součástka určená pro snímání obrazové informace} snímačů nebo fotodiod, přičemž, v dnes již výjimečných případech, může být použito i pouze 
 jedné fotodiody. CCD snímače nacházejí své uplatnění velmi často při čtení 
 dvourozměrných čárových kódů, zatímco fotodiody při čtení klasických čárových 
 kódů. \cite{barcodeScanner}
@@ -29,12 +28,12 @@ otázka využití fotoaparátu pro přenos dat. V té době již existovaly tech
 infračerveného přenosu, Bluetooth aj. Přenos informací do mobilního telefonu z 
 tištěné formy by byl ovšem novinkou. Přenos pomocí čárových kódů se přímo 
 nabízel a o jeho prosazení se postaraly a stále starají především marketingové 
-firmy, které tímto způsobem nabízejí odkazy na své inzerenty. Samotným 
-průkopníkem je Japonsko, kde se jako vhodný čárový kód pro přenos informací 
+firmy, které tímto způsobem prezentují odkazy na své inzerenty. Samotným 
+průkopníkem v této oblasti je Japonsko, kde se jako vhodný čárový kód pro přenos informací 
 ustálil QR kód\footnote{Quick Response kód -- dvourozměrný čárový kód
 tzv. kód rychlé odezvy}. Ani v této době nejsou
 ovšem čtečky QR kódů v mobilních telefonech řešeny konstrukčně, proto je nutné je implementovat na úrovni 
-softwarové vrstvy, pomocí přídavných aplikací. Tvorbou takové aplikace se 
+softwarové vrstvy pomocí přídavných aplikací. Tvorbou takové aplikace se 
 zabývá tato bakalářská práce.
 
 Práce si klade především za cíl zanalyzovat aktuální standard QR kódů, 
@@ -48,9 +47,9 @@ Historii dvourozměrných čárových kódů, důvody vzniku QR kódů pro přen
 informací a detailní strukturu QR kódů lze nalézt v kapitole \ref{QRKody}.
 Stručný přehled stále poměrně nové mobilní architektury Android je zobrazen v
 kapitole \ref{android}. Kapitola \ref{navrh} obsahuje návrh
-algoritmu pro detekování a dekódování QR kódu z obrazu a samotný návrh cílové
-aplikace. V kapitole \ref{implementace} je již popsána výsledná implementace
-aplikace. Poslední kapitola \ref{testovani} hodnotí úspěšnost čtení QR kódů z
+algoritmu pro detekování a dekódování QR kódů z obrazu a samotný návrh cílové
+aplikace. V kapitole~\ref{implementace} je již popsána výsledná implementace
+aplikace. Poslední kapitola \ref{vysledky} hodnotí úspěšnost čtení QR kódů z
 obrazu, zabývá se možnými rozšířeními a případným dalším vývojem aplikace.
 
 \chapter{QR kódy}
@@ -68,9 +67,9 @@ více dat než některé klasické čárové kódy, které kódují své informa
 v jednom směru. \cite{aboutQRCOde} 
 
 QR kódy byly zprvu vyvinuté pro sledování vozidel během výrobního procesu. 
-Svojí rychlou detekcí, dekódováním a velkému množství informací, které jsou 
+Svojí rychlou detekcí, dekódováním a velkým množstvím informací, které jsou 
 schopny přenášet, se ale dostaly do širšího podvědomí a 
-staly se populárními také i pro přenos dat do mobilních telefonů. Bližší důvody 
+staly se populárními také pro přenos dat do mobilních telefonů. Bližší důvody 
 jejich úspěchu, porovnání s jejich předchůdci a samotný proces standardizace 
 lze nalézt v podkapitole \ref{vyvojQRKodu}.
 
@@ -80,7 +79,7 @@ lokalizaci a věrohodné čtení těchto kódů. Tyto prostředky jsou dopodrobn
 popsány v podkapitolách \ref{strukturaQRKodu} a \ref{fyzickaVrstva}. 
 
 QR kódy mohou přenášet informace mnoha druhů, jejich interpretace v podobě dat 
-jsou často aplikačně specifické. V mobilním průmyslu se ovšem během několika let 
+jsou často aplikačně specifické. V mobilním průmyslu se ovšem během posledních let 
 ustálilo pár zažitých formátů, které jsou dodržovány a podporovány většinou 
 moderních čteček QR kódů. O jaké formáty se jedná, se můžeme dozvědět v 
 podkapitole \ref{aplikacniVrstva}.
@@ -95,13 +94,14 @@ mezinárodní normy upravující formát QR kódů ISO/IEC 18004:2006
 \subsection{Přehled dvourozměrných kódů}
 \label{prehled2DKodu}
 
-Za rok vzniku dvourozměrných (2D) čárových kódů se dá považovat rok 1984, kdy 
-byl poprvé použit automobilovou společností AIAG  tzv. skládaný čárový kód. 
-Tento kód byl složen z celkem 4 klasických jednorozměrných (1D) čárových kódů 
+Za rok vzniku dvourozměrných (2D) čárových kódů je považován rok 1984,
+kdy byl poprvé použit automobilovou společností AIAG  tzv. skládaný čárový kód. 
+Tento kód byl složen z~celkem 4 klasických jednorozměrných (1D) čárových kódů 
 značených jako Code 39, které kódovaly číslo dílů, množství, dodavatele a 
-sériové číslo. Jak lze vidět, tak jedním z důvodů pro vznik 2D kódů byla právě 
+sériové číslo. Jak je patrné, jedním z důvodů pro vznik 2D kódů byla právě 
 potřeba přenášet více informací (strukturovaných informací), ale také možnost 
-uchovávat data redundantně, což se ovšem odvíjí a vychází také z kapacity kódu.
+uchovávat data redundantně, což se ovšem odvíjí a vychází také z větší kapacity
+kódu.
 \cite{adams12D}
 
 První kód, který byl představen jako ryze dvourozměrný, byl Code 49 (obrázek
@@ -111,7 +111,7 @@ kódů. Tentokrát ovšem na rozdíl od svého předchůdce jednotlivé 1D kódy
 kompaktní celek, z toho důvodu byly jednotlivé řádky kódů odděleny tmavou 
 dělící linií. Dalšími známými skládanými kódy jsou Code 16K, Codablock F, 
 PDF 417, MicroPDF417 či ISS SuperCode. Některé z nich již nepotřebují oddělující 
-řádky např. PDF 417 (obrázek \ref{stackedCodes}), který konkrétně využívá
+řádky jako např. PDF 417 (obrázek \ref{stackedCodes}), který konkrétně využívá
 shlukování (clusteringu) pro odlišení řádků vzájemně mezi sebou. Při shlukování je využito tří unikátních 
 kódových sad (clusterů), které jsou každé tři řádky střídány. Aplikace rozdílných 
 clusterů na vzájemně sousední řádky vždy zajistí vytvoření pomyslných 
@@ -133,7 +133,7 @@ Souběžně se se skládanými kódy vyvíjí i druhá skupina dvourozměrných 
 maticové kódy. Maticové kódy, kam mj. patří i QR kód, jsou tvořeny body, jejichž 
 výška a šířka má pevný a stejný rozměr. Pro svůj stejný rozměr kódování 
 v horizontálním i vertikálním směru nejsou vertikálně redundantní, tzn. je 
-téměř povinnosti využití robustních samoopravných kódů. Naopak díky této 
+téměř povinností využití robustních samoopravných kódů. Naopak díky této 
 vlastnosti dokáží uchovat více informací než skládané kódy. Kódy nemusí být 
 čteny po řádcích, při jejich čtení se využívá čtecích mřížek. Představiteli 
 maticových kódů jsou např. kódy Data Matrix, Aztec Code, MaxiCode aj.
@@ -159,11 +159,11 @@ DPM\footnote{Direct Part Marking -- přímé značení součástí}.
 \subsection{Porovnání QR kódů s ostatními 2D kódy}
 \label{porovnani2DKoduSQRKody}
 
-QR kódy od ostatních 2D kódů lze rozeznat podle výrazných značek ve třech rozích 
+QR kódy lze od ostatních 2D kódů rozeznat podle výrazných značek ve třech rozích 
 kódu. Tyto značky slouží pro rychlou detekci v rozmanitém okolním prostředí a 
 upevnění čtecí mřížky nezávisle na natočení kódu. Mechanismus obnovy, který 
-využívají (viz kapitola \ref{metodaReedSolomon}) dokáže obnovit nevalidní a
-poničené segmenty dat až do 30 \% poškození (obrázek \ref{corruptedQRCodes}).   
+využívají (kapitola~\ref{metodaReedSolomon}), dokáže obnovit nevalidní a
+poničené segmenty dat až do 30 \% poškození (obrázek~\ref{corruptedQRCodes}).   
 
 \begin{figure}[H]
   \begin{center}
@@ -205,7 +205,7 @@ Porovnání s ostatními 2D kódy, zmíněnými v předešlé kapitole
 QR kód od své první aplikace v automobilovém průmyslu byl schválen mnoha
 standardizačními organizacemi včetně mezinárodních (tabulka 
 \ref{standardizaceBehemLet}). Abychom plně porozuměli aktuální mezinárodní normě
-ISO/IEC 18004:2006, která strukturu QR kódů aktuálně upravuje, tak se v této 
+ISO/IEC 18004:2006, která strukturu QR kódů upravuje, tak se v této 
 kapitole podíváme na průběh standardizace, zejména té mezinárodní, trochu blíže.
 
 \begin{table}[H]
@@ -227,13 +227,13 @@ kapitole podíváme na průběh standardizace, zejména té mezinárodní, troch
 První mezinárodní norma, která se QR kódy pokusila standardizovat, byla norma 
 organizace AIM v roce 1997. Tato norma se snažila držet striktně formy QR kódů, 
 které se doposud používaly v aplikačně uzavřeném průmyslovém segmentu, skupinu 
-QR kódu sjednotila a položila základy pro ostatní normy. Specifikováno bylo 
+QR kódů sjednotila a položila základy pro ostatní normy. Specifikováno bylo 
 celkem 14 verzí QR kódů. Ve 20. století byl QR kód dále standardizován 
-japonskými organizacemi JIS a JEIDA a to zejména díky své schopnosti přenášet 
+japonskými organizacemi JIS a JEIDA, a to zejména díky své schopnosti přenášet 
 velice výhodně znaky japonských abeced.
 
-V roce 2000 standardizovala QR kódy organizace ISO, přičemž norma vychází 
-z normy AIM, kterou ovšem již nedoporučuje dále používat v otevřené 
+V roce 2000 standardizovala QR kódy organizace ISO, přičemž její norma vychází 
+z~normy AIM, kterou ovšem již nedoporučuje dále používat v otevřené 
 aplikační sféře. Starou normu AIM značně upravuje, přidává nové a 
 odstraňuje staré stavební (konstrukční) prvky\footnote{stavební prvek -- Souhrnné označení pro
 ustálené značky a vzory, které nenesou žádná data.}.
@@ -244,20 +244,20 @@ QR kódy modelu 2 (obrázek \ref{QRCodeModel12Comparision}).
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.20}{
-      \includegraphics{fig/QRCodeModel12Comparision.PNG}
+    \scalebox{0.43}{
+      \includegraphics{fig/QRCodeModel12Comparision.pdf}
     } 
     \caption{Porovnaní QR kódu stejné verze modelu 1 (vlevo) a modelu 2 (vpravo)}
     \label{QRCodeModel12Comparision}
   \end{center}
 \end{figure}
 
-Aktuální norma ISO/IEC 18004:2006 již přímo vychází z ISO normy vydané v roce 
+Aktuální norma ISO/IEC 18004:2006 již přímo rozšiřuje ISO normu vydanou v roce 
 2000. Nově přidává k rodině QR kódů další dva typy: QR kód 2005 a Micro QR kód. 
 
 QR kód 2005 vychází z QR kódu modelu 2, nepřidává žádné nové stavební prvky 
-ani není změněn způsob kódování dat. Od QR kódu modelu 2 se QR kód 2005 
-odlišuje zejména v možnostech, jakými může být reprezentován. Byla přidána
+a ani nemění způsob kódování dat. Od QR kódu modelu 2 se QR kód 2005 
+odlišuje zejména v~možnostech, jakými může být reprezentován. Byla přidána
  možnost zrcadlení kódu, jeho existence na tmavém povrchu s invertovanými body 
  a možnost specifikace alternativní výchozí znakové sady zakódovaných dat v 
  podobě textu. QR kódy modelu 2 jsou tedy plně kompatibilní s QR kódy 2005. 
@@ -266,14 +266,14 @@ Kromě QR kódu 2005 byl v normě ISO/IEC 18004:2006 nově definován Micro QR k
 který byl už předtím standardizován v roce 2004 JIS organizací. Tento kód 
 se od předešlých kódů liší výrazně -- má velmi malé rozměry a dokáže přenést 
 malé množství dat. Z důvodu malých rozměrů se používá často pro značení 
-elektrických obvodů a součástek \cite{microQRCodeDenso}. Ale aby přesto mohl o
+elektrických obvodů a součástek \cite{microQRCodeDenso}. Aby ale přesto mohl o
 takto malých rozměrech pojmout co nejvíce dat, značně redukuje počet stavebních
 prvků. Norma definuje celkem 4 verze Micro QR kódů značené jako M1 až M4.
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.15}{
-      \includegraphics{fig/microQRIntroducion.PNG}
+    \scalebox{0.25}{
+      \includegraphics{fig/microQRIntroducion.pdf}
     } 
     \caption{Micro QR kód}
     \label{microQRIntroducion}
@@ -293,8 +293,8 @@ klidovou zónou, která je alespoň široká jako 4 body kódu.
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.25}{
-      \includegraphics{fig/QRCodesStructure.PNG}
+    \scalebox{0.55}{
+      \includegraphics{fig/QRCodesStructure.pdf}
     } 
     \caption{Struktura QR kódu 2005 (znázorněna verze 7)}
     \label{QRCodesStructure}
@@ -315,23 +315,23 @@ transformaci kódu z perspektivního či zakřiveného zobrazení do normalizova
 zobrazení pro dekódování kódu. Zarovnávací značky jsou umístěny v kódu na 
 přesných pozicích, tak jak je definováno v příloze E ISO normy. Micro QR kód 
 a QR kód 2005 verze 1 neobsahuje žádné zarovnávací značky. Synchronizační vzory
-existují dva, jeden horizontální, druhý vertikální. Oba začínají a končí v pevně
-daných pozicích, které jsou totožné v každé verzi QR kódu 2005 a nejinak tomu 
+existují dva, jeden horizontální, druhý vertikální. Oba začínají a končí na
+pevně daných pozicích, které jsou totožné v každé verzi QR kódu 2005 a nejinak tomu 
 je i u Micro QR kódu. Své uplatnění nachází při odměřování bodů uvnitř datové 
 sekce, jejichž polohy lze získat podle středů jednotlivých bodů synchronizačních
 vzorů. 
 
-Z hlediska rozměrů má QR kód 2005 verze 1 rozměry 21x21 bodů a každá další verze
-rozšiřuje kód předcházející verze o 4 body na výšku i šířku. Z toho plyne, že
+Z hlediska rozměrů má QR kód 2005 verze 1 rozměry 21x21 bodů. Každá další
+verze rozšiřuje kód předcházející verze o 4 body na výšku i šířku. Z toho plyne, že
 verze 40 má rozměry 177x177 bodů. Nejmenší verze Micro QR kódu (M1) začíná na
-rozměrech 11x11 bodů, s každou další verzí se rozměry postupně navyšují o dva
-body, verze M4 tedy má 17x17 bodů.
+rozměrech 11x11 bodů. S každou další verzí se rozměry Micro QR kódu postupně
+navyšují o dva body, verze M4 tedy má 17x17 bodů.
 
 
 \section{Fyzická vrstva}
 \label{fyzickaVrstva}
 
-V předcházející kapitole jsme popsali strukturu QR kódu, zmínili jsme se i o
+V předcházející kapitole jsme popsali strukturu QR kódů, zmínili jsme se i o
 blocích metainformací a datových blocích. V této kapitole se budeme zabývat 
 právě formátem a způsobem kódování informací, které jsou obsažené v těchto 
 blocích, ale také i samotným dekódováním, které bude poté využito při tvorbě 
@@ -343,13 +343,13 @@ blocích, ale také i samotným dekódováním, které bude poté využito při 
 Samotná informační data metainformací nejsou kódována žádným kódem, nicméně 
 každý blok s metainformacemi obsahuje také bity kontroly a korekce chyby a právě
 pro jejich výpočet je zapotřebí využít kódování BCH --
-Bose-Chaudhuri-Hocquenghem (viz příloha \ref{ukazkaVypoctuECCMetainformace}).
+Bose-Chaudhuri-Hocquenghem (příloha~\ref{ukazkaVypoctuECCMetainformace}).
 
 Z důvodu malého počtu možných kombinací, které mohou BCH kódováním vzniknout, a 
 náročnosti výpočtu kódu, je vhodné si pro kódování i dekódování metainformací 
 vytvořit vyhledávací tabulku. Pro dekódování norma použití vyhledávací tabulky 
 přímo doporučuje. Jelikož je minimální Hammingova vzdálenost pro použité 
-samoopravné BCH kódy v obou metainformacích rovna tří, lze během čtení 
+samoopravné BCH kódy v obou metainformacích rovna třem, lze během čtení 
 metainformací opravit maximálně tři bitové chyby. V případě využití vyhledávací 
 tabulky nám tedy stačí nalézt záznam, který se shoduje v nejvíce bitech a přitom
 se liší maximálně ve třech bitech.
@@ -367,8 +367,8 @@ značek redundantně.
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.15}{
-      \includegraphics{fig/QRCodeVersionMetainformation.PNG}
+    \scalebox{0.30}{
+      \includegraphics{fig/QRCodeVersionMetainformation.pdf}
     } 
     \caption{Znázornění bloků s metainformací verze QR kódu}
     \label{QRCodeVersionMetainformation}
@@ -382,11 +382,11 @@ Každý QR kód, již od modelu 1, má blok s metainformací o způsobu zakódov
 výsledného vzoru dat. 
 
 V případě QR kódu 2005 tento blok obsahuje informaci o 
-úrovni použité korekce chyb (2 bity), kterou kód disponuje (viz kapitola 
+úrovni použité korekce chyb (2 bity), kterou kód disponuje (kapitola 
 \ref{metodaReedSolomon} tab. \ref{moznostiZotaveniTabulka}). Druhým údajem,
 který v bloku můžeme nalézt, je informace o masce (3 bity), která byla na
 výsledný vzor s daty aplikována za účelem odstranění nežádoucích vzorů z dat
-podobajících se pozičním značkám (viz kapitola \ref{tvorbaVystupnihoVzoru} obr.
+podobajících se pozičním značkám (kapitola~\ref{tvorbaVystupnihoVzoru} obrázek
 \ref{QRCodeDataMasks}).
 
 Micro QR kód blok metainformace také využívá 
@@ -396,8 +396,8 @@ samotnou verzi Micro QR kódu.
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.15}{
-      \includegraphics{fig/QRCodeFormatMetainformation.PNG}
+    \scalebox{0.42}{
+      \includegraphics{fig/QRCodeFormatMetainformation.pdf}
     } 
     \caption{Znázornění bloků s metainformací formátu QR kódu}
     \label{QRCodeFormatMetainformation}
@@ -419,8 +419,8 @@ terminátorem.
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.25}{
-      \includegraphics{fig/QRCodeDataSegments.PNG}
+    \scalebox{0.85}{
+      \includegraphics{fig/QRCodeDataSegments.pdf}
     } 
     \caption{Ukázka kódování dat do datových segmentů}
     \label{QRCodeDataSegments}
@@ -440,8 +440,9 @@ terminátorem.
   \item \textbf{ECI} -- režim neslouží pro přenos dat, nýbrž pro specifikaci
   kódové sady znaků v~následujících segmentech. Výchozí sadou je ISO/IEC 8859-1;
   \item \textbf{FNC1} -- FNC1 režim nepřenáší data, pouze značí, že následovaná
-  data podléhají specifickému kódování EAN.UCC nebo jinému registrovanému AIM organizaci;
-  \item \textbf{strukturovaný} -- pokud je segment s tímto režim obsažen v QR 
+  data podléhají specifickému kódování EAN.UCC nebo jinému registrovanému AIM
+  organizací;
+  \item \textbf{strukturovaný} -- pokud je segment s tímto režimem obsažen v QR 
   kódu, říká nám, že data v jeho závěsu jsou neúplná a rozdělena do více QR 
   kódů. Pro sestavení a uspořádání kompletních dat poté slouží sekvenční 
   číslo, které je zahrnuto v každém strukturovaném segmentu.
@@ -493,7 +494,7 @@ připojena, je zjistitelná vztahem
 \noindent jako zbytek po dělení $r(x)$. \cite{decodingRSCodesLiterature}
 
 V praxi se pro generování kódu vyžívá generující neboli bázové matice
-$\mathbf{G(x)}$ (rovnice \ref{generujiciMatice}), která vychází z cyklických a
+$\mathbf{G(x)}$ (rovnice~\ref{generujiciMatice}), která vychází z cyklických a
 lineárních vlastností RS kódu.
 Matice má celkem $k$ lineárně nezávislých řádků, které jsou tvořeny cyklicky posunutými kódovými 
 slovy. Výsledný kód je poté zjištěn pomocí lineární kombinace jednotlivých 
@@ -515,18 +516,18 @@ slovy. Výsledný kód je poté zjištěn pomocí lineární kombinace jednotliv
   \label{generujiciMatice}
 \end{equation}
 
-Proces dekódování a případné opravy chyby v RS kódu je více komplikovaný a jeho
-popis by překračoval rozsah této práce. Jeho základní podstata je vystižena v
-diagramu na obrázku \ref{ReedSolomonDecodingProcess}. Pro určení chybového
-polynomu existuje více metod, z těch efektivnějších můžeme jmenovat Euklidovský nebo Berlekampův algoritmus. 
+Proces dekódování a případné opravy chyby v RS kódu je více komplikovaný. Jeho
+matematický popis by překračoval rozsah této práce. Základní
+podstata procesu je však vystižena v diagramu na obrázku
+\ref{ReedSolomonDecodingProcess}. Pro určení chybového polynomu existuje více metod, z těch efektivnějších můžeme jmenovat Euklidovský nebo Berlekampův algoritmus. 
 Během řešení kořenů chybového mnohočlenu se může uplatnit algoritmus Chienova 
 vyhledávání a při zjišťování velikosti chyby Forneyův algoritmus.
 \cite{decodingRSCodesLiterature}
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.22}{
-      \includegraphics{fig/ReedSolomonDecodingProcess.PNG}
+    \scalebox{0.68}{
+      \includegraphics{fig/ReedSolomonDecodingProcess.pdf}
     } 
     \caption{Proces dekódování Reed Solomon kódu}
     \label{ReedSolomonDecodingProcess}
@@ -550,8 +551,8 @@ $2^m+1$ symbolů, neboť pro RS kódy platí: \cite{sklarRSCodes}
 \end{equation}
 
 Aby byla předchozí podmínka splněna, jsou pro větší QR kódy datové segmenty
-rozděleny do bloků a zabezpečení probíhá nad více vzájemně nezávislými bloky
-(viz ISO norma tabulka 9)
+rozděleny do bloků a zabezpečení probíhá nad více menšími vzájemně nezávislými
+bloky (viz ISO norma tabulka 9)
 
 \begin{table}[H]
   \begin{center} 
@@ -569,27 +570,28 @@ rozděleny do bloků a zabezpečení probíhá nad více vzájemně nezávislým
 
 Aktuální aplikovaná úroveň zabezpečení pro daný kód je uložena v metainformaci
 formátu QR kódu. Zatímco QR kódy 2005 mohou pro svůj přenos využít všechny 4 
-úrovně, u Micro QR kódu je schopnost zabezpečení závislá na verzi kódu. Pro 
-verzi M1 např. neexistuje žádné zotavení z chyby, pouze detekce chyby, a vyjma 
-verze M4 nepodporují Micro QR kódy korekci úrovně Q.
+úrovně, u~Micro QR kódu je schopnost zabezpečení přímo závislá na verzi kódu.
+Pro verzi M1 např. neexistuje žádné zotavení z chyby, pouze detekce
+chyby, a vyjma verze M4, nepodporují Micro QR kódy korekci úrovně Q.
 
+\clearpage
 \subsection{Tvorba výstupního vzoru}
 \label{tvorbaVystupnihoVzoru}
-
-\begin{figure}[H]
-  \begin{center}
-    \scalebox{0.50}{
-      \includegraphics{fig/CreatingOutputPatternProcess.PNG}
-    } 
-    \caption{Kroky vedoucí ke tvorbě výstupního vzoru}
-    \label{CreatingOutputPatternProcess}
-  \end{center}
-\end{figure}
 
 Pokud máme data vložena do datových segmentů s vhodně zvolenými režimy pro 
 přenos (kapitola \ref{kodovaniDat}), datové segmenty rozděleny na bloky a vypočítány pro
 ně paritní bity korekce (kapitola \ref{metodaReedSolomon}), můžeme přistoupit k finálnímu
 umístění bloků do QR kódu.
+
+\begin{figure}[H]
+  \begin{center}
+    \scalebox{0.70}{
+      \includegraphics{fig/CreatingOutputPatternProcess.pdf}
+    } 
+    \caption{Kroky vedoucí ke tvorbě výstupního vzoru}
+    \label{CreatingOutputPatternProcess}
+  \end{center}
+\end{figure}
 
 Kódová slova bloků jsou umísťována do QR kódu vertikálně v šíři 2 bodů od 
 pravého dolního rohu směrem do levého horního rohu, přičemž po dosažení 
@@ -601,15 +603,15 @@ bloků a slouží pro rovnoměrné rozložení případných chyb do více nezá
 zabezpečených bloků. 
 
 Pokud bychom uvážili QR kód verze 5 s úrovní korekce H, 
-tento kód má celkem 4 zabezpečené bloky, kde první dva bloky obsahují 11 
+tento kód má celkem 4~zabezpečené bloky, kde první dva bloky obsahují 11 
 kódových slov dat a 22 kódových slov korekce, zbylé dva bloky obsahují akorát 
-o 1 kódové slovo dat více, budou kódová slova vkládána do QR kódu tak, jak 
+o 1 kódové slovo dat více, byla by kódová slova vkládána do QR kódu tak, jak 
 lze vidět na následujícím obrázku \ref{PuttingDataCodewordsIntoQRCode}.
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.35}{
-      \includegraphics{fig/PuttingDataCodewordsIntoQRCode.PNG}
+    \scalebox{0.45}{
+      \includegraphics{fig/PuttingDataCodewordsIntoQRCode.pdf}
     } 
     \caption{Znázornění způsobu organizace kódových slov v QR kódu}
     \label{PuttingDataCodewordsIntoQRCode}
@@ -625,7 +627,7 @@ jednotlivými body QR kódu a body masky.
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.18}{
+    \scalebox{0.22}{
       \includegraphics{fig/QRCodeDataMasks.PNG}
     } 
     \caption{Sada datových masek QR kódu}
@@ -641,15 +643,17 @@ není nijak standardizována a může být vždy specifická pro danou aplikaci.
 Postupem času se ustálily především dva univerzální formáty, které si zde 
 zmíníme.
 
-\bigskip \noindent Prvním způsobem, jak přenášet informace, je kódovat je do URI
-\cite{zxingContents,sixrevisionsURI}:
+Prvním způsobem, jak přenášet informace, je kódovat je do URI
+\cite{zxingContents,sixrevisionsURI}. Jednotlivé typy informací jsou poté
+rozlišeny podle schémat. Samotné informace jsou obvykle přenášeny pomocí
+hierarchické části a dotazů:
 
 \begin{verbatim}
              schéma: hierarchická část [?dotaz] [#fragment]
 \end{verbatim}
 
 Používaná URI schémata, jež jsou registrována organizací IANA, lze vidět v
-tabulce \ref{URISChemes}. Vyjma těchto schémat se můžeme setkat ale i
+tabulce~\ref{URISChemes}. Vyjma těchto schémat se můžeme setkat ale i s
 neregistrovanými schématy \texttt{URL}, \texttt{SMSTO} aj.
 
 \begin{table}[H]
@@ -669,7 +673,7 @@ neregistrovanými schématy \texttt{URL}, \texttt{SMSTO} aj.
 
 Druhým způsobem pro přenos informací je využití metodiky firmy NTT DoCoMo
 \cite{DOCOMOFormatsLiterature}, která definuje formáty zejména pro vytváření
-záložek URL adres, přenos kontaktů a elektronických zpráv (Tabulka
+záložek URL adres, přenos kontaktů a elektronických zpráv (tabulka
 \ref{DOCOMOFormatsTable}). Pro přenos kontaktu se můžeme setkat i s formátem
 vCard (viz RFC 6350).
 
@@ -691,15 +695,15 @@ vCard (viz RFC 6350).
 \label{refCteniQRKodu}
 
 Pro čtení QR kódů aktuální ISO norma definuje referenční algoritmus, který je
-možné použít, ovšem není nutný, při tvorbě čtečky QR kódů. Základní kroky 
+možné použít, ovšem není nutné, při tvorbě čtečky QR kódů. Základní kroky 
 algoritmu, které lze považovat za obecné a uplatní se při tvorbě všech čteček 
 QR kódů, můžeme vidět ve vývojovém diagramu na obrázku
 \ref{QRCodeReferenceReadingProcess}.
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.27}{
-      \includegraphics{fig/QRCodeReferenceReadingProcess.PNG}
+    \scalebox{0.65}{
+      \includegraphics{fig/QRCodeReferenceReadingProcess.pdf}
     } 
     \caption{Referenční vývojový diagram znázorňující kroky čtení QR kódu}
     \label{QRCodeReferenceReadingProcess}
@@ -722,7 +726,7 @@ a některé klíčové aplikace.
 
 Tato podkapitola čerpá z \cite{whatISAndroid}. Základní
 architektura platformy Android se skládá z aplikační vrstvy, aplikačního frameworku, knihoven, Androidu runtime a Linuxového jádra.
-Přehledně ji můžeme vidět na následujícím obrázku:
+Přehledně ji můžeme vidět na následujícím obrázku \ref{AndroidArchitecture}.
 
 \begin{figure}[H]
   \begin{center}
@@ -736,7 +740,7 @@ Přehledně ji můžeme vidět na následujícím obrázku:
 
 \textbf{Aplikační vrstva}, nejvyšší vrstva abstrakce, tvoří prostor pro běh
 aplikací. Zařízení používající Android jsou zpravidla dodávána již se sadou
-předinstalovaných optimalizovaných aplikací. Bývají jimi být např. webový prohlížeč, aplikace na zpracování obrazu z~kamery, SMS a e-mailový klient aj. Všechny aplikace v této vrstvě jsou napsány v jazyce Java a jsou spouštěny na speciálním virtuálním stroji zvaném Dalvik.
+předinstalovaných optimalizovaných aplikací. Bývají jimi např. webový prohlížeč, aplikace na zpracování obrazu z~kamery, SMS a e-mailový klient aj. Všechny aplikace v této vrstvě jsou napsány v jazyce Java a jsou spouštěny na speciálním virtuálním stroji zvaném Dalvik.
 
 \bigskip \textbf{Aplikační framework} nabízí vývojové prostředky pro tvorbu aplikací
 v aplikační vrstvě. API frameworku poskytuje plný přístup ke stejným komponentám, které používají klíčové aplikace systému. Architektura tvorby aplikací je založena na opětovném využívání komponent, které mohou být každou aplikací zveřejněny. Obdobný systém umožňuje i komponenty nahrazovat.
@@ -748,7 +752,7 @@ součástí distribuce platformy. Hlavními knihovnami jsou: standardní systém
 \bigskip \textbf{Android runtime} obsahuje sadu klíčových knihoven,
 zajišťujících většinu funkcionality pro interpretaci jazyka Java, a samotný
 virtuální stroj Dalvik. Každá třída, která má být spuštěna pomocí virtuálního
-stroje musí být převedena do formátu Dalvik Executable (.dex) pomocí nástroje
+stroje, musí být převedena do formátu Dalvik Executable (.dex) pomocí nástroje
 \texttt{dx}, jež je přístupný v Android SDK. Aplikace jsou vždy
 spouštěny jako nový proces s vlastní instancí virtuálního stroje.
 
@@ -757,19 +761,17 @@ služby zabezpečení, správu paměti, správu procesů, ovladačů aj.
 
 \section{Aplikace}
 
-Aplikace pro Android jsou psány v jazyce Java, přičemž pro spuštění musí být
-zkompilovány do formátu Dalvik Executable. Pro distribuci by měly být aplikace
+Tato podkapitola čerpá z \cite{applicationAndroidFundamentals}. Aplikace pro
+Android jsou psány v jazyce Java, přičemž pro spuštění musí být zkompilovány do formátu Dalvik Executable. Pro distribuci by měly být aplikace
 zabaleny do balíku s příponou \texttt{.apk} a podepsány certifikátem. Při
 podepisování se využívá asymetrického šifrování, vlastníkem privátního klíče je sám autor
-aplikace. Nové aplikace je zapotřebí vždy nainstalovat, během níž se každé
+aplikace. Nové aplikace je zapotřebí vždy nainstalovat. Během níž se každé
 aplikaci přiřadí vlastní uživatelský účet, s nímž bude spouštěna, vytvoří
-privátní složka pro ukládání souborů a balík s kompilovaným kódem aplikace
+privátní složka pro ukládání souborů a balík s~kompilovaným kódem aplikace
 překopíruje do systémových složek Androidu.
 
-\subsection{Komponenty aplikace}
-
-Tato podkapitola čerpá z \cite{applicationAndroidFundamentals}. Komponenty
-aplikace jsou základními stavební bloky pro tvorbu aplikací na platformě Android. O jejich existenci informujeme systém během instalace ve
+Základními stavebními bloky pro tvorbu aplikací na platformě Android jsou tzv.
+komponenty aplikace. O jejich existenci informujeme systém během instalace ve
 speciálním XML souboru (\texttt{AndroidManifest.xml}), který je nutno umístit do
 \texttt{.apk} archivu. Komponenty tvoří jakési přístupové a spouštěcí body,
 jejich kód je systémem vyvoláván na základě nějaké vnější události. Aktuálně
@@ -782,7 +784,7 @@ komponentu lze vyvolat metodou \texttt{startActivity()}. Pokud se dostane do
 popředí jiná Activity, aktuálně spuštěná Activity je pozastavena a může být uvolněna i z paměti a její stav uložen.
 
 \bigskip \textbf{Service} komponenta neposkytuje uživatelské rozhraní,
-běží jako služba na pozadí systému bez vědomí uživatele a lze jí spustit metodou
+běží jako služba na pozadí systému bez vědomí uživatele a lze ji spustit metodou
 \texttt{startService()}.
 
 \bigskip \textbf{Broadcast receiver} komponentou můžeme zachytávat
@@ -793,21 +795,22 @@ oznámení, volá \texttt{sendBroadcast()}.
 dokáže zprostředkovávat soukromá data aplikace jiným aplikacím.
 
 \bigskip Invokace komponent (mimo \texttt{Content provider}) probíhá pomocí
-objektů instance \texttt{Intent}. Komponenta může být zavolána buď přímo, pokud známe
-její třídu, která komponentu implementuje, nebo nepřímo požadavkem, jež lze 
-předat \texttt{Intent} instancí. Jaké druhy požadavků může komponenta zpracovat
+instancí \texttt{Intent} objektů. Komponenta může být zavolána buď přímo, pokud
+známe třídu, která komponentu implementuje, nebo nepřímo požadavkem, jež lze 
+předat \texttt{Intent} instancí. Jaké druhy požadavků může komponenta zpracovat,
 lze oznámit systému opět manifest souborem elementem \texttt{<intent-filter>}.
 
 
 \chapter{Návrh}
 \label{navrh}
 
-V této kapitole budeme nejprve diskutovat požadavky pro cílovou aplikaci a
+V této kapitole budeme nejprve diskutovat požadavky na cílovou aplikaci a
 stanovíme si cíle, jichž budeme chtít dosáhnout. Dále si popíšeme, jakými 
 vhodnými způsoby lze lokalizovat QR kód v obraze a přečíst jeho obsah. 
-Aktuální ISO norma sice uvádí referenční postup jak QR kódy číst, ale neuvádí 
-konkrétní algoritmy a metody zpracování obrazu, jakými toho docílit. Z tohoto
-důvodu se pokusíme v této kapitole tyto metody navrhnout a upřesnit. Závěrem
+Aktuální ISO norma sice uvádí referenční postup, jak QR kódy číst, ale
+nespecifikuje konkrétní algoritmy a metody zpracování obrazu, jakými toho
+docílit.
+Z tohoto důvodu se pokusíme v této kapitole tyto metody navrhnout a upřesnit. Závěrem
 kapitoly bude prezentován základní návrh architektury aplikace.
 
 \section{Stanovení cílů}
@@ -820,7 +823,7 @@ se tedy bude nacházet v prostoru a v perspektivním zobrazení. V rámci příp
 obrazu pro čtení bude nutno provést transformaci do normalizovaného zobrazení
 (kapitola \ref{inverzniPerspektivniTransformace},
 \ref{detekcePozicnichZnacek}, \ref{zjisteniATransformace}). Snímání obrazu
-mobilními přístroji nám také většinou nezaručí rovnoměrně osvětlenou scénu, intenzita pro tmavý modul v jedné části QR kódu, může odpovídat intenzitě pro světlý modul v jiné části kódu. Z čehož plyne
+mobilními přístroji nám také většinou nezaručí rovnoměrně osvětlenou scénu, intenzita pro tmavý modul v jedné části QR kódu může odpovídat intenzitě pro světlý modul v jiné části kódu. Z čehož plyne
 důležitost volby vhodné metody převodu obrazu do dvouhodnotového (binárního)
 obrazu (kapitola \ref{binarizaceObrazu}).
 
@@ -828,12 +831,12 @@ Ačkoliv aktuální ISO norma definuje QR kódy 2005 a Micro QR kódy, v praxi s
 s~nimi nikdy nesetkáme, alespoň co se mobilního průmyslu týče. Proto během návrhu a implementace budeme vycházet z běžně používaných QR kódů modelu 2.
 
 Většina dnešních čteček umožnuje QR kódy detekovat a dekódovat v reálném 
-obraze, což má mnoho výhod, jmenovitě např. schopnost zahodit špatně dekódovaný
-QR kód a neinformovat o tomto neúspěchu uživatele. Naopak zpracování reálného
+obraze, což má mnoho výhod, jmenovitě např. schopnost eliminovat špatně
+dekódovaný QR kód a neinformovat o tomto neúspěchu uživatele. Naopak zpracování reálného
 obrazu je prováděno z výpočetních a hardwarových důvodů nad obrazem s nízkým
-rozlišením, to vede k problémům během zpracování větších QR kódů. Abychom
+rozlišením, což vede k~problémům během zpracování větších QR kódů. Abychom
 umožnili práci i s kódy vyšších verzí, ale i použití automatického zaostření
-při snímání QR kódu, nebudeme QR kódy číst z reálného obrazu, ale po jejich
+při snímání QR kódu, nebudeme QR kódy číst z reálného obrazu, nýbrž po jejich
 vyfocení. Nicméně bylo by vhodné, aby cílová čtečka informovala uživatele o
 skutečnosti, že QR kód byl v reálném obraze detekován a že lze předpokládat
 jeho úspěšné přečtení.
@@ -846,8 +849,8 @@ přistoupit, je zobrazen na obrázku \ref{QRCodeReadingProcess}.
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.45}{
-      \includegraphics{fig/QRCodeReadingProcess.PNG}
+    \scalebox{0.75}{
+      \includegraphics{fig/QRCodeReadingProcess.pdf}
     } 
     \caption{Vývojový diagram navrženého postupu pro čtení QR kódů}
     \label{QRCodeReadingProcess}
@@ -865,7 +868,7 @@ detekovány alespoň 3 poziční značky.
 \label{binarizaceObrazu}
 
 Příprava obrazu pro strojové čtení bývá často tím nejdůležitějším úkolem pro
-dosažení uspokojivým výsledků. Pro čtení QR kódů lze uplatnit tzv. binarizaci
+dosažení uspokojivých výsledků. Pro čtení QR kódů lze uplatnit tzv. binarizaci
 obrazu, kde se vícekanálový snímek převede na snímek ve stupni šedi, který
 je poté prahován. Prahováním vzniká obraz, který obsahuje pouze dvě hodnoty,
 jež představují tmavé a světlé pixely QR kódu.
@@ -883,9 +886,8 @@ Zvolení správné metody a parametrů pro prahování obrazu bývá již složi
 úkolem a odvíjí se často na konkrétní doméně použití dané aplikace. Pro
 prahování obrazu existují zejména dva zásadní přístupy, kdy práh je volen
 globálně pro celý obraz (globální prahování) nebo lokálně (adaptivní 
-prahování). Referenční algoritmus uvedený v ISO normě pracuje~s globálním
-prahováním, přesto ale s ohledem na naši aplikaci, kde bude obraz pořizován z
-kamery za předem neznámých světelných podmínek, můžeme tvrdit, že použití
+prahování). Referenční algoritmus uvedený v ISO normě pracuje s~globálním
+prahováním. Přesto ale s ohledem na naši aplikaci, kde bude obraz pořizován z~kamery za předem neznámých světelných podmínek, můžeme tvrdit, že použití
 adaptivního prahování bude výhodnější. Zvolení globální metody prahování by
 mohlo vést k negativním výsledkům (obrázek
 \ref{GlobalAdaptiveThresholdingComparision}) a dalo by se zvážit např. při skenování QR kódu se zdrojem světla, pokud ovšem zanedbáme možnost výskytu
@@ -918,7 +920,7 @@ jeho velikost v závislosti na velikosti QR kódu. \cite{adaptiveThresholdLit}
     \scalebox{0.19}{
       \includegraphics{fig/LocalThresholdingBadSizeOfThresholdBlock.PNG}
     }
-    \caption{Výstup prahování při nevhodně zvolené velikost bloku prahování}
+    \caption{Výstup prahování při nevhodně zvolené velikosti bloku prahování}
     \label{LocalThresholdingBadSizeOfThresholdBlock}
   \end{center}
 \end{figure}
@@ -935,10 +937,10 @@ grafu \ref{DependencyOfSizeOfThresholdBlockToQRCodeSizes}.
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.25}{
-      \includegraphics{fig/DependencyOfSizeOfThresholdBlockToQRCodeSizes.PNG}
+    \scalebox{0.85}{
+      \includegraphics{fig/DependencyOfSizeOfThresholdBlockToQRCodeSizes.pdf}
     }
-    \caption{Graf zavislosti vhodné velikosti bloku prahování na rozměrech QR
+    \caption{Graf závislosti vhodné velikosti bloku prahování na rozměrech QR
     kódu}
     \label{DependencyOfSizeOfThresholdBlockToQRCodeSizes}
   \end{center}
@@ -950,21 +952,22 @@ vstupního obrazu či vhodným podílům rozměrů (pro vzdálenější QR kódy
 bude již QR kód detekován, bude známa jeho velikost, budeme moci aplikovat
 prahování podle experimentálně získané referenční závislosti.
 
+\bigskip
 \section{Inverzní perspektivní transformace}
 \label{inverzniPerspektivniTransformace}
 
-Než se pustíme do popisu návrhu detekce a čtení QR kódu je nutno definovat pojem
-a metodu inverzní perspektivní transformace, kterou budeme v následujících
+Než se pustíme do popisu návrhu detekce a čtení QR kódu, je nutno definovat
+pojem a metodu inverzní perspektivní transformace, kterou budeme v následujících
 kapitolách používat.
 
 Nutnost použití inverzní perspektivní transformace se odvíjí od způsobu
 interpretace QR kódu ve snímaném obraze, ve kterém je zobrazen v perspektivní
-projekci, v důsledku pozice kamery v prostoru. Abychom mohli QR kód zpracovat
+projekci, v důsledku pozice kamery v prostoru. Abychom mohli QR kód zpracovat,
 musíme nalézt takový vztah mezi body QR kódu a jejich odpovídajícími body v
 perspektivní projekci, k čemuž slouží právě metoda homografie neboli inverzní
 perspektivní transformace.
 
-\bigskip \noindent Vztah mezi body QR kódu $(x,y)$ a body promítaného QR kódu
+Vztah mezi body QR kódu $(x,y)$ a body promítaného QR kódu
 $(X,Y)$ lze vyjádřit jako
 
 \begin{equation}
@@ -1000,9 +1003,9 @@ $(X,Y)$ lze vyjádřit jako
 = (p_1, \ldots, p_9)^T$, tzv. stupně svobody, platí že $|\vec{p}|=1$. 
 
 Pro zjištění závislosti mezi body v obou zobrazeních nám stačí určit vektor
-$\vec{p}$. Přičemž prvky vektoru $\vec{p}$ můžeme nalézt ze 4 kolineárních bodů
-obrazu a jejich korespondujících bodů v perspektivním zobrazení a řešením 
-soustavy lineárních rovnic, tak aby 
+$\vec{p}$. Přičemž prvky vektoru $\vec{p}$ můžeme nalézt ze 4 nekolineárních
+bodů obrazu a jejich korespondujících bodů v perspektivním zobrazení a řešením 
+soustavy lineárních rovnic tak, aby 
 platilo $|\vec{p}|=1$ \cite{homografieCite,homografieComputerVision}: 
 
 \begin{equation}
@@ -1051,7 +1054,7 @@ v~kapitole \ref{skenovaciLinie}.
 \subsection{Skenovací linie}
 \label{skenovaciLinie}
 
-Princip hledání pozičních značek s využitím skenovací linie, lze definovat
+Princip hledání pozičních značek s využitím skenovací linie lze definovat
 procházením jednotlivých řádků obrazu a hledáním takové sekvence tmavých a
 světlých bodů, která by odpovídala poměru 1:1:3:1:1. Akceptovaná nepřesnost v
 poměru je dána podle normy hodnotou 0.5, takže lze např. přijmout i sekvenci v
@@ -1065,10 +1068,10 @@ využít skenovací linie ve vertikálním směru a obdobného postupu.
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.18}{
-      \includegraphics{fig/QRCodeDetectionWithScanline.PNG}
+    \scalebox{0.83}{
+      \includegraphics{fig/QRCodeDetectionWithScanline.pdf}
     }
-    \caption{Detekce poziční značky pomocí skenovací linky}
+    \caption{Detekce poziční značky pomocí skenovací linie}
     \label{QRCodeDetectionWithScanline}
   \end{center}
 \end{figure}
@@ -1078,16 +1081,16 @@ využít skenovací linie ve vertikálním směru a obdobného postupu.
 
 Hledání kontur slouží ke strukturální analýze obrazu. Algoritmy na hledání
 kontur pracují většinou s již binarizovanými obrazy a jejich princip spočívá ve
-hledání spojených komponent buď 1 pixely (tzv. 1-komponenty) nebo 0 pixely 
-(tzv. 0-komponenty či díry). Nejpoužívanějšími algoritmy jsou Square tracing,
+hledání spojitých komponent, které jsou tvořeny buď 1 pixely (tzv. 1-komponenty)
+nebo 0 pixely (tzv. 0-komponenty či díry). Nejpoužívanějšími algoritmy jsou Square tracing,
 Moore-Neighbor, Radial Sweep aj. Vyjma těchto algoritmů existují i algoritmy,
 které dokáží rozpoznat a uchovat topologii mezi nalezenými strukturami, jedním
 z nich je např. Suzuki 85 algoritmus \cite{suzukiLit}.
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.23}{
-      \includegraphics{fig/ContourTopology.PNG}
+    \scalebox{0.75}{
+      \includegraphics{fig/ContourTopology.pdf}
     }
     \caption{Výstup nálezu kontur a sestavení topologické závislosti mezi nimi}
     \label{ContourTopology}
@@ -1099,19 +1102,19 @@ víme, že poziční značka musí být tvořena právě jednou další 1-kompon
 (obrázek \ref{ContourTopology}), čehož lze využít k rychlému zahazování
 neplatných struktur. Topologie by šla využít i pro detekci a zpracování více QR
 kódů v obraze, kde by ovšem musel být každý QR kód ohraničen tzn. být ve vlastní struktuře. Identifikace a přiřazení
-pozičních značek k jednotlivým QR kódům by poté probíhalo na základě shodnosti
-rodičovské struktury. Právě z těchto důvodů bude v implementaci využito
+pozičních značek k jednotlivým QR kódům by poté probíhalo na základě shody
+rodičovské struktury. Právě z těchto důvodů bude v~implementaci využito
 topologické analýzy a Suzuki algoritmu.
 
-Výsledkem hledání kontury bývá vždy množina bodu, která sleduje danou strukturu,
+Výsledkem hledání kontury bývá vždy množina bodů, která sleduje danou strukturu,
 v našem případě např. poziční značku. Pokud uvážíme již i nějaký druh
 interpolace bodů, možný výsledek detekce poziční značky by mohl vypadat tak,
-jak je znázorněno na obrázku \ref{FinderMarkContourDetection}:
+jak je znázorněno na obrázku~\ref{FinderMarkContourDetection}.
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.17}{
-      \includegraphics{fig/FinderMarkContourDetection.PNG}
+    \scalebox{1.0}{
+      \includegraphics{fig/FinderMarkContourDetection.pdf}
     }
     \caption{Předpokládaný interpolovaný výstup bodů hledání kontury pro
     poziční značku}
@@ -1129,8 +1132,8 @@ obrázku \ref{SearchCornersOfPolygonAlgorithm}.
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.25}{
-      \includegraphics{fig/SearchCornersOfPolygonAlgorithm.PNG}
+    \scalebox{0.85}{
+      \includegraphics{fig/SearchCornersOfPolygonAlgorithm.pdf}
     }
     \caption{Výstup algoritmu hledání rohů polygonu (zde poziční značky)}
     \label{SearchCornersOfPolygonAlgorithm}
@@ -1149,18 +1152,19 @@ vývojový diagram celého procesu detekce lze vidět na následujícím obrázk
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.20}{
-      \includegraphics{fig/QRCodeDetectionProcess.PNG}
+    \scalebox{0.70}{
+      \includegraphics{fig/QRCodeDetectionProcess.pdf}
     } 
     \caption{Proces detekce pozičních značek QR kódu}
     \label{QRCodeDetectionProcess}
   \end{center}
 \end{figure}
 
+\clearpage
 \section{Zjištění a transformace oblasti QR kódu}
 \label{zjisteniATransformace}
 
-Proces detekce pozičních značek nám bude vracet seznam dekovaných značek, kde
+Proces detekce pozičních značek nám bude vracet seznam detekovaných značek, kde
 každá značka bude přesně definována čtyřmi body seřazenými ve směru hodinových
 ručiček. Abychom mohli takto detekovaných značek využít pro převod QR kódu do
 normalizovaného zobrazení, budeme muset nejprve poziční značky a jejich body
@@ -1172,7 +1176,7 @@ transformaci je zapotřebí čtyř bodů, budeme muset určit i tento čtvrtý b
 Postup seřazení pozičních značek (obrázek \ref{QRCodeArea}) by mohl být založen
 na vytvoření pomyslného trojúhelníku ze středů pozičních značek, výpočtu jeho těžiště, díky
 němuž by šlo poziční značky uspořádat ve směru hodinových ručiček. Tímto
-seřazením by nám stále ale scházela informace o pozici značek a jejich bodů 
+seřazením by nám ale stále scházela informace o pozici značek a jejich bodů 
 v rámci QR kódu, tuto informaci by šlo získat na základě nalezení bodů
 pozičních značek $X$, $Y$, $Z$, které se nachází uvnitř QR kódu. Vnitřní bod
 každé poziční značky by byl nalezen otestováním všech bodů dané poziční značky a
@@ -1184,8 +1188,8 @@ vnitřní bod $Y$ poziční značky od vnitřní strany pomyslného trojúhelní
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.17}{
-      \includegraphics{fig/QRCodeArea.PNG}
+    \scalebox{0.45}{
+      \includegraphics{fig/QRCodeArea.pdf}
     } 
     \caption{Znázornění postupu zjištění čtyř bodů pro inverzní perspektivní
     transformaci}
@@ -1200,17 +1204,6 @@ polopřímek $AM$ a $CN$. V praxi se ovšem můžeme setkat i s nepřesně detek
 pozičními značkami, proto byly navrženy další dva postupy získání 4. bodu (rohu)
 QR kódu (obrázek \ref{DeterminingTheFourthPointForTransformation}).	
 
-\begin{figure}[H]
-  \begin{center}
-    \scalebox{0.23}{
-      \includegraphics{fig/DeterminingTheFourthPointForTransformation.PNG}
-    } 
-    \caption{Zjištění 4. bodu vzorkováním (vlevo) a pomocí zarovnávací značky
-    (vpravo)}
-    \label{DeterminingTheFourthPointForTransformation}
-  \end{center}
-\end{figure}
-
 První navržený postup hledání 4. bodu je založen na konstrukci vzorkovací úsečky
 (obdélníku) $X'Y'$, která vzorkuje QR kód postupnou rotací z počátečního bodu 
 $X'$ ve směru hodinových ručiček, dokud není dosaženo světlého pozadí, které
@@ -1218,6 +1211,17 @@ kód obklopuje. Po skončení vzorkování můžeme rozšířením vzorkovací �
 $X'Y''$ získat polopřímku, na které bude ležet bod $D$. Pokud totéž provedeme i
 vůči pravé horní poziční značce a proti směru hodinových ručiček, tak bod $D$
 získáme právě z průsečíku námi rozšířených vzorkovacích úseček.
+
+\begin{figure}[H]
+  \begin{center}
+    \scalebox{0.60}{
+      \includegraphics{fig/DeterminingTheFourthPointForTransformation.pdf}
+    } 
+    \caption{Zjištění 4. bodu vzorkováním (vlevo) a pomocí zarovnávací značky
+    (vpravo)}
+    \label{DeterminingTheFourthPointForTransformation}
+  \end{center}
+\end{figure}
 
 Druhý postup hledání 4. bodu není použitelný pro QR kódy verze 1, které
 neobsahují zarovnávací značky. Principiálně ke své činnosti využívá jiné 
@@ -1246,17 +1250,18 @@ zpátky do perspektivního zobrazení. Tento postup hledání 4. bodu byl navrž
 z důvodu umožnění čtení QR kódů na znečištěném podkladu, což by vedlo k selhání
 první uvedené metody.
 
-\section{Čtení QR kódu}
-\label{cteniQRKodu}
+\clearpage
+\section{Čtení informací z QR kódu}
+\label{cteniQRKoduMrizka}
 
 Pro čtení QR kódu bude implementována čtecí mřížka (obrázek \ref{SamplingGrid}),
 která bude na celý QR kód přikládána. Jednotlivé moduly  QR kódu reprezentující bity budou
 vzorkovány ze středu každé buňky přiložené mřížky. Vzorkovaná oblast bude zabírat
-3x3 pixely, tak je uvedeno v referenčním algoritmu ISO normy.
+3x3 pixely, jak je uvedeno v referenčním algoritmu ISO normy.
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.20}{
+    \scalebox{0.25}{
       \includegraphics{fig/SamplingGrid.PNG}
     } 
     \caption{Ustanovení vzorkovací mřížky a oblastí vzorkování (červená barva)}
@@ -1272,20 +1277,22 @@ vtahem (dle ISO normy)
   V = \frac{7 D}{2 (W_{UL} + W_{UR})} - 2,5\mbox{.}
 \end{equation}
 
+\noindent Bude-li detekován QR kód verze 6 nebo nižší, bude tato verze považována jako
+finální. V~opačném případě dojde k upřesnění verze $V$ přečtením metainformace 
+o verzi z QR kódu. 
+
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.13}{
-      \includegraphics{fig/DeterminingTheVersionOfQRCode.PNG}
+    \scalebox{0.30}{
+      \includegraphics{fig/DeterminingTheVersionOfQRCode.pdf}
     } 
     \caption{Zjištění dočasné verze QR kódu podle jeho rozměrů}
     \label{DeterminingTheVersionOfQRCode}
   \end{center}
 \end{figure}
 
-Bude-li detekován QR kód verze 6 nebo nižší, bude tato verze považována jako
-finální. V opačném případě dojde k upřesnění verze $V$ přečtením metainformace 
-o verzi z QR kódu. 
-
+\bigskip
+\clearpage
 \section{Architektura cílové aplikace}
 \label{architekturaCiloveAplikace}
 
@@ -1295,13 +1302,15 @@ mobilních platformách. Nejenom z tohoto důvodu, ale také i z efektivního vy
 výpočetních prostředků, bude implementována detekce a čtení QR kódu v nativním
 kódu jazyka C++. Sestavené C++ moduly budou poté ve formě sdílené knihovny
 (\texttt{Barcodes Library}) linkovány do naší aplikace, ve které bude nutno
-implementovat rozhraní pro komunikaci s naší knihovnou z~jazyka Java
-(\texttt{JNI Library}) (obrázek \ref{QRReaderApplicationLibraryDependency}).
+prostřednictvím JNI\footnote{Java Native Interface -- Rozhraní umožňující
+oboustranné propojení Java kódu, interpretovaným na virtuálním stroji, s kódem
+nativním, jako je C++, C, assembler apod. } implementovat rozhraní pro komunikaci s
+naší knihovnou z~jazyka Java (\texttt{JNI Library}) (obrázek \ref{QRReaderApplicationLibraryDependency}).
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.20}{
-      \includegraphics{fig/QRReaderApplicationLibraryDependency.PNG}
+    \scalebox{0.65}{
+      \includegraphics{fig/QRReaderApplicationLibraryDependency.pdf}
     } 
     \caption{Knihovní závislosti aplikace čtečky QR kódů}
     \label{QRReaderApplicationLibraryDependency}
@@ -1311,8 +1320,8 @@ implementovat rozhraní pro komunikaci s naší knihovnou z~jazyka Java
 Z důvodu snadné rozšiřitelnosti aplikace o nově čitelné QR kódy, bez potřeby
 překládání nativní knihovny, bude knihovna \texttt{Barcodes Library} obsahovat
 pouze dekodér fyzické vrstvy, který je pro všechny případy použití QR kódu
-neměnný. Dekodér aplikační vrstvy bude implementován až v rámci aplikace a jazyce Java. Jelikož nám Dalvik
-dovoluje dynamické načítání tříd pomocí \texttt{DexClassLoader}, bude zvážena i
+neměnný. Dekodér aplikační vrstvy bude implementován až v rámci aplikace v
+jazyce Java. Jelikož nám Dalvik dovoluje dynamické načítání tříd pomocí \texttt{DexClassLoader}, bude zvážena i
 možnost instalování dekodérů aplikační vrstvy za běhu aplikace ve formě zásuvných modulů.
 
 Rozhraní mezi nativní knihovnou a aplikací bude obsahovat řadu obalujících
@@ -1323,8 +1332,8 @@ QR kódu v reálném obraze a druhá pro dekódování QR kódu ze sejmutého ob
 
 \begin{figure}[H]
   \begin{center}
-    \scalebox{0.55}{
-      \includegraphics{fig/QRReaderApplicationNativeCalls.PNG}
+    \scalebox{0.85}{
+      \includegraphics{fig/QRReaderApplicationNativeCalls.pdf}
     } 
     \caption{Sekvenční diagram znázorňující volání funkcí nativního rozhraní}
     \label{QRReaderApplicationNativeCalls}
@@ -1334,8 +1343,8 @@ QR kódu v reálném obraze a druhá pro dekódování QR kódu ze sejmutého ob
 \chapter{Implementace}
 \label{implementace}
 
-Následující kapitola pojednává o samotné realizaci navržených algoritmů a 
-aplikaci čtečky QR kódů v kapitole \ref{navrh}. Popis implementace je zaměřen na
+Následující kapitola pojednává o samotné realizaci algoritmů a navržené 
+aplikaci čtečky QR kódů (kapitola \ref{navrh}). Popis implementace je zaměřen na
 uvedení nejzákladnějších tříd, metod či funkcí, které implementují nejdůležitější části
 výsledné aplikace, přičemž podrobný popis lze nalézt v programových 
 dokumentacích na přiloženém DVD (příloha \ref{obsahDVD}).
@@ -1373,11 +1382,11 @@ prahování, tzn. výsledný binarizovaný obraz, kde budou detekovány pozičn�
 Byly zvoleny celkem čtyři předpokládané vzdálenosti QR kódu, které mohou být
 předány metodě i současně. Jedna ze vzdáleností odpovídá velmi blízkému QR kódu
 a pokud je předána, tak se pro výpočet velikosti bloku prahování uplatní
-experimentálně zjištěná referenční závislost (obrázek
-\ref{DependencyOfSizeOfThresholdBlockToQRCodeSizes} v kapitole \ref{binarizaceObrazu}).
+experimentálně zjištěná referenční závislost (kapitola \ref{binarizaceObrazu} obrázek
+\ref{DependencyOfSizeOfThresholdBlockToQRCodeSizes}).
 Ostatní tři vzdálenosti jsou určeny pro vzdálenější QR kódy, konkrétně pro QR kódy 
-o velikosti $1/3$, $1/6$ a $1/12$ celkového obrazu. Velikost bloku prahování v
-tomto případě je dána stejnou poměrnou částí referenční závislosti.
+o velikosti $1/3$, $1/6$ nebo $1/12$ celkového obrazu. Velikost bloku prahování
+v tomto případě je dána stejnou poměrnou částí referenční závislosti.
 
 Pokud předáme metodě více předpokládaných vzdáleností QR kódu, budou algoritmem
 detekce preferovány nejprve ty menší, neboť lze předpokládat, že QR kód budeme
@@ -1400,7 +1409,7 @@ těchto značek.
   pokud u nich nebyly nalezeny přesně 4 rohy.
   \item \textbf{Převedení obrazu} do normalizovaného zobrazení funkcí
   \texttt{warpPerspective()}.
-  \item \textbf{Šablonové porovnání} struktury s šablonou poziční značky funkcí
+  \item \textbf{Šablonové porovnání} struktury se šablonou poziční značky funkcí
   \texttt{exactMatch()}.
 \end{enumerate}
 
@@ -1436,8 +1445,8 @@ tudíž akceptujeme i poměry 57:8 či 41:24.
 \ref{MinimalBoundedAndConvexHull}) a zjistí počet pixelů uvnitř této obálky. S
 využitím předchozího filtru, kde jsme získali počet pixelů struktury, můžeme obě hodnoty porovnat. Jelikož tvar
 poziční značky je přesně určen pouze svými 4 nekolineárními body a součet
-vnitřních úhlů je 360°, nikdy nemůže u struktury ideální poziční značky nastat,
-že by některý z vnitřních úhlů byl konkávní. Konkávnost vnitřních úhlů je možné
+vnitřních úhlů značky je 360°, nikdy nemůže u~struktury ideální poziční značky
+nastat, že by některý z vnitřních úhlů byl konkávní. Konkávnost vnitřních úhlů je možné
 získat až pro 5 a více bodů. I když počet bodů konvexní obálky a struktury
 poziční značky by měl být totožný, implementačně je tolerována až 10\% neshoda.
 
@@ -1457,7 +1466,7 @@ zbývajících 158 struktur třetím filtrem.
   \end{center}
 \end{figure}
 
-Pro optimalizaci detekce pozičních značek v reálném obraze, byly přidány další
+Pro optimalizaci detekce pozičních značek v reálném obraze byly přidány další
 dva topologické filtry. Ty jsou ovšem volitelné a provádí se pouze při předání
 specifické bitové vlajky parametrem \texttt{flags} metodě detekce. Jejich
 použití při detekci užité během dekódování by bylo nevhodné, pokud by byl QR kód např.
@@ -1515,7 +1524,7 @@ odpovídající nejzákladnější třídy a metody, které funkčnost implement
   metodou \texttt{sample()} třídy \texttt{GridSampler}, která
   vzorkuje bitovou matici menší maticí, v našem případě o~velikosti kódového
   slova QR kódu.
-  Sekvence jsou získány z kódu ve formě bitového pole \texttt{BitArray}.
+  Sekvence je získána z kódu ve formě bitového pole \texttt{BitArray}.
   \item \textbf{Uspořádání sekvence dat} a korekce chyby do bloků je zapotřebí z
   důvodu prokládání kódových slov a zpřístupnění opravy chyb, která probíhá vždy
   nad těmito menšími bloky. Za tímto účelem byla vytvořena třída
@@ -1527,19 +1536,20 @@ odpovídající nejzákladnější třídy a metody, které funkčnost implement
   \item \textbf{Dekódování dat} z fyzické vrstvy QR kódu je umožněno třídou
   \texttt{QrBitDecoder}, která shromažďuje a v případě potřeby využívá instance
   implementovaných dekodérů různých režimů. Při dekódování se využívá proudu
-  bitů zprostředkovaným třídou \texttt{BitStream}, přičemž bitový proud je
+  bitů zprostředkovaného třídou \texttt{BitStream}, přičemž bitový proud je
   ustanoven nad přečteným polem bitů \texttt{BitArray}.
 \end{enumerate}
 
 \clearpage
 \section{Aplikace čtečky QR kódů}
+\label{aplikaceCteckyImplementace}
 
 Aplikace čtečky QR kódů byla implementována v jazyce Java pro cílovou platformu
 Android. Ke své činnosti využívá výše popsanou C++ knihovnu (kapitola
 \ref{knihovnaBarcodesLibrary}), se kterou komunikuje skrze JNI.
 
 Uživatelsky viditelná část aplikace se skládá ze sedmi Activity komponent
-(kapitola \ref{aplikaceComponents}). Z důvodů popsaných v návrhu implementuje
+(kapitola~\ref{aplikaceComponents}). Z důvodu popsaného v návrhu implementuje
 aplikace i mechanismus dekódování aplikační vrstvy QR kódů (kapitola
 \ref{aplikaceDekodovani}), který je postaven na možnosti snadného přidávání
 nových dekodérů do aplikace i včetně skrze zásuvné moduly.
@@ -1551,13 +1561,15 @@ OI File Manager, je doporučené mít tuto aplikaci pro zkvalitnění práce se
 \subsection{Komponenty aplikace}
 \label{aplikaceComponents}
 
-Aplikace je tvořena převážně Activity komponentami.
+Aplikace je tvořena převážně Activity komponentami. Přehled, s jakými
+třídami komponenty kooperují, můžeme získat z diagramu tříd v příloze
+\ref{diagramTrid}.
 
 Hlavní spouštěcí Activity komponentou je \texttt{MainActivity}, která v sobě
 implementuje funkčnost zobrazení náhledu z kamery a volání nativních funkcí skrze JNI
-rozhraní. Probíhá zde jak detekce, tak i dekódování QR kódu z obrazu, přičemž
-obě tyto činnosti běží ve svém vlastním vlákně. V případě detekce je z kamery
-přebírán RAW obraz ve formátu NV21, který je převáděn v nativní funkci do
+rozhraní. Probíhá zde jak detekce, tak i dekódování
+QR kódu z obrazu, přičemž obě tyto činnosti běží ve svém vlastním vlákně. V případě detekce je z kamery
+přebírán obraz ve formátu NV21, který je převáděn v nativní funkci do
 stupňů šedi. Jelikož je NV21 nejčastějším formátem pro náhled, se kterým se
 u zařízení pracujících na platformě Android můžeme setkat, nejsou žádné další
 formáty aktuálně podporovány. Obraz pro dekódování QR kódu je získáván
@@ -1565,8 +1577,8 @@ z~callback funkce volané z API Androidu při požadavku o sejmutí obrazu. Tato
 funkci rozhraní převáděn do stupňů šedi.
 
 Pokud \texttt{MainActivity} komponenta nalezne QR kód a dekóduje jeho fyzickou
-vrstvu, je obraz a serializovaný objekt obsahující data QR kódu uložen do
-souborů v privátní složce aplikace a zavolána komponenta
+vrstvu, jsou obraz a serializovaný objekt obsahující data QR kódu uloženy do
+souborů v privátní složce aplikace a je zavolána komponenta
 \texttt{OpenQrActivity}, které jsou Intent požadavkem předána umístění obou
 souborů. Komponenta \texttt{OpenQrActivity} slouží pro dekódování aplikační
 vrstvy a zobrazení obrazovky s výsledkem dekódování. Problematika dekódování je blíže
@@ -1589,7 +1601,7 @@ popsána v následující kapitole \ref{aplikaceDekodovani}.
 \label{aplikaceDekodovani}
 
 Dekódování aplikační vrstvy QR kódu se provádí po předání kódu Intent požadavkem 
-komponentě \texttt{OpenQrActivity}. V níž je dále volána ze singleton třídy
+komponentě \texttt{OpenQrActivity}. V ní je dále volána ze singleton třídy
 \texttt{QrDecoderManager} metoda \texttt{decode()}, která vrací objekt
 reprezentující specifický QR kód.
 
@@ -1602,7 +1614,7 @@ testování nám nezbývá.
 
 Aktuálně jsou v aplikaci zahrnuty pouze dva dekodéry
 \texttt{BaseQrDecoder} a \texttt{TextDecoder}. \texttt{BaseQrDecoder}
-implementuje dekódování následujících URI schémata: \texttt{http},
+implementuje dekódování následujících URI schémat: \texttt{http},
 \texttt{mailto}, \texttt{tel}, \texttt{URLTO}, \texttt{sms}, \texttt{SMSTO}.
 \texttt{TextDecoder} není dekodérem URI schémat a slouží pro dekódování prostého
 textu, tudíž má i nejnižší prioritu ze všech dekodérů, neboť většina dnešních
@@ -1616,7 +1628,8 @@ adaptér vyhledat, musí být registrován v registru. Nejpodstatnější metodo
 adaptéru je metoda \texttt{getProvider()}, která vrací samotný objekt
 zprostředkovávající převod, konkrétně objekt implementující rozhraní
 \texttt{QrCodeViewProvider}. Celkově byly implementovány adaptéry pro zobrazení
-QR kódů obsahujících SMS, e-mailu, tel. čísla, internetové stránky a prostého textu.
+QR kódů obsahujících SMS, e-mail, tel. číslo, internetové stránky a prostý
+text.
  
  \begin{figure}[H]
   \begin{center}
@@ -1647,7 +1660,7 @@ pohledů \texttt{InstallableQrCodeViewManager}.
 \label{vysledky}
 
 V této kapitole bude zhodnocena výkonnost a spolehlivost implementovaného
-řešení detekce a čtení QR kódů. Závěrem budou diskutovány budoucí možná
+řešení detekce a čtení QR kódů. Závěrem budou diskutována budoucí možná
 rozšíření aplikace.
 
 Pro vyhodnocení spolehlivosti a výkonnosti aplikace byly použity výbavou velmi
@@ -1657,19 +1670,20 @@ díky svému dvoujádrovému procesoru a kvalitnímu 8 Mpix fotoaparátu, dosáh
 následujících testech značně lepších výsledků než telefon Samsung.
 
 \section{Vyhodnocení spolehlivosti}
+\label{vyhodnoceniSpolehlivost}
 
 Spolehlivost čtečky QR kódů je dána především kvalitou vstupního obrazu. Bylo
 zjištěno, že největší negativní vliv na čtení má rozostřený obraz. Bílé moduly
 QR kódu jsou potom během binarizace umocňovány, což způsobuje někdy až ztrátu
 modulů tmavých. Ačkoliv ztracené moduly v QR kódu mohou být často opraveny,
-problém ovšem nastává při neostrých pozičních značkách, které musí splňovat pro
+problém nastává při neostrých pozičních značkách, které musí splňovat pro
 úspěšnou detekci 80\% shodu v šablonovém porovnání. Při čtení QR kódu z malé
 vzdálenosti se ale s předchozími problémy nesetkáme. Výjimku tvoří pouze QR
 kódy nejvyšších verzí, kde poziční značky zabírají velmi malou část obrazu i z
 blízka sejmutého obrazu. Takové kódy se ovšem v praxi téměř vůbec nepoužívají.
 
 Čtečka si umí dobře poradit s QR kódy, které jsou sejmuty při špatných
-světelných podmínkách. Pokud je QR kód poškozen je použita Reed-Solomonova
+světelných podmínkách. Pokud je QR kód poškozen, je použita Reed-Solomonova
 metoda k jeho opravení (obrázek \ref{readableCodes}).
 
  \begin{figure}[H]
@@ -1698,33 +1712,34 @@ zakřiveném povrchu láhve. S telefonem Samsung se nepodařilo řádně přeč�
 nejvyšší verze, pouze ho detekovat. Telefon LG si s tímto kódem poradil, ale
 pouze až s využitím automatického zaostření. Jakékoliv porušení struktury
 poziční značky, vedoucí např. k nalezení 5. rohu poziční značky nebo spojení
-dvou struktur, způsobí neúspěšnou detekci QR kódu v obraze.
+dvou struktur, způsobí neúspěšnou detekci QR kódu v~obraze.
 
 \section{Vyhodnocení výkonnosti}
+\label{vyhodnoceniVykonnosti}
 
 Při vyhodnocování výkonnosti byla zkoumána celková doba, jaká je potřebná pro
 provedení detekce QR kódu v reálném obraze a jeho čtení v sejmutém obraze.
 Hlavním faktorem ovlivňujícím výkonnost bylo dle očekávání rozlišení
-zpracovávaného obrazu. Referenčním použitý obraz pro testování obsahoval
+zpracovávaného obrazu. Referenční použitý obraz pro testování obsahoval
 neporušený QR kód verze 3.
 
-Ke změření závislosti doby detekce pozičních značek na velikosti obrazu, bylo
+Ke změření závislosti doby detekce pozičních značek na velikosti obrazu bylo
 proměnlivě nastavováno rozlišení náhledu z kamery, který je k detekci využíván.
-Doba byla odečítána pomocí systémového času, nikoliv procesorového, tudíž jí
+Doba byla odečítána pomocí systémového času, nikoliv procesorového, tudíž ji
 lze použít i k příp. převodu na zpracované rámce za sekundu. Získanou závislost
 lze vidět v grafu na obrázku \ref{detectionFPS}. Při výchozím nastavení
 rozlišení náhledu, tzn.
 rozlišení odpovídajícímu rozlišení displeje, bylo u obou přístrojů dosaženo
 frekvence obnovy volání detekce 5-6 rámců za sekundu. Jediným faktorem, který
-může frekvenci v daném rozlišení výrazně ovlivnit je počet detekovaných struktur
-v rámci metody detekce. Není-li obraz strukturovaný, lze pozorovat při výchozím
+může frekvenci v daném rozlišení výrazně ovlivnit, je počet detekovaných
+struktur v rámci metody detekce. Není-li obraz strukturovaný, lze pozorovat při výchozím
 rozlišení zpracování až 10 rámců obrazu za sekundu, v opačném případě naopak
 výrazně méně.
 
  \begin{figure}[H]
   \begin{center}
     \scalebox{0.53}{
-      \includegraphics[trim = 1.5cm 5cm 1.5cm 5cm]{fig/detectionFPS.pdf}
+      \includegraphics{fig/detectionFPS.pdf}
     }
     \caption{Graf závislosti doby detekce pozičních značek na velikosti obrazu}
     \label{detectionFPS}
@@ -1740,7 +1755,7 @@ které se mj. skládá i z detekce pozičních značek, lze vidět na obrázku
  \begin{figure}[H]
   \begin{center}
     \scalebox{0.53}{
-      \includegraphics[trim = 1.5cm 5cm 1.5cm 5cm]{fig/decodeFPS.pdf}
+      \includegraphics{fig/decodeFPS.pdf}
     }
     \caption{Graf závislosti doby čtení QR kódu na velikosti obrazu}
     \label{decodeFPS}
@@ -1748,15 +1763,14 @@ které se mj. skládá i z detekce pozičních značek, lze vidět na obrázku
 \end{figure}
 
 Jelikož proces čtení QR kódu se skládá z více kroků, byla provedena analýza
-stráveného procesorového času uvnitř jednotlivých kroků (obrázek
-\ref{decodingStepsOverview}). Výsledku může být využito v budoucnu pro návrh
+náročnosti jednotlivých kroků z hlediska procesorového času
+(obrázek \ref{decodingStepsOverview}). Výsledku může být využito v budoucnu pro návrh
 případných optimalizací.
 
  \begin{figure}[H]
   \begin{center}
     \scalebox{0.50}{
-      \includegraphics[trim = 2.5cm 5cm 3.5cm
-      5cm]{fig/decodingStepsOverview.pdf} }
+      \includegraphics{fig/decodingStepsOverview.pdf} }
     \caption{Graf procesorového času stráveného v jednotlivých
     krocích čtení QR kódu}
     \label{decodingStepsOverview}
@@ -1767,11 +1781,12 @@ Bylo zjištěno, že převážná část procesorového času je spotřebována 
 detekce pozičních značek. Následně po ní se ukázal být náročný krok transformace
 QR kódu do normalizovaného zobrazení. Avšak ne samotná transformace, ale
 binarizace obrazu, která je prováděna ihned po transformaci v témže kroku.
-Překvapivě dobře dopadl krok přípravy obrazu, ve kterém je převáděn komprimovaný
-obraz v JPEG formátu na obraz ve stupních šedi. Další kroky čtení, které nejsou
-v kruhovém grafu uvedeny, ukrojily z celkového času pouhých 0,1%.
+Překvapivě dobře dopadl krok přípravy obrazu, v němž je převáděn
+komprimovaný obraz v JPEG formátu na obraz ve stupních šedi. Další kroky čtení, které nejsou
+v kruhovém grafu uvedeny, ukrojily z celkového času pouhých 0,1\%.
 
 \section{Možnosti budoucího vývoje}
+\label{rozsireniBudouciVyvoj}
 
 Velkým prostorem pro samotný vývoj se skýtá v C++ knihovně pro detekci a čtení
 QR kódů. Knihovnu by bylo možné rozšířit např. o podporu čtení Micro QR kódů,
@@ -1780,14 +1795,15 @@ strukturovaného režimu nebo kódů ze zakřivených povrchů.
 Přidání podpory pro čtení skupiny Micro QR kódů by znamenalo pouze změnit
 koncepci nacházení oblasti QR kódu. Ta by mohla být založena na sledování
 synchronizačních vzorů vedoucích z detekované poziční značky Micro QR kódu
-(\ref{microQRCodePoints}).
+(obrázek \ref{microQRCodePoints}).
 Pokud by sledování dosáhlo konce, tzn. strany QR kódu, byly by zde stanoveny
-rohy A a C. Tyto rohy by se staly zároveň i počátečními body pro vzorkování a
-nalezení čtvrtého rohu QR kódu D -- viz kapitola \ref{zjisteniATransformace}.
+rohy $A$ a $C$. Tyto rohy by se staly zároveň i počátečními body pro vzorkování
+a nalezení čtvrtého rohu QR kódu $D$ -- viz kapitola
+\ref{zjisteniATransformace}.
 
  \begin{figure}[H]
   \begin{center}
-    \scalebox{0.18}{
+    \scalebox{0.17}{
       \includegraphics{fig/microQRCodePoints.PNG}
     }
     \caption{Micro QR kód}
@@ -1809,16 +1825,17 @@ tmavých a světlých modulů poziční značky v poměru 1:1:3:1:1.
 
  \begin{figure}[H]
   \begin{center}
-    \scalebox{0.80}{
+    \scalebox{0.78}{
       \includegraphics{fig/qrdiv.PNG}
     }
-    \caption{Rozdělení dat do více QR kódů pomocí strukturovaného režimu}
+    \caption{Rozdělení dat do více QR kódů pomocí strukturovaného režimu
+    \cite{DensoQRFeatures}}
     \label{qrdiv}
   \end{center}
 \end{figure}
 
 Čtení QR kódů ze zakřivených povrchů by šlo realizovat pomocí zarovnávacích
-značek v QR kódu. Samotný princip čtení je dokonce uveden v referenčním
+značek v~QR kódu. Samotný princip čtení je dokonce uveden v referenčním
 algoritmu pro čtení QR kódů v ISO normě. Podstata by spočívala v nalezení
 zarovnávacích značek a rozdělení QR kódu na dvourozměrné menší bloky
 (obrázek \ref{alignmentBlocks}), které by poté byly samostatně převedeny
@@ -1835,7 +1852,7 @@ sjednotil a mohla by být aplikována standardní metodika čtení.
   \end{center}
 \end{figure}
  
-Rozšíření aplikace pro Android by bylo také možné. Zahrnovalo by spíše ale
+Rozšíření aplikace pro Android by bylo také možné. Zahrnovalo by však spíše
 vylepšení z pohledu uživatele, nikoliv však funkční z pohledu spolehlivosti 
 a podpory čtení QR kódů. Hlavním přínosem by byla implementace souborového
 správce, který by byl využit pro správu QR kódů, obrázků a instalovaní zásuvných
@@ -1847,41 +1864,56 @@ jakéhokoliv souborového správce.
 
 \chapter{Závěr}
 
-Cílem této bakalářské práce bylo prozkoumat problematiku dvourozměrných čárových
-QR kódů. Na základě získaných teoretických znalostí navrhnout algoritmy pro
-jejich automatické rozpoznání a přečtení ve snímaném obraze. Dále tyto algoritmy
+Cílem této bakalářské práce bylo zanalyzovat problematiku dvourozměrných
+čárových QR kódů. Na základě získaných teoretických znalostí navrhnout algoritmy pro
+jejich automatické rozpoznávání a přečtení ve snímaném obraze. Dále tyto algoritmy
 implementovat a využít v aplikaci čtečky QR kódů pro mobilní platformu Android.
 
 Během návrhu metodiky čtení QR kódů práce vychází z aktuální normy
 spravující standard QR kódů. Pro některé kroky čtení, které norma
 nespecifikovala, nebo nebyly pro naše účely příliš vhodné, bylo nutno
-prezentovat vlastní řešení. Jedná se zejména o metodu binarizace, lokalizaci QR
-kódu v obraze a jeho transformaci do normalizovaného zobrazení.
+prezentovat vlastní řešení. Jedná se zejména o přípravu obrazu pro strojové
+zpracování a lokalizaci QR kódů v obraze.
+
+V rámci práce se podařilo implementovat všechny navržené postupy uvedené v
+kapitole~\ref{navrh}. Automatické rozpoznávání QR kódů v obraze probíhá nad
+binarizovaným obrazem (kapitola \ref{binarizaceObrazu}) a je prováděno pomocí
+hledání kontur (kapitola \ref{detekcePozicnichZnacek}). Při hledání kontur jsou v obraze
+lokalizovány tzv. poziční značky, které se vyskytují ve třech rozích QR kódu.
+Po lokalizaci těchto značek a určení čtvrtého rohu QR
+kódu (kapitola \ref{zjisteniATransformace}) dochází k inverzní perspektivní
+transformaci (kapitola \ref{inverzniPerspektivniTransformace})
+QR kódu do normalizovaného zobrazení. Samotného přečtení QR kódu je docíleno
+přiložením čtecí mřížky a vzorkováním bodů uvnitř buněk mřížky (kapitola
+\ref{cteniQRKoduMrizka}).
 
 V praktické části práce byla v jazyce C++ s využitím knihovny OpenCV vytvořena
-knihovna, která zajišťuje lokalizaci a čtení QR kódů v obraze. Knihovna je
-napsána přenositelně a byla úspěšně otestována na mobilních architekturách
+knihovna (kapitola \ref{knihovnaBarcodesLibrary}), která zajišťuje lokalizaci a
+čtení QR kódů v obraze.
+Knihovna je napsána přenositelně a byla úspěšně otestována na mobilních architekturách
 ARMv6 a ARMv7a a desktopových architekturách x86 a x64.
 
 Druhým produktem praktické části práce je aplikace čtečky QR kódů napsaná v
-jazyce Java, jejíž funkčnost je závislá na dostupnosti předešlé knihovny.
+jazyce Java (kapitola \ref{aplikaceCteckyImplementace}), jejíž funkčnost je
+závislá na dostupnosti předešlé knihovny.
 Samotná knihovna je potom v aplikaci čtečky QR kódů dynamicky načítána. Vzájemná
 komunikace mezi aplikací a knihovnou probíhá skrze nativní rozhraní JNI.
 Aplikace je unikátní od ostatních čteček QR kódů zejména svojí snadnou
 rozšiřitelností v podobě zásuvných doplňků, dokonce i za běhu aplikace.
 
-V rámci práce se podařilo implementovat všechny navržené postupy. Výsledná
-aplikace by proto mohla být používána v praxi. Při vytracení zarovnávacích
-značek z QR kódů, je aplikace schopna tento kód přesto dekódovat, na rozdíl od
-všech testovaných veřejně dostupných čteček, které s tímto měly problém. Z
-důvodu nedostatečné rychlosti dekódování a dekódování ve více krocích, které
-může nastat při selhání jednoho přístupu a pokusu o nápravu chyby jiným
-přístupem, se nedoporučuje používat aplikaci při zpracování QR kódů z reálného
-obrazu. Detekce QR kódů v \csuv{běžném} reálném obraze, jehož rozlišení
-odpovídalo rozlišení displeje, na testovaných mobilních zařízeních dosahovala
-frekvence obnovy 5-6 rámců za sekundu.
+Za účelem zhodnocení spolehlivosti a výkonnosti implementovaných funkcionalit,
+byla aplikace podrobena sadě testů (kapitoly \ref{vyhodnoceniSpolehlivost} a
+\ref{vyhodnoceniVykonnosti}), které prokázaly, že aplikace je použitelná
+v praxi, ale není vhodná pro čtení QR kódů z reálného obrazu.
+Detekce QR kódů v \csuv{běžně} strukturovaném reálném obraze, jehož rozlišení
+odpovídalo rozlišení displeje, dosahovala na testovaných mobilních zařízeních
+frekvence obnovy 5-6 rámců za sekundu. Doba celého procesu čtení závisela na
+zvoleném rozlišení vstupního obrazu a počtu opravných kroků čtení, které se v
+případě selhání předešlého kroku mohou uplatnit. V porovnání s ostatními
+veřejně dostupnými čtečkami dosahovala aplikace v testech lepších výsledků,
+pokud QR kód obsahoval poškozené zarovnávací značky.
 
-Budoucí vývoj práce by mohl spočívat hlavně v optimalizaci a zvýšení přesnosti
-lokalizace QR kódů. Mohla by být přidána i podpora čtení více QR kódů v obraze
-a nové skupiny QR kódů tzv. Micro QR kódů. Výhodou by byla i schopnost čtení ze
-zakřivených povrchů.
+Budoucí vývoj práce (kapitola \ref{rozsireniBudouciVyvoj}) by mohl směřovat zejména k optimalizaci
+a zvýšení přesnosti lokalizace QR kódů. Mohla by být implementována i podpora čtení více
+QR kódů v obraze a nové skupiny QR kódů tzv. Micro QR kódů. Vhodné by rovněž
+bylo aplikovat schopnost čtení ze zakřivených povrchů.

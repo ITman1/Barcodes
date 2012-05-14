@@ -43,7 +43,7 @@ const QrDetector QrDetector::DETECTOR_INSTANCE = QrDetector();
  */
 void QrDetector::detect(Image &image, DetectedMarks &detectedMarks, int flags) const {
 	detectedMarks.clear();
-	DEBUG_PRINT(DEBUG_TAG, "================ NEW IMAGE DETECT CALL ================");
+	DEBUG_PRINT(DEBUG_TAG, ">>>>>>>>>>> DETECT START <<<<<<<<<<<<<");
 	if (image.data != NULL) {
 		DetectedMarks marks;
 		int repairFlags = flags & REPAIR_FLAGS;
@@ -52,14 +52,14 @@ void QrDetector::detect(Image &image, DetectedMarks &detectedMarks, int flags) c
 
 		// Detection without any repairs
 		detectByDistancePriority(image, detectedMarks, flags);
-		if (detectedMarks.size() > 2) return;
+		if (detectedMarks.size() > 2) goto return_end;
 
 		// Detection with corrupt fill repair
 		if (repairFlags & FLAG_ADAPT_THRESH_CORRUPT_FILL_REPAIR) {
 			detectByDistancePriority(image, marks, flags | FLAG_ADAPT_THRESH_CORRUPT_FILL_REPAIR);
 			detectedMarks.insert(detectedMarks.end(), marks.begin(), marks.end());
 			detectedMarks.filter(QR_MARK_CENTER_POINTS_MINIMUM_DISTANCE);
-			if (detectedMarks.size() > 2) return;
+			if (detectedMarks.size() > 2) goto return_end;
 		}
 
 		// Detection with flood fill repair
@@ -67,9 +67,13 @@ void QrDetector::detect(Image &image, DetectedMarks &detectedMarks, int flags) c
 			detectByDistancePriority(image, marks, flags | FLAG_QR_MARK_OUTER_FLOOD_FILL_REPAIR);
 			detectedMarks.insert(detectedMarks.end(), marks.begin(), marks.end());
 			detectedMarks.filter(QR_MARK_CENTER_POINTS_MINIMUM_DISTANCE);
-			if (detectedMarks.size() > 2) return;
+			if (detectedMarks.size() > 2) goto return_end;
 		}
 	}
+
+	return_end:
+		DEBUG_PRINT(DEBUG_TAG, ">>>>>>>>>>> DETECT END <<<<<<<<<<<<<");
+		return;
 }
 
 /**
